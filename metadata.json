@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Ox Commerce",
+  "description": "Sistema SaaS ERP moderno para comercialização, monitoramento de viagens, controle fiscal (GTA/NF-e) e gestão de bovinos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

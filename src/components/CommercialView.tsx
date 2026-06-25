@@ -1,0 +1,1809 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Compra, OrdemCompraCliente, Negociacao, Lote, SubMenuComercial } from '../types';
+import { CADASTRO_CLIENTES, CADASTRO_FORNECEDORES, CADASTRO_PARCEIROS, CADASTRO_MOTORISTAS } from '../data/mockData';
+import { supabase } from '../supabaseClient';
+
+const MOCK_CLIENT_UNITS = [
+  { id: 'cl-1-1', nomeFantasia: 'JBS - Rondonópolis', razaoSocial: 'Frigorífico JBS S/A', cidade: 'Rondonópolis', uf: 'MT' },
+  { id: 'cl-1-2', nomeFantasia: 'JBS - Barra do Garças', razaoSocial: 'Frigorífico JBS S/A', cidade: 'Barra do Garças', uf: 'MT' },
+  { id: 'cl-1-3', nomeFantasia: 'JBS - Campo Grande', razaoSocial: 'Frigorífico JBS S/A', cidade: 'Campo Grande', uf: 'MS' },
+  { id: 'cl-2-1', nomeFantasia: 'Marfrig - Bataguassu', razaoSocial: 'Frigorífico Marfrig Global Foods', cidade: 'Bataguassu', uf: 'MS' },
+  { id: 'cl-2-2', nomeFantasia: 'Marfrig - Tangará da Serra', razaoSocial: 'Frigorífico Marfrig Global Foods', cidade: 'Tangará da Serra', uf: 'MT' },
+  { id: 'cl-2-3', nomeFantasia: 'Marfrig - Promissão', razaoSocial: 'Frigorífico Marfrig Global Foods', cidade: 'Promissão', uf: 'SP' },
+  { id: 'cl-3-1', nomeFantasia: 'Minerva - Paranatinga', razaoSocial: 'Minerva Foods S/A', cidade: 'Paranatinga', uf: 'MT' },
+  { id: 'cl-3-2', nomeFantasia: 'Minerva - Barretos', razaoSocial: 'Minerva Foods S/A', cidade: 'Barretos', uf: 'SP' },
+  { id: 'cl-3-3', nomeFantasia: 'Minerva - Araguaína', razaoSocial: 'Minerva Foods S/A', cidade: 'Araguaína', uf: 'TO' }
+];
+import {
+  Search,
+  Plus,
+  ArrowRightLeft,
+  X,
+  FileSpreadsheet,
+  CheckCircle2,
+  Trash2,
+  MoveRight,
+  TrendingUp,
+  Tag,
+  MapPin,
+  FileCheck
+} from 'lucide-react';
+
+interface CommercialViewProps {
+  compras: Compra[];
+  onAddCompra: (compra: Compra) => void;
+  onDeleteCompra: (id: string) => void;
+  ordensCompraCliente: OrdemCompraCliente[];
+  onAddOrdemCompraCliente: (venda: OrdemCompraCliente) => void;
+  onDeleteOrdemCompraCliente: (id: string) => void;
+  negociacoes: Negociacao[];
+  onUpdateNegociacaoStage: (id: string, stage: Negociacao['fase']) => void;
+  onAddNegociacao: (neg: Negociacao) => void;
+  searchQuery: string;
+  activeSubMenu: SubMenuComercial;
+  setActiveSubMenu: (sub: SubMenuComercial) => void;
+  viagens?: any[]; // ViagemLogistica[] representing active processes
+  onGoToLogistica?: () => void;
+}
+
+export default function CommercialView({
+  compras,
+  onAddCompra,
+  onDeleteCompra,
+  ordensCompraCliente,
+  onAddOrdemCompraCliente,
+  onDeleteOrdemCompraCliente,
+  negociacoes,
+  onUpdateNegociacaoStage,
+  onAddNegociacao,
+  searchQuery,
+  activeSubMenu,
+  setActiveSubMenu,
+  viagens = [],
+  onGoToLogistica
+}: CommercialViewProps) {
+  
+  // Clientes state loaded from Supabase
+  const [clientes, setClientes] = useState<any[]>(MOCK_CLIENT_UNITS);
+
+  useEffect(() => {
+    async function loadClientes() {
+      try {
+        const { data, error } = await supabase
+          .from('clientes_fornecedores')
+          .select('*');
+
+        if (!error && data && data.length > 0) {
+          const filtered = data.filter(item => item.relacionamento === 'CLI' || item.relacionamento === 'AMB');
+          if (filtered.length > 0) {
+            const mapped = filtered.map(item => {
+              const raw = item.raw_data || {};
+              const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+              const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+              const cid = raw.cidade || item.fazenda || 'Não Informada';
+              const estadoUf = raw.uf || item.estado || 'SP';
+              return {
+                id: item.id,
+                nomeFantasia: nFantasia,
+                razaoSocial: rSocial,
+                cidade: cid,
+                uf: estadoUf
+              };
+            });
+            setClientes(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load clients from Supabase in CommercialView:', err);
+      }
+    }
+    loadClientes();
+  }, []);
+
+  // Categorias state loaded from Supabase
+  const [categorias, setCategorias] = useState<any[]>([
+    { code: 'BOI', name: 'Boi Gordo' },
+    { code: 'VAC', name: 'Vaca Gorda' },
+    { code: 'GAR', name: 'Garrote' },
+    { code: 'NOV', name: 'Novilha' },
+    { code: 'BEZ', name: 'Bezerro(a)' }
+  ]);
+
+  useEffect(() => {
+    async function loadCategorias() {
+      try {
+        const { data, error } = await supabase
+          .from('categorias')
+          .select('*');
+
+        if (!error && data && data.length > 0) {
+          const activeCats = data
+            .filter(item => item.status === 'Ativo')
+            .map(item => ({
+              code: item.codigo,
+              name: item.nome
+            }));
+          if (activeCats.length > 0) {
+            setCategorias(activeCats);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load categorias from Supabase in CommercialView:', err);
+      }
+    }
+    loadCategorias();
+  }, []);
+
+  // Modals status
+  const [showAddCompraModal, setShowAddCompraModal] = useState(false);
+  const [showAddVendaModal, setShowAddVendaModal] = useState(false);
+  const [showAddNegModal, setShowAddNegModal] = useState(false);
+
+  // Form State for Compra
+  const [compraForm, setCompraForm] = useState({
+    numeroOperacao: '',
+    fornecedor: '',
+    fazendaOrigem: '',
+    municipio: '',
+    estado: '',
+    categoriaAnimal: '' as any,
+    quantidade: '' as any,
+    pesoMedio: '' as any,
+    valorArroba: '' as any,
+    comissao: '' as any,
+    frete: '' as any,
+    ordemCompraClienteId: '',
+    prazoPagamento: '',
+    formaPagamento: '',
+    observacoes: '',
+    dataEmissao: new Date().toISOString().split('T')[0],
+    dataEntrega: new Date().toISOString().split('T')[0],
+    status: 'Aberta',
+    pais: '',
+    corretor: '',
+    motorista: '',
+    veiculo: '',
+    placa: '',
+    destinoFrigorifico: '',
+    destinoCidade: '',
+    destinoEstado: '',
+    destinoPais: ''
+  });
+
+  // Form State for OrdemCompraCliente
+  const [vendaForm, setVendaForm] = useState({
+    numeroOC: '',
+    cliente: '',
+    frigorifico: '',
+    categoriaAnimal: 'Boi Gordo' as OrdemCompraCliente['categoriaAnimal'],
+    quantidade: 100,
+    peso: 30000,
+    valorArroba: 290,
+    comissao: 1.0,
+    status: 'Pendente' as OrdemCompraCliente['status'],
+    dataEmissao: new Date().toISOString().split('T')[0]
+  });
+
+  // Form State for Negociacao
+  const [negForm, setNegForm] = useState({
+    titulo: '',
+    clienteFornecedor: '',
+    fazenda: '',
+    cabecas: 100,
+    valorEstimado: 300000,
+    contatoTelefone: '',
+    fase: 'prospeccao' as Negociacao['fase'],
+    ordemCompraClienteId: '',
+    processoId: '',
+    pais: 'Brasil',
+    estado: '',
+    cidade: ''
+  });
+
+  // Live calculations for Add Compra Modal
+  const livePesoTotal = (Number(compraForm.quantidade) || 0) * (Number(compraForm.pesoMedio) || 0);
+  const liveArrobas = livePesoTotal / 30;
+  const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
+  const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
+  const liveFrete = Number(compraForm.quantidade) > 50 ? 0 : (Number(compraForm.frete) || 0);
+  const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete);
+
+  useEffect(() => {
+    if (showAddVendaModal) {
+      const firstCli = clientes[0];
+      const initialClient = firstCli ? firstCli.nomeFantasia : '';
+      setVendaForm(prev => ({
+        ...prev,
+        numeroOC: 'OC-2026-' + Math.floor(Math.random() * 9000 + 1000),
+        cliente: initialClient,
+        frigorifico: initialClient,
+        dataEmissao: new Date().toISOString().split('T')[0],
+        status: 'Pendente'
+      }));
+    }
+  }, [showAddVendaModal, clientes]);
+
+  useEffect(() => {
+    if (showAddCompraModal) {
+      setCompraForm(prev => ({
+        ...prev,
+        numeroOperacao: 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
+        dataEmissao: new Date().toISOString().split('T')[0]
+      }));
+    }
+  }, [showAddCompraModal]);
+
+  const handleClientChange = (clientName: string) => {
+    const found = clientes.find(c => c.nomeFantasia === clientName);
+    const location = found ? found.nomeFantasia : '';
+    setVendaForm(prev => ({
+      ...prev,
+      cliente: clientName,
+      frigorifico: location
+    }));
+  };
+
+  // Submódulo calculations & filters
+  const handleAddCompraSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const pesoTotal = Number(compraForm.quantidade) * Number(compraForm.pesoMedio);
+    const arrobas = pesoTotal / 30;
+    const valorGado = arrobas * Number(compraForm.valorArroba);
+    const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
+    const freteValor = Number(compraForm.quantidade) > 50 ? 0 : Number(compraForm.frete);
+    const valorTotal = Math.round(valorGado + comissaoValor + freteValor);
+
+    const novaCompra: Compra = {
+      id: 'c-' + Math.random().toString(36).substr(2, 9),
+      numeroOperacao: compraForm.numeroOperacao || 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
+      fornecedor: compraForm.fornecedor,
+      fazendaOrigem: compraForm.fazendaOrigem,
+      municipio: compraForm.municipio,
+      estado: compraForm.estado,
+      categoriaAnimal: compraForm.categoriaAnimal,
+      quantidade: Number(compraForm.quantidade),
+      pesoMedio: Number(compraForm.pesoMedio),
+      pesoTotal: pesoTotal,
+      valorArroba: Number(compraForm.valorArroba),
+      comissao: Number(compraForm.comissao),
+      frete: freteValor,
+      valorTotal: valorTotal,
+      dataCriacao: compraForm.dataEmissao || new Date().toISOString().split('T')[0],
+      dataEntrega: compraForm.dataEntrega || new Date().toISOString().split('T')[0],
+      ordemCompraClienteId: compraForm.ordemCompraClienteId || undefined,
+      prazoPagamento: compraForm.prazoPagamento,
+      formaPagamento: compraForm.formaPagamento,
+      observacoes: compraForm.observacoes,
+      status: compraForm.status,
+      pais: compraForm.pais,
+      corretor: compraForm.corretor,
+      motorista: Number(compraForm.quantidade) > 50 ? '' : compraForm.motorista,
+      veiculo: Number(compraForm.quantidade) > 50 ? '' : compraForm.veiculo,
+      placa: Number(compraForm.quantidade) > 50 ? '' : compraForm.placa,
+      destinoFrigorifico: compraForm.destinoFrigorifico,
+      destinoCidade: compraForm.destinoCidade,
+      destinoEstado: compraForm.destinoEstado,
+      destinoPais: compraForm.destinoPais
+    };
+
+    onAddCompra(novaCompra);
+    setShowAddCompraModal(false);
+    // Reset keys
+    setCompraForm({
+      numeroOperacao: '',
+      fornecedor: '',
+      fazendaOrigem: '',
+      municipio: '',
+      estado: '',
+      categoriaAnimal: '' as any,
+      quantidade: '' as any,
+      pesoMedio: '' as any,
+      valorArroba: '' as any,
+      comissao: '' as any,
+      frete: '' as any,
+      ordemCompraClienteId: '',
+      prazoPagamento: '',
+      formaPagamento: '',
+      observacoes: '',
+      dataEmissao: new Date().toISOString().split('T')[0],
+      dataEntrega: new Date().toISOString().split('T')[0],
+      status: 'Aberta',
+      pais: '',
+      corretor: '',
+      motorista: '',
+      veiculo: '',
+      placa: '',
+      destinoFrigorifico: '',
+      destinoCidade: '',
+      destinoEstado: '',
+      destinoPais: ''
+    });
+  };
+
+  const handleAddVendaSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const arrobas = vendaForm.peso / 30;
+    const valorBruto = arrobas * vendaForm.valorArroba;
+    const comissaoDedução = valorBruto * (vendaForm.comissao / 100);
+    const resultado = Math.round(valorBruto - comissaoDedução);
+
+    const novaVenda: OrdemCompraCliente = {
+      id: 'v-' + Math.random().toString(36).substr(2, 9),
+      numeroOC: vendaForm.numeroOC || 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
+      cliente: vendaForm.cliente,
+      frigorifico: vendaForm.frigorifico,
+      categoriaAnimal: vendaForm.categoriaAnimal,
+      quantidade: Number(vendaForm.quantidade),
+      peso: Number(vendaForm.peso),
+      valorArroba: Number(vendaForm.valorArroba),
+      comissao: Number(vendaForm.comissao),
+      resultadoOperacao: resultado,
+      status: vendaForm.status,
+      dataCriacao: vendaForm.dataEmissao || new Date().toISOString().split('T')[0]
+    };
+
+    onAddOrdemCompraCliente(novaVenda);
+    setShowAddVendaModal(false);
+    setVendaForm({
+      numeroOC: '',
+      cliente: '',
+      frigorifico: '',
+      categoriaAnimal: 'Boi Gordo',
+      quantidade: 100,
+      peso: 30000,
+      valorArroba: 290,
+      comissao: 1.0,
+      status: 'Pendente',
+      dataEmissao: new Date().toISOString().split('T')[0]
+    });
+  };
+
+  const handleAddNegSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const novaNeg: Negociacao = {
+      id: 'n-' + Math.random().toString(36).substr(2, 9),
+      titulo: negForm.titulo,
+      clienteFornecedor: negForm.clienteFornecedor,
+      fazenda: negForm.fazenda,
+      cabecas: Number(negForm.cabecas),
+      valorEstimado: Number(negForm.valorEstimado),
+      contatoTelefone: negForm.contatoTelefone,
+      fase: negForm.fase,
+      ultimaAtualizacao: 'Hoje, ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+      ordemCompraClienteId: negForm.ordemCompraClienteId || undefined,
+      processoId: negForm.processoId || undefined,
+      pais: negForm.pais,
+      estado: negForm.estado,
+      cidade: negForm.cidade
+    };
+    onAddNegociacao(novaNeg);
+    setShowAddNegModal(false);
+    setNegForm({
+      titulo: '',
+      clienteFornecedor: '',
+      fazenda: '',
+      cabecas: 100,
+      valorEstimado: 300000,
+      contatoTelefone: '',
+      fase: 'prospeccao',
+      ordemCompraClienteId: '',
+      processoId: '',
+      pais: 'Brasil',
+      estado: '',
+      cidade: ''
+    });
+  };
+
+  // Grid Filters
+  // Automatic reconciliation of Client Purchase Order status based on linked purchases
+  const reconciledVendas = ordensCompraCliente.map(v => {
+    const linkedPurchases = compras.filter(c => c.ordemCompraClienteId === v.id);
+    const totalPurchased = linkedPurchases.reduce((acc, curr) => acc + Number(curr.quantidade), 0);
+    let status: OrdemCompraCliente['status'] = 'Pendente';
+    if (totalPurchased > 0) {
+      if (totalPurchased >= v.quantidade) {
+        status = 'Entregue';
+      } else {
+        status = 'Faturada';
+      }
+    }
+    return { ...v, status };
+  });
+
+  // Grid Filters
+  const filteredCompras = compras.filter((c) =>
+    c.fornecedor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.fazendaOrigem.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.numeroOperacao.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.municipio.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredVendas = reconciledVendas.filter((v) =>
+    v.cliente.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    v.frigorifico.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    v.numeroOC.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Kanban Columns
+  const kanbanColumns: Array<{ key: Negociacao['fase']; label: string; bg: string; text: string }> = [
+    { key: 'prospeccao', label: 'Prospecção / Visitas', bg: 'bg-[#F8F8FA] border-[#DEE1E9]', text: 'text-[#071757]' },
+    { key: 'negociacao', label: 'Em Negociação', bg: 'bg-amber-50 border-amber-200', text: 'text-amber-800' },
+    { key: 'documentacao', label: 'Análise Documental', bg: 'bg-[#FDF6E3] border-[#D8B46A]/30', text: 'text-[#8A6D2E]' },
+    { key: 'aprovado', label: 'Aprovado / Fechado', bg: 'bg-green-50 border-green-200', text: 'text-green-800' },
+    { key: 'cancelado', label: 'Cancelado', bg: 'bg-rose-50 border-rose-200', text: 'text-rose-800' }
+  ];
+
+  return (
+    <div id="commercial-module-view" className="space-y-6">
+      
+      {/* Tab Navigation header */}
+      <div className="flex border-b border-gray-250 bg-white p-2 rounded-xl shadow-xs space-x-1">
+        <button
+          id="tab-vendas"
+          onClick={() => setActiveSubMenu('vendas')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+            activeSubMenu === 'vendas'
+              ? 'bg-[#071757] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
+          }`}
+        >
+          Ordens de Compra
+        </button>
+        <button
+          id="tab-compras"
+          onClick={() => setActiveSubMenu('compras')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+            activeSubMenu === 'compras'
+              ? 'bg-[#071757] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
+          }`}
+        >
+          Negociações
+        </button>
+        <button
+          id="tab-negociacoes"
+          onClick={() => setActiveSubMenu('negociacoes')}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+            activeSubMenu === 'negociacoes'
+              ? 'bg-[#071757] text-white shadow-xs'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
+          }`}
+        >
+          CRM / Follow-up
+        </button>
+      </div>
+
+      {/* -------------------- GESTÃO DE COMPRAS -------------------- */}
+      {activeSubMenu === 'compras' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-gray-800">Negociação de Compra Bovina</h3>
+              <p className="text-xs text-gray-400 font-medium">Controle de entrada de gado, cálculo de arrobas e fretes</p>
+            </div>
+            <button
+              id="btn-add-compra"
+              onClick={() => {
+                setCompraForm({
+                  numeroOperacao: 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
+                  fornecedor: '',
+                  fazendaOrigem: '',
+                  municipio: '',
+                  estado: '',
+                  categoriaAnimal: '' as any,
+                  quantidade: '' as any,
+                  pesoMedio: '' as any,
+                  valorArroba: '' as any,
+                  comissao: '' as any,
+                  frete: '' as any,
+                  ordemCompraClienteId: '',
+                  prazoPagamento: '',
+                  formaPagamento: '',
+                  observacoes: '',
+                  dataEmissao: new Date().toISOString().split('T')[0],
+                  dataEntrega: new Date().toISOString().split('T')[0],
+                  status: 'Aberta',
+                  pais: '',
+                  corretor: '',
+                  motorista: '',
+                  veiculo: '',
+                  placa: '',
+                  destinoFrigorifico: '',
+                  destinoCidade: '',
+                  destinoEstado: '',
+                  destinoPais: ''
+                });
+                setShowAddCompraModal(true);
+              }}
+              className="flex items-center space-x-1 bg-[#071757] hover:bg-[#182763] px-3.5 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-all uppercase cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Negociação</span>
+            </button>
+          </div>
+
+          {/* TABLE GRID */}
+          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+            <table className="w-full text-left border-collapse min-w-[1100px]">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                  <th className="p-3 pl-4">ID Op.</th>
+                  <th className="p-3">Fornecedor</th>
+                  <th className="p-3">Origem</th>
+                  <th className="p-3">Pais</th>
+                  <th className="p-3">UP</th>
+                  <th className="p-3">Cidade</th>
+                  <th className="p-3 text-center">ID OC</th>
+                  <th className="p-3">Categoria</th>
+                  <th className="p-3 text-right">Qtd</th>
+                  <th className="p-3 text-right">Peso Méd.</th>
+                  <th className="p-3 text-right">Valor @</th>
+                  <th className="p-3 text-right">Comiss. (%)</th>
+                  <th className="p-3 text-right">Vlr Frete</th>
+                  <th className="p-3 text-right">Valor Líquido</th>
+                  <th className="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
+                {filteredCompras.map((c) => (
+                  <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="p-3 pl-4 font-mono font-bold text-gray-800">{c.numeroOperacao}</td>
+                    <td className="p-3 font-semibold text-gray-800">{c.fornecedor}</td>
+                    <td className="p-3 text-xs text-gray-500">{c.fazendaOrigem}</td>
+                    <td className="p-3 text-gray-500">Brasil</td>
+                    <td className="p-3 font-mono text-gray-500">{c.estado}</td>
+                    <td className="p-3 text-gray-500">{c.municipio}</td>
+                    <td className="p-3 text-center">
+                      {c.ordemCompraClienteId ? (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#071757]/10 text-[#071757] font-mono border border-[#071757]/20" title={ordensCompraCliente.find(o => o.id === c.ordemCompraClienteId)?.cliente}>
+                          {ordensCompraCliente.find(o => o.id === c.ordemCompraClienteId)?.numeroOC || 'Conectada'}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-gray-400 italic">Disponível / Recria</span>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FDF6E3] text-[#8A6D2E] border border-[#D8B46A]/30">
+                        {c.categoriaAnimal}
+                      </span>
+                    </td>
+                    <td className="p-3 text-right font-bold">{c.quantidade}</td>
+                    <td className="p-3 text-right text-gray-500 font-mono">{c.pesoMedio} kg</td>
+                    <td className="p-3 text-right text-[#D8B46A] font-mono font-semibold">
+                      {c.valorArroba.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </td>
+                    <td className="p-3 text-right font-mono text-gray-500">{c.comissao}%</td>
+                    <td className="p-3 text-right font-mono text-gray-500">
+                      {c.frete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </td>
+                    <td className="p-3 text-right font-mono font-bold text-gray-900 bg-[#FDF6E3]/20">
+                      {c.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        id={`del-compra-${c.id}`}
+                        onClick={() => onDeleteCompra(c.id)}
+                        className="p-1 text-gray-400 hover:text-rose-500 rounded transition-all cursor-pointer"
+                        title="Deletar Registro"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                 {filteredCompras.length === 0 && (
+                  <tr>
+                    <td colSpan={15} className="p-6 text-center text-gray-400 italic">
+                      Nenhuma compra encontrada no banco de dados ativo.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* -------------------- GESTÃO DE VENDAS (ORDENS DE COMPRA CLIENTE) -------------------- */}
+      {activeSubMenu === 'vendas' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-gray-800">Ordem de Compra (Demandas)</h3>
+              <p className="text-xs text-gray-400 font-medium">Controle de pedidos de compras enviados para clientes</p>
+            </div>
+            <button
+              id="btn-add-venda"
+              onClick={() => setShowAddVendaModal(true)}
+              className="flex items-center space-x-1 bg-[#071757] hover:bg-[#182763] px-3.5 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-all uppercase cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Ordem de Compra</span>
+            </button>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+            <table className="w-full text-left border-collapse min-w-[900px]">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                  <th className="p-3 pl-4">ID OC</th>
+                  <th className="p-3">Cliente</th>
+                  <th className="p-3">Destino</th>
+                  <th className="p-3">País</th>
+                  <th className="p-3">UF</th>
+                  <th className="p-3">Cidade</th>
+                  <th className="p-3">Categoria</th>
+                  <th className="p-3 text-right">Quantidade</th>
+                  <th className="p-3 text-right">Peso</th>
+                  <th className="p-3 text-right">Preço</th>
+                  <th className="p-3 text-right">Valor</th>
+                  <th className="p-3 text-center">Status</th>
+                  <th className="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
+                {filteredVendas.map((v) => {
+                  const cliInfo = clientes.find(c => c.nomeFantasia === v.cliente);
+                  const pais = cliInfo ? (cliInfo.pais || 'Brasil') : 'Brasil';
+                  const uf = cliInfo ? cliInfo.uf : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[1].replace(')', '') : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[1].trim() : 'MT'));
+                  const cidade = cliInfo ? cliInfo.cidade : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[0].trim() : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[0].trim() : v.frigorifico.replace('Planta ', '').replace('Unidade ', '').trim()));
+                  
+                  return (
+                    <tr key={v.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-3 pl-4 font-mono font-bold text-gray-800">{v.numeroOC}</td>
+                      <td className="p-3 font-semibold text-gray-800">{v.cliente}</td>
+                      <td className="p-3 text-gray-500">{v.frigorifico}</td>
+                      <td className="p-3 text-gray-500">{pais}</td>
+                      <td className="p-3 font-mono text-gray-500">{uf}</td>
+                      <td className="p-3 text-gray-500">{cidade}</td>
+                      <td className="p-3">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FDF6E3] text-[#8A6D2E] border border-[#D8B46A]/30">
+                          {v.categoriaAnimal || 'Boi Gordo'}
+                        </span>
+                      </td>
+                      <td className="p-3 text-right font-mono font-semibold">{v.quantidade}</td>
+                      <td className="p-3 text-right font-mono">
+                        {Math.round(v.peso / 30).toLocaleString('pt-BR')} @
+                      </td>
+                      <td className="p-3 text-right text-[#D8B46A] font-mono font-semibold">
+                        {v.valorArroba.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </td>
+                      <td className="p-3 text-right font-mono font-bold text-green-700">
+                        {v.resultadoOperacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                          v.status === 'Entregue' ? 'bg-green-100 text-green-800' :
+                          v.status === 'Faturada' ? 'bg-slate-100 text-[#071757] border border-[#DEE1E9]' :
+                          'bg-amber-100 text-amber-800 border border-amber-200'
+                        }`}>
+                          {v.status}
+                        </span>
+                      </td>
+                      <td className="p-3 text-center">
+                        <button
+                          id={`del-venda-${v.id}`}
+                          onClick={() => onDeleteOrdemCompraCliente(v.id)}
+                          className="p-1 text-gray-400 hover:text-rose-500 rounded transition-all cursor-pointer"
+                          title="Deletar Ordem de Compra"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+                 {filteredVendas.length === 0 && (
+                  <tr>
+                    <td colSpan={13} className="p-6 text-center text-gray-400 italic">
+                      Nenhuma ordem de compra cadastrada.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* -------------------- CRM KANBAN -------------------- */}
+      {activeSubMenu === 'negociacoes' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-gray-800">Funil de Negociação & Captação</h3>
+              <p className="text-xs text-gray-400 font-medium">Pipeline visual do CRM Pecuário. Avance cartões para fechamento de contratos</p>
+            </div>
+          </div>
+
+          {/* KANBAN BOARD WRAPPER */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-4">
+            {kanbanColumns.map((col) => {
+              const cardsInCol = negociacoes.filter((n) => n.fase === col.key);
+              return (
+                <div key={col.key} className="bg-slate-50 rounded-xl p-3 border border-gray-200 min-w-[220px] flex flex-col h-[520px]">
+                  <div className={`p-2 rounded-lg mb-3 border ${col.bg} flex justify-between items-center`}>
+                    <span className={`text-[11px] font-bold ${col.text} uppercase`}>{col.label}</span>
+                    <span className="text-xs font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-gray-200 text-gray-700">
+                      {cardsInCol.length}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                    {cardsInCol.map((card) => (
+                      <div
+                        key={card.id}
+                        className="bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-all hover:border-gray-350 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex justify-between items-start mb-1.5">
+                            <span className="text-[10px] font-mono text-gray-400">ID: {card.id.toUpperCase()}</span>
+                            <span className="text-[9px] bg-slate-100 px-1 py-0.2 rounded font-mono font-semibold">
+                              {card.cabecas} cab
+                            </span>
+                          </div>
+                          <h4 className="text-xs font-bold text-gray-800 leading-tight mb-1">{card.titulo}</h4>
+                          <p className="text-[10px] text-gray-500">{card.clienteFornecedor}</p>
+                          <p className="text-[10px] font-medium text-gray-400 mt-1 flex items-center space-x-1">
+                            <MapPin className="h-3 w-3 inline text-[#D8B46A]" />
+                            <span>{card.fazenda}</span>
+                          </p>
+                          {(card.ordemCompraClienteId || card.processoId) && (
+                            <div className="mt-1.5 flex flex-wrap gap-1 items-center">
+                              {card.ordemCompraClienteId && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#071757]/10 text-[#071757] border border-[#071757]/20 uppercase">
+                                  OC: {ordensCompraCliente.find(o => o.id === card.ordemCompraClienteId)?.numeroOC || 'Conectada'}
+                                </span>
+                              )}
+                              {card.processoId && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#D8B46A]/10 text-[#7C6329] border border-[#D8B46A]/30 font-mono">
+                                  Proc: {card.processoId}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="mt-3.5 pt-2 border-t border-gray-100 flex items-center justify-between">
+                          <span className="text-[11px] font-mono font-bold text-[#D8B46A]">
+                            {card.valorEstimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}
+                          </span>
+                          
+                          {/* Flow movement simulator */}
+                          <div className="flex space-x-1">
+                            {col.key !== 'aprovado' && col.key !== 'cancelado' && (
+                              <button
+                                id={`move-next-${card.id}`}
+                                onClick={() => {
+                                  const nextStages: Record<string, Negociacao['fase']> = {
+                                    prospeccao: 'negociacao',
+                                    negociacao: 'documentacao',
+                                    documentacao: 'aprovado'
+                                  };
+                                  onUpdateNegociacaoStage(card.id, nextStages[col.key]);
+                                }}
+                                className="p-1 bg-[#FDF6E3] hover:bg-[#D8B46A]/20 text-[#8A6D2E] rounded-sm font-bold text-[9px] cursor-pointer"
+                                title="Avançar Fila"
+                              >
+                                {col.key === 'documentacao' ? 'Homologar' : 'Avançar'}
+                              </button>
+                            )}
+                            {col.key !== 'cancelado' && col.key !== 'aprovado' && (
+                              <button
+                                id={`move-cancel-${card.id}`}
+                                onClick={() => onUpdateNegociacaoStage(card.id, 'cancelado')}
+                                className="p-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-sm font-bold text-[9px] cursor-pointer"
+                                title="Declinar Proposta"
+                              >
+                                X
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {cardsInCol.length === 0 && (
+                      <p className="text-[11px] text-gray-400 italic text-center py-8">Nenhum gado nesta fase.</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+
+      {/* ==================== COMPRA MODAL ==================== */}
+      {showAddCompraModal && (
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-150">
+              <h3 className="text-sm font-bold text-gray-800">Lançar Compra de Bovinos (Entrada)</h3>
+              <button id="close-compra-modal" onClick={() => setShowAddCompraModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCompraSubmit} className="mt-4 space-y-4 overflow-y-auto pr-2 flex-1 scrollbar-thin">
+              {/* Seção 1: Dados da Ordem */}
+              <div className="border-b border-gray-200 pb-1.5">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
+                  <input
+                    type="text"
+                    readOnly
+                    disabled
+                    value={compraForm.numeroOperacao}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-50 font-mono text-gray-500 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
+                  <select
+                    value={compraForm.ordemCompraClienteId}
+                    onChange={(e) => setCompraForm({ ...compraForm, ordemCompraClienteId: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono text-gray-855 font-bold bg-[#D8B46A]/5"
+                  >
+                    <option value="">-- Sem vínculo --</option>
+                    {reconciledVendas.filter(o => o.status !== 'Entregue').map(oc => (
+                      <option key={oc.id} value={oc.id}>
+                        {oc.numeroOC}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Compra</label>
+                  <input
+                    type="date"
+                    required
+                    value={compraForm.dataEmissao}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, dataEmissao: val, dataEntrega: val });
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Entrega</label>
+                  <input
+                    type="date"
+                    required
+                    value={compraForm.dataEntrega}
+                    onChange={(e) => setCompraForm({ ...compraForm, dataEntrega: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Status</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-bold text-emerald-700 flex items-center h-[34px]">
+                    <span className="h-2 w-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                    {compraForm.status}
+                  </div>
+                </div>
+              </div>
+
+              {/* Seção 2: Origem / Destino */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider font-mono">2. Origem / Destino</span>
+              </div>
+              
+              {/* ORIGEM SUBSECTION */}
+              <div className="mt-1">
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">A. Procedência (Origem)</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fornecedor</label>
+                  <input
+                    type="text"
+                    required
+                    list="fornecedores-list"
+                    value={compraForm.fornecedor}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm(prev => {
+                        const updated = { ...prev, fornecedor: val };
+                        const found = CADASTRO_FORNECEDORES.find(f => f.nome === val);
+                        if (found) {
+                          updated.fazendaOrigem = found.fazenda;
+                          updated.estado = found.estado;
+                          updated.pais = 'Brasil';
+                          if (found.nome === 'José Carlos Albuquerque') {
+                            updated.municipio = 'Rondonópolis';
+                          } else if (found.nome === 'Agropecuária Vale Verde S/A') {
+                            updated.municipio = 'Rio Verde';
+                          } else if (found.nome === 'Marcos de Souza Neves') {
+                            updated.municipio = 'Redenção';
+                          }
+                        }
+                        return updated;
+                      });
+                    }}
+                    placeholder="Nome do produtor rural"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Origem (Fazenda)</label>
+                  <input
+                    type="text"
+                    required
+                    value={compraForm.fazendaOrigem}
+                    onChange={(e) => setCompraForm({ ...compraForm, fazendaOrigem: e.target.value })}
+                    placeholder="Nome da propriedade"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Origem)</label>
+                  <input
+                    type="text"
+                    value={compraForm.pais}
+                    onChange={(e) => setCompraForm({ ...compraForm, pais: e.target.value })}
+                    placeholder="Brasil"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Origem - UF)</label>
+                  <select
+                    value={compraForm.estado}
+                    onChange={(e) => setCompraForm({ ...compraForm, estado: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  >
+                    <option value="">-- UF --</option>
+                    <option value="MT">MT</option>
+                    <option value="GO">GO</option>
+                    <option value="MS">MS</option>
+                    <option value="PA">PA</option>
+                    <option value="MG">MG</option>
+                    <option value="SP">SP</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Origem)</label>
+                  <input
+                    type="text"
+                    value={compraForm.municipio}
+                    onChange={(e) => setCompraForm({ ...compraForm, municipio: e.target.value })}
+                    placeholder="Cidade de origem"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              {/* DESTINO SUBSECTION */}
+              <div className="mt-2 border-t border-gray-100 pt-1.5">
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">B. Destinação (Destino)</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
+                  <input
+                    type="text"
+                    required
+                    list="destino-list"
+                    value={compraForm.destinoFrigorifico}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm(prev => {
+                        const updated = { ...prev, destinoFrigorifico: val };
+                        const found = clientes.find(c => c.nomeFantasia === val);
+                        if (found) {
+                          updated.destinoCidade = found.cidade;
+                          updated.destinoEstado = found.uf;
+                          updated.destinoPais = 'Brasil';
+                        }
+                        return updated;
+                      });
+                    }}
+                    placeholder="Nome da unidade compradora"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Destino)</label>
+                  <input
+                    type="text"
+                    value={compraForm.destinoPais}
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoPais: e.target.value })}
+                    placeholder="Brasil"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Destino - UF)</label>
+                  <select
+                    value={compraForm.destinoEstado}
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoEstado: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  >
+                    <option value="">-- UF --</option>
+                    <option value="MT">MT</option>
+                    <option value="GO">GO</option>
+                    <option value="MS">MS</option>
+                    <option value="PA">PA</option>
+                    <option value="MG">MG</option>
+                    <option value="SP">SP</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Destino)</label>
+                  <input
+                    type="text"
+                    value={compraForm.destinoCidade}
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoCidade: e.target.value })}
+                    placeholder="Cidade de destino"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              {/* Seção 3: Detalhes da Compra */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhes da Compra</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
+                  <select
+                    value={compraForm.categoriaAnimal}
+                    onChange={(e) => setCompraForm({ ...compraForm, categoriaAnimal: e.target.value as any })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    required
+                  >
+                    <option value="">-- Selecione --</option>
+                    {categorias.map((cat) => (
+                      <option key={cat.code} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    value={compraForm.quantidade}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, quantidade: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.quantidade === '') {
+                        setCompraForm({ ...compraForm, quantidade: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
+                  <input
+                    type="number"
+                    required
+                    value={compraForm.pesoMedio}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, pesoMedio: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.pesoMedio === '') {
+                        setCompraForm({ ...compraForm, pesoMedio: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Arroba (BRL)</label>
+                  <input
+                    type="number"
+                    required
+                    value={compraForm.valorArroba}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, valorArroba: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.valorArroba === '') {
+                        setCompraForm({ ...compraForm, valorArroba: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              {/* Seção 4: Custos e Comissões */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Custos e Comissões</span>
+              </div>
+              
+              {/* Row 1: Comissão */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Corretor / Parceiro</label>
+                  <input
+                    type="text"
+                    list="parceiros-list"
+                    value={compraForm.corretor}
+                    onChange={(e) => setCompraForm({ ...compraForm, corretor: e.target.value })}
+                    placeholder="Nome do parceiro/corretor"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Comissão (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={compraForm.comissao}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, comissao: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.comissao === '') {
+                        setCompraForm({ ...compraForm, comissao: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Comissão (R$)</label>
+                  <input
+                    type="text"
+                    disabled
+                    readOnly
+                    value={`R$ ${liveComissao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
+                  />
+                </div>
+                <div className="hidden md:block"></div>
+              </div>
+
+              {/* Row 2: Frete */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
+                {Number(compraForm.quantidade) > 50 ? (
+                  <div className="col-span-1 md:col-span-4 bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-start justify-between space-x-3 text-amber-900 shadow-sm">
+                    <div className="flex items-start space-x-2.5">
+                      <span className="text-base mt-0.5">⚠️</span>
+                      <div className="text-[11px]">
+                        <strong className="font-bold text-amber-950 block mb-0.5">Operação acima de 50 cabeças detectada ({compraForm.quantidade} animais)</strong>
+                        O preenchimento direto de transporte está bloqueado por motivos de compliance e segurança operacional. 
+                        Por favor, acesse o módulo de <strong>Logística</strong> para cadastrar, programar e detalhar cada viagem, motorista, veículo e as condições específicas deste lote.
+                      </div>
+                    </div>
+                    {onGoToLogistica && (
+                      <button
+                        type="button"
+                        onClick={onGoToLogistica}
+                        className="flex-shrink-0 flex items-center space-x-1.5 bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                      >
+                        <span>🚛</span>
+                        <span>Ir para Logística</span>
+                      </button>
+                    )}
+                  </div>
+                ) : null}
+
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista</label>
+                  <input
+                    type="text"
+                    list="motoristas-list"
+                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.motorista}
+                    disabled={Number(compraForm.quantidade) > 50}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm(prev => {
+                        const updated = { ...prev, motorista: val };
+                        const found = CADASTRO_MOTORISTAS.find(m => m.nome === val);
+                        if (found) {
+                          updated.placa = found.placa;
+                          if (found.nome === 'Valdecir Rodrigues Alves') {
+                            updated.veiculo = 'Bitrem Scania R440';
+                          } else if (found.nome === 'Ailton Senna de Souza') {
+                            updated.veiculo = 'Carreta Simples Volvo FH540';
+                          } else if (found.nome === 'Roberto Carlos Santos') {
+                            updated.veiculo = 'Bi-trem Mercedes Actros';
+                          }
+                        }
+                        return updated;
+                      });
+                    }}
+                    placeholder={Number(compraForm.quantidade) > 50 ? "Detalhamento via Logística" : "Nome do motorista"}
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
+                      Number(compraForm.quantidade) > 50 
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
+                        : 'border-gray-300 text-gray-800'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Caminhão / Veículo</label>
+                  <input
+                    type="text"
+                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.veiculo}
+                    disabled={Number(compraForm.quantidade) > 50}
+                    onChange={(e) => setCompraForm({ ...compraForm, veiculo: e.target.value })}
+                    placeholder={Number(compraForm.quantidade) > 50 ? "Bloqueado" : "Ex: Bitrem Scania"}
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
+                      Number(compraForm.quantidade) > 50 
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
+                        : 'border-gray-300 text-gray-800'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Placa</label>
+                  <input
+                    type="text"
+                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.placa}
+                    disabled={Number(compraForm.quantidade) > 50}
+                    onChange={(e) => setCompraForm({ ...compraForm, placa: e.target.value })}
+                    placeholder={Number(compraForm.quantidade) > 50 ? "Bloqueado" : "Placa do veículo"}
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
+                      Number(compraForm.quantidade) > 50 
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
+                        : 'border-gray-300 text-gray-800'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor do Frete (R$)</label>
+                  <input
+                    type="number"
+                    value={Number(compraForm.quantidade) > 50 ? 0 : compraForm.frete}
+                    disabled={Number(compraForm.quantidade) > 50}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, frete: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.frete === '') {
+                        setCompraForm({ ...compraForm, frete: 0 });
+                      }
+                    }}
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
+                      Number(compraForm.quantidade) > 50 
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed font-mono' 
+                        : 'border-gray-300 text-gray-800'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Dynamic Value Banner */}
+              <div className="bg-[#D0EBFC] text-blue-900 px-4 py-3 rounded-xl flex justify-between items-center font-sans border border-blue-200/50 shadow-sm">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-800">Resultado Estimado da Operação</span>
+                  <p className="text-[10.5px] text-blue-700 mt-1 font-medium">
+                    Peso Total: <strong className="text-blue-900">{livePesoTotal.toLocaleString('pt-BR')} kg</strong> ({liveArrobas.toFixed(1)} @) | Gado: <strong className="text-blue-900">R$ {Math.round(liveValorGado).toLocaleString('pt-BR')}</strong> | Comissão: <strong className="text-blue-900">R$ {Math.round(liveComissao).toLocaleString('pt-BR')}</strong>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] uppercase font-bold text-blue-800 block tracking-wider">Valor Total Estimado</span>
+                  <p className="text-lg font-black font-mono text-blue-950 mt-0.5">
+                    R$ {liveTotalEstimado.toLocaleString('pt-BR')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Seção 5: Condições e Observações */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Condições e Observações</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Prazo de Pagamento</label>
+                  <select
+                    value={compraForm.prazoPagamento}
+                    onChange={(e) => setCompraForm({ ...compraForm, prazoPagamento: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    required
+                  >
+                    <option value="">-- Selecione o Prazo --</option>
+                    <option value="À Vista">À Vista</option>
+                    <option value="30 dias">30 dias</option>
+                    <option value="60 dias">60 dias</option>
+                    <option value="90 dias">90 dias</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Forma de Pagamento</label>
+                  <select
+                    value={compraForm.formaPagamento}
+                    onChange={(e) => setCompraForm({ ...compraForm, formaPagamento: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    required
+                  >
+                    <option value="">-- Selecione a Forma --</option>
+                    <option value="Transferência Bancária">Transferência Bancária</option>
+                    <option value="PIX">PIX</option>
+                    <option value="Boleto">Boleto</option>
+                    <option value="Depósito">Depósito</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">Observações Gerais</label>
+                <textarea
+                  value={compraForm.observacoes}
+                  onChange={(e) => setCompraForm({ ...compraForm, observacoes: e.target.value })}
+                  placeholder="Instruções logísticas, observações sanitárias, restrições ou termos contratuais adicionais..."
+                  rows={2}
+                  className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 resize-none animate-in fade-in"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
+                <button
+                  type="button"
+                  id="cancel-compra"
+                  onClick={() => setShowAddCompraModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  id="submit-compra"
+                  className="px-4 py-2 bg-[#071757] hover:bg-[#182763] rounded-lg text-xs text-white font-bold cursor-pointer"
+                >
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== REGISTRAR ORDEM DE COMPRA CLIENTE (DEMANDA) ==================== */}
+      {showAddVendaModal && (
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-150">
+              <h3 className="text-sm font-bold text-gray-800">Receber Ordem de Compra (Demanda)</h3>
+              <button onClick={() => setShowAddVendaModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddVendaSubmit} className="mt-4 space-y-4">
+              {/* Row 1: ID OC, Data de Emissão, Status */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={vendaForm.numeroOC}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-mono cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Data de Emissão</label>
+                  <input
+                    type="date"
+                    required
+                    value={vendaForm.dataEmissao}
+                    onChange={(e) => setVendaForm({ ...vendaForm, dataEmissao: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Status</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-bold text-amber-700 flex items-center h-[34px]" title="Conciliação automática baseada em entregas físicas">
+                    <span className="h-2 w-2 bg-amber-500 rounded-full mr-2 animate-pulse"></span>
+                    Pendente (Automático)
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: Cliente, Destino, Categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cliente</label>
+                  <select
+                    value={vendaForm.cliente}
+                    onChange={(e) => handleClientChange(e.target.value)}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-855 bg-white"
+                  >
+                    {clientes.map((cli) => (
+                      <option key={cli.id} value={cli.nomeFantasia}>
+                        {cli.nomeFantasia}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
+                  <input
+                    type="text"
+                    required
+                    list="destino-list"
+                    value={vendaForm.frigorifico}
+                    onChange={(e) => setVendaForm({ ...vendaForm, frigorifico: e.target.value })}
+                    placeholder="Selecione o destino"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
+                  <select
+                    value={vendaForm.categoriaAnimal}
+                    onChange={(e) => setVendaForm({ ...vendaForm, categoriaAnimal: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800 bg-white"
+                  >
+                    {categorias.map((cat) => (
+                      <option key={cat.code} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 3: Endereço do Destino (País, Estado, Cidade) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {(() => {
+                  const selectedUnit = clientes.find(c => c.nomeFantasia === vendaForm.frigorifico);
+                  const modalPais = selectedUnit ? (selectedUnit.pais || 'Brasil') : 'Brasil';
+                  const modalUf = selectedUnit ? selectedUnit.uf : '';
+                  const modalCidade = selectedUnit ? selectedUnit.cidade : '';
+                  
+                  return (
+                    <>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Destino)</label>
+                        <input
+                          type="text"
+                          readOnly
+                          value={modalPais}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-medium cursor-not-allowed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">UF (Destino)</label>
+                        <input
+                          type="text"
+                          readOnly
+                          value={modalUf}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-medium cursor-not-allowed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Destino)</label>
+                        <input
+                          type="text"
+                          readOnly
+                          value={modalCidade}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-medium cursor-not-allowed"
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
+                  <input
+                    type="number"
+                    value={vendaForm.quantidade}
+                    onChange={(e) => setVendaForm({ ...vendaForm, quantidade: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso</label>
+                  <input
+                    type="number"
+                    value={vendaForm.peso}
+                    onChange={(e) => setVendaForm({ ...vendaForm, peso: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço</label>
+                  <input
+                    type="number"
+                    value={vendaForm.valorArroba}
+                    onChange={(e) => setVendaForm({ ...vendaForm, valorArroba: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Descontos / Retenções (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={vendaForm.comissao}
+                    onChange={(e) => setVendaForm({ ...vendaForm, comissao: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddVendaModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#071757] hover:bg-[#182763] rounded-lg text-xs text-white font-bold cursor-pointer"
+                >
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== NEGOCIAÇÃO MODAL ==================== */}
+      {showAddNegModal && (
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-150">
+              <h3 className="text-sm font-bold text-gray-800">Planejar Negociação de Bovinos</h3>
+              <button onClick={() => setShowAddNegModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddNegSubmit} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">Título da Oportunidade</label>
+                <input
+                  type="text"
+                  required
+                  value={negForm.titulo}
+                  onChange={(e) => setNegForm({ ...negForm, titulo: e.target.value })}
+                  placeholder="Ex: Lote Boi Nelore Pecuária Real"
+                  className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro Comercial</label>
+                  <input
+                    type="text"
+                    required
+                    list="parceiros-list"
+                    value={negForm.clienteFornecedor}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNegForm(prev => {
+                        const updated = { ...prev, clienteFornecedor: val };
+                        const foundCli = CADASTRO_CLIENTES.find(c => c.nome === val);
+                        const foundSup = CADASTRO_FORNECEDORES.find(f => f.nome === val);
+                        
+                        if (foundCli) {
+                          updated.estado = foundCli.estado;
+                          updated.contatoTelefone = foundCli.telefone;
+                          updated.pais = 'Brasil';
+                          if (foundCli.nome === 'Frigorífico JBS S/A') {
+                            updated.fazenda = 'Unidade Rondonópolis - JBS';
+                            updated.cidade = 'Rondonópolis';
+                          } else if (foundCli.nome === 'Frigorífico Marfrig Global Foods') {
+                            updated.fazenda = 'Planta de Bataguassu - Marfrig';
+                            updated.cidade = 'Bataguassu';
+                          } else if (foundCli.nome === 'Minerva Foods S/A') {
+                            updated.fazenda = 'Unidade Barretos - Minerva';
+                            updated.cidade = 'Barretos';
+                          }
+                        } else if (foundSup) {
+                          updated.fazenda = foundSup.fazenda;
+                          updated.estado = foundSup.estado;
+                          updated.pais = 'Brasil';
+                          if (foundSup.nome === 'José Carlos Albuquerque') {
+                            updated.cidade = 'Rondonópolis';
+                            updated.contatoTelefone = '(66) 99882-1244';
+                          } else if (foundSup.nome === 'Agropecuária Vale Verde S/A') {
+                            updated.cidade = 'Rio Verde';
+                            updated.contatoTelefone = '(34) 99121-7890';
+                          } else if (foundSup.nome === 'Marcos de Souza Neves') {
+                            updated.cidade = 'Redenção';
+                            updated.contatoTelefone = '(67) 98111-5432';
+                          }
+                        }
+                        return updated;
+                      });
+                    }}
+                    placeholder="Nome"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Origem/Destino</label>
+                  <input
+                    type="text"
+                    required
+                    value={negForm.fazenda}
+                    onChange={(e) => setNegForm({ ...negForm, fazenda: e.target.value })}
+                    placeholder="Nome Propriedade"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cabeças gado</label>
+                  <input
+                    type="number"
+                    value={negForm.cabecas}
+                    onChange={(e) => setNegForm({ ...negForm, cabecas: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Estimado (R$)</label>
+                  <input
+                    type="number"
+                    value={negForm.valorEstimado}
+                    onChange={(e) => setNegForm({ ...negForm, valorEstimado: Number(e.target.value) })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Localização da Negociação */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País</label>
+                  <input
+                    type="text"
+                    value={negForm.pais}
+                    onChange={(e) => setNegForm({ ...negForm, pais: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade</label>
+                  <input
+                    type="text"
+                    value={negForm.cidade}
+                    onChange={(e) => setNegForm({ ...negForm, cidade: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (UF)</label>
+                  <select
+                    value={negForm.estado}
+                    onChange={(e) => setNegForm({ ...negForm, estado: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  >
+                    <option value="">-- UF --</option>
+                    <option value="MT">MT</option>
+                    <option value="GO">GO</option>
+                    <option value="MS">MS</option>
+                    <option value="PA">PA</option>
+                    <option value="MG">MG</option>
+                    <option value="SP">SP</option>
+                    <option value="TO">TO</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-500 uppercase">Telefone de Contato</label>
+                <input
+                  type="text"
+                  value={negForm.contatoTelefone}
+                  onChange={(e) => setNegForm({ ...negForm, contatoTelefone: e.target.value })}
+                  placeholder="(00) 90000-0000"
+                  className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Atender à Ordem de Compra</label>
+                  <select
+                    value={negForm.ordemCompraClienteId}
+                    onChange={(e) => setNegForm({ ...negForm, ordemCompraClienteId: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono"
+                  >
+                    <option value="">-- Não vincular (Avulsa) --</option>
+                    {reconciledVendas.filter(o => o.status !== 'Entregue').map(oc => (
+                      <option key={oc.id} value={oc.id}>
+                        {oc.numeroOC}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Vincular Processo de Rastreamento</label>
+                  <select
+                    value={negForm.processoId}
+                    onChange={(e) => setNegForm({ ...negForm, processoId: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono"
+                  >
+                    <option value="">-- Não vincular (Avulso) --</option>
+                    {viagens?.map(v => (
+                      <option key={v.id} value={v.id}>
+                        {v.id}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddNegModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-xs text-gray-600 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#071757] hover:bg-[#182763] rounded-lg text-xs text-white font-bold cursor-pointer"
+                >
+                  Adicionar ao Funil
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+      <datalist id="fornecedores-list">
+        {CADASTRO_FORNECEDORES.map(f => (
+          <option key={f.id} value={f.nome} />
+        ))}
+      </datalist>
+
+      <datalist id="parceiros-list">
+        {[...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES, ...CADASTRO_PARCEIROS].map(p => (
+          <option key={p.id} value={p.nome} />
+        ))}
+      </datalist>
+
+      <datalist id="motoristas-list">
+        {CADASTRO_MOTORISTAS.map(m => (
+          <option key={m.id} value={m.nome} />
+        ))}
+      </datalist>
+
+      <datalist id="destino-list">
+        {clientes.map(c => (
+          <option key={c.id} value={c.nomeFantasia} />
+        ))}
+      </datalist>
+
+    </div>
+  );
+}

@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;450;500;700;800;900&family=Roboto:wght@300;450;500;700&display=swap');
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+  
+  --color-brand-dark: #071757;
+  --color-brand-medium: #182763;
+  --color-brand-light: #57628D;
+  --color-brand-charcoal: #071757;
+  --color-brand-accent: #D8B46A;
+  --color-brand-accent-hover: #A9823A;
+  --color-brand-50: #F8F8FA;
+  --color-brand-100: #DEE1E9;
+  --color-brand-200: #DEE1E9;
+  --color-brand-300: #57628D;
+  --color-brand-400: #57628D;
+  --color-brand-500: #182763;
+  --color-brand-600: #071757;
+  --color-brand-700: #182763;
+  --color-brand-800: #071757;
+  --color-brand-900: #071757;
+
+  /* Overriding emerald scales to the new elegant blue & gold palette */
+  --color-emerald-50: #F8F8FA;
+  --color-emerald-100: #DEE1E9;
+  --color-emerald-200: #57628D;
+  --color-emerald-300: #57628D;
+  --color-emerald-400: #D8B46A; /* Destaque Premium */
+  --color-emerald-500: #D8B46A; /* Destaque Premium */
+  --color-emerald-600: #A9823A; /* Destaque Premium Hover */
+  --color-emerald-700: #071757; /* Azul Institucional */
+  --color-emerald-800: #071757; /* Azul Institucional */
+  --color-emerald-850: #182763; /* Azul Secundário */
+  --color-emerald-900: #071757; /* Azul Institucional */
+  --color-emerald-950: #182763; /* Azul Secundário */
+
+  /* Overriding green scales to match the same corporate blue palette */
+  --color-green-50: #F8F8FA;
+  --color-green-100: #DEE1E9;
+  --color-green-200: #57628D;
+  --color-green-300: #57628D;
+  --color-green-400: #D8B46A;
+  --color-green-500: #D8B46A;
+  --color-green-600: #A9823A;
+  --color-green-700: #071757;
+  --color-green-800: #071757;
+  --color-green-900: #182763;
+  --color-green-950: #182763;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F8F8FA;
+  color: #182763;
+  overflow-x: hidden;
+}
+
+/* Custom premium scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #DEE1E9;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #57628D;
+}
