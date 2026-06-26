@@ -393,39 +393,39 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
           ))}
         </div>
 
-        {/* Brand Scrim Overlay: Dark on the left (under the text) but completely transparent on the right */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-r from-[#05113b] via-[#05113b]/85 via-[#05113b]/30 to-transparent pointer-events-none" />
+        {/* Brand Scrim Overlay: Light on the left to seamlessly integrate the glass card, completely transparent on the right */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-r from-[#05113b]/40 via-transparent to-transparent pointer-events-none" />
 
-        {/* Content Layer */}
-        <div className="container-wide relative z-30 pt-32 pb-24 flex items-center w-full min-h-screen">
-          <div className="max-w-2xl text-left flex flex-col justify-center">
+        {/* Content Layer - Glassmorphic card aligned to the left */}
+        <div className="container-wide relative z-30 pt-32 pb-24 flex items-center justify-start w-full min-h-screen">
+          <div className="max-w-xl lg:max-w-2xl text-left flex flex-col justify-center p-8 sm:p-10 lg:p-12 rounded-[2rem] bg-[#05113b]/55 backdrop-blur-xl border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] animate-fade-in-up">
             {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-8 animate-fade-in-up self-start">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-6 self-start">
               <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
               Plataforma homologada · SEFAZ & Defesa Agropecuária
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white font-display leading-tight mb-6 animate-fade-in-up delay-100 drop-shadow-md">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white font-display leading-tight mb-4 drop-shadow-md">
               Gestão completa para
               <span className="block text-[#D8B46A] mt-1">operações pecuárias</span>
             </h1>
 
-            <p className="text-lg text-slate-200 leading-relaxed mb-10 animate-fade-in-up delay-200 drop-shadow-sm">
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed mb-8 drop-shadow-sm">
               OxCommerce é o ERP AgroTech que integra comercial, fiscal, financeiro e logística em uma única plataforma — com rastreabilidade total do gado do campo ao frigorífico.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 id="btn-hero-access"
                 onClick={onNavigateToLogin}
-                className="btn-accent px-8 py-3.5 text-base shadow-lg shadow-[#D8B46A]/20 hover:shadow-[#D8B46A]/40 transition-all"
+                className="btn-accent px-8 py-3.5 text-sm sm:text-base shadow-lg shadow-[#D8B46A]/20 hover:shadow-[#D8B46A]/40 transition-all"
               >
                 Acessar o Sistema
                 <ArrowRight className="h-4 w-4" />
               </button>
               <a
                 href="#modulos"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white font-semibold rounded-full text-base hover:bg-white/20 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white font-semibold rounded-full text-sm sm:text-base hover:bg-white/20 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
               >
                 Ver Módulos
                 <ChevronRight className="h-4 w-4" />
@@ -433,105 +433,15 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-6 mt-12 animate-fade-in-up delay-400">
+            <div className="flex flex-wrap items-center gap-5 mt-8 border-t border-white/10 pt-6">
               {['Rastreabilidade GTA', 'Integração SEFAZ', 'SSL-256', 'LGPD'].map((tag) => (
-                <div key={tag} className="flex items-center gap-1.5 text-slate-300 text-xs font-medium bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/5">
+                <div key={tag} className="flex items-center gap-1.5 text-slate-300 text-xs font-medium">
                   <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
                   {tag}
                 </div>
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Floating Glassmorphic Caption & Controls Card (Bottom-Right) */}
-        <div className="absolute bottom-12 right-8 z-30 hidden md:flex flex-col gap-3 p-5 rounded-3xl bg-[#05113b]/75 backdrop-blur-xl border border-white/10 shadow-2xl max-w-xs select-none animate-fade-in">
-          {/* Badge of Category */}
-          <div className="self-start">
-            <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#D8B46A] bg-[#05113b]/90 border border-[#D8B46A]/30 px-2.5 py-1.5 rounded-full uppercase tracking-wider">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
-              {CAROUSEL_IMAGES[activeIndex].category}
-            </span>
-          </div>
-
-          {/* Text Content */}
-          <div className="text-left">
-            <h3 className="text-sm font-bold text-white font-display tracking-wide mb-1">
-              {CAROUSEL_IMAGES[activeIndex].title}
-            </h3>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              {CAROUSEL_IMAGES[activeIndex].caption}
-            </p>
-          </div>
-
-          {/* Controls Row */}
-          <div className="flex items-center justify-between pt-2.5 border-t border-white/10 pointer-events-auto">
-            {/* Play/Pause & Nav */}
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={handlePrev}
-                className="h-6 w-6 rounded bg-white/10 hover:bg-[#D8B46A] hover:text-[#05113b] text-white flex items-center justify-center cursor-pointer transition-colors"
-                title="Imagem anterior"
-              >
-                <ChevronLeft className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="h-6 w-6 rounded bg-white/10 hover:bg-[#D8B46A] hover:text-[#05113b] text-white flex items-center justify-center cursor-pointer transition-colors"
-                title={isPlaying ? 'Pausar' : 'Iniciar'}
-              >
-                {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-              </button>
-              <button
-                onClick={handleNext}
-                className="h-6 w-6 rounded bg-white/10 hover:bg-[#D8B46A] hover:text-[#05113b] text-white flex items-center justify-center cursor-pointer transition-colors"
-                title="Próxima imagem"
-              >
-                <ChevronRight className="h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            {/* Dots */}
-            <div className="flex gap-1">
-              {CAROUSEL_IMAGES.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => { setActiveIndex(idx); setProgress(0); }}
-                  className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === activeIndex
-                      ? 'w-3.5 bg-[#D8B46A]'
-                      : 'w-1 bg-white/40 hover:bg-white/70'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Center/Bottom Dots for Mobile View */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex md:hidden gap-1.5">
-          {CAROUSEL_IMAGES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => { setActiveIndex(idx); setProgress(0); }}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === activeIndex
-                  ? 'w-5 bg-[#D8B46A]'
-                  : 'w-1.5 bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Linear progress bar at the very bottom of the Hero section */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 h-1 bg-white/10">
-          <div
-            className="h-full bg-[#D8B46A] transition-all"
-            style={{
-              width: `${progress}%`,
-              transition: isPlaying && progress > 0 ? 'width 50ms linear' : 'none'
-            }}
-          />
         </div>
 
         {/* Scroll hint */}
