@@ -1,20 +1,22 @@
 /**
- * @license
- * SPDX-License-Identifier: Apache-2.0
+ * LoginView — OxCommerce
+ * Design System: AgroTech B2B | Verde Institucional
  */
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Lock, 
-  User, 
-  QrCode, 
-  ArrowLeft, 
-  Eye, 
-  EyeOff, 
+import {
+  Lock,
+  Mail,
+  ArrowLeft,
+  Eye,
+  EyeOff,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react';
+import logoBlue from '@/assets/logo_blue.png';
 import logoWhite from '@/assets/logo_white.png';
 
 interface LoginViewProps {
@@ -44,142 +46,223 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
     }
 
     setIsLoading(true);
-
-    // Simula a autenticação e carregamento de permissões da base de dados
     setTimeout(() => {
       setIsLoading(false);
-      // Extrai um nome amigável a partir do email
       let name = 'Diego Silveira';
-      if (email.toLowerCase().includes('wagner')) {
-        name = 'Wagner Targa';
-      } else if (email.toLowerCase().includes('admin')) {
-        name = 'Administrador do Sistema';
-      }
+      if (email.toLowerCase().includes('wagner')) name = 'Wagner Targa';
+      else if (email.toLowerCase().includes('admin')) name = 'Administrador do Sistema';
       onLoginSuccess(name);
     }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center px-4 relative select-none font-sans overflow-hidden">
-      
-      {/* Background blobs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#D8B46A]/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#071757]/20 rounded-full blur-3xl" />
+    <div className="min-h-screen flex font-sans">
 
-      {/* Back button */}
-      <button 
-        onClick={onNavigateBack}
-        className="absolute top-8 left-8 flex items-center space-x-2 text-slate-400 hover:text-white transition-all text-xs font-bold bg-white/5 border border-white/10 hover:border-white/20 rounded-xl px-4 py-2 cursor-pointer"
+      {/* ── Left Panel (desktop only) ── */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #052E16 0%, #14532D 60%, #166534 100%)' }}
       >
-        <ArrowLeft className="h-4 w-4" />
-        <span>Voltar ao Início</span>
-      </button>
-
-      {/* Card container */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md bg-[#071757]/70 border border-[#D8B46A]/20 p-8 rounded-3xl backdrop-blur-md shadow-2xl relative z-10"
-      >
-        
-        {/* Brand identity */}
-        <div className="flex flex-col items-center mb-8">
-          <img src={logoUrl || logoWhite} alt="Ox-Commerce Logo" className="h-12 w-auto object-contain rounded-lg mb-2" />
-          <p className="text-xs text-[#D8B46A] font-mono tracking-widest uppercase mt-1">Acesso ao Painel</p>
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='white' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)'/%3E%3C/svg%3E")`,
+            }}
+          />
         </div>
 
-        {/* Error Alert Box */}
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-5 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs flex items-center space-x-2.5"
-          >
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
-            <span>{error}</span>
-          </motion.div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 font-mono">E-mail ou Usuário</label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                <User className="h-4.5 w-4.5" />
-              </span>
-              <input
-                id="login-email-input"
-                type="text"
-                disabled={isLoading}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="exemplo@oxcommerce.com"
-                className="w-full pl-11 pr-4 py-3 bg-slate-950/40 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 outline-none focus:border-[#D8B46A] focus:ring-1 focus:ring-[#D8B46A] transition-all font-sans"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest font-mono">Senha</label>
-              <button 
-                type="button" 
-                className="text-[10px] text-slate-400 hover:text-[#D8B46A] font-bold"
-                onClick={() => alert('Simulação: contate o suporte TI para recuperação de senhas.')}
-              >
-                Esqueceu a senha?
-              </button>
-            </div>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                <Lock className="h-4.5 w-4.5" />
-              </span>
-              <input
-                id="login-password-input"
-                type={showPassword ? 'text' : 'password'}
-                disabled={isLoading}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Insira sua senha"
-                className="w-full pl-11 pr-10 py-3 bg-slate-950/40 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 outline-none focus:border-[#D8B46A] focus:ring-1 focus:ring-[#D8B46A] transition-all font-sans"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="h-4.5 w-4.5" /> : <Eye className="h-4.5 w-4.5" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Form Actions */}
-          <button
-            id="btn-submit-login"
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 bg-[#071757] hover:bg-[#182763] active:bg-[#05113b] text-white border border-[#D8B46A]/20 hover:border-[#D8B46A]/40 text-sm font-extrabold rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed mt-2"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4.5 w-4.5 animate-spin" />
-                <span>Carregando dados e acessos...</span>
-              </>
-            ) : (
-              <span>Entrar no Sistema</span>
-            )}
-          </button>
-        </form>
-
-        {/* Small Notice */}
-        <div className="mt-8 text-center text-[10px] text-slate-500">
-          <p>Conexão corporativa criptografada (SSL-256).</p>
-          <p className="mt-1">Agropecuária de Rastreabilidade Integrada S/A.</p>
+        {/* Logo */}
+        <div className="relative z-10">
+          <img
+            src={logoUrl || logoWhite}
+            alt="OxCommerce"
+            className="h-9 w-auto object-contain"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
         </div>
 
-      </motion.div>
+        {/* Center content */}
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold text-white font-display leading-tight mb-4">
+            Gestão pecuária integrada,<br />do campo ao frigorífico
+          </h2>
+          <p className="text-emerald-200 text-base leading-relaxed mb-8 max-w-sm">
+            Rastreabilidade total, conformidade fiscal e controle operacional em uma única plataforma.
+          </p>
+          <div className="space-y-3">
+            {[
+              'Integração direta com SEFAZ & GTA',
+              'Rastreamento logístico em tempo real',
+              'Fluxo de caixa e conciliação bancária',
+              'Dashboard executivo com BI pecuário',
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3 text-sm text-emerald-100">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom badges */}
+        <div className="relative z-10 flex flex-wrap gap-3">
+          {['SEFAZ Homologado', 'SSL-256', 'LGPD Compliant', '99,9% Uptime'].map((tag) => (
+            <span key={tag} className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+              <ShieldCheck className="h-3 w-3" />
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Right Panel (login form) ── */}
+      <div className="flex-1 flex flex-col justify-center items-center bg-[#F8FAFC] px-6 py-12 relative">
+
+        {/* Back button */}
+        <button
+          onClick={onNavigateBack}
+          className="absolute top-6 left-6 flex items-center gap-2 text-sm font-medium text-[#64748B] hover:text-[#14532D] transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar ao Início
+        </button>
+
+        {/* Mobile logo */}
+        <div className="lg:hidden mb-8">
+          <img
+            src={logoUrl || logoBlue}
+            alt="OxCommerce"
+            className="h-10 w-auto object-contain"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md"
+        >
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-[#0F172A] font-display mb-1.5">
+              Acesso ao painel
+            </h1>
+            <p className="text-sm text-[#64748B]">
+              Insira suas credenciais corporativas para continuar.
+            </p>
+          </div>
+
+          {/* Error Alert */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2.5"
+            >
+              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+              <span>{error}</span>
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="login-email-input"
+                className="block text-xs font-semibold text-[#475569] mb-1.5 uppercase tracking-wide"
+              >
+                E-mail corporativo
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <Mail className="h-4 w-4" />
+                </span>
+                <input
+                  id="login-email-input"
+                  type="text"
+                  disabled={isLoading}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="usuario@empresa.com.br"
+                  className="form-input pl-10"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="login-password-input"
+                  className="block text-xs font-semibold text-[#475569] uppercase tracking-wide"
+                >
+                  Senha
+                </label>
+                <button
+                  type="button"
+                  className="text-xs text-[#16A34A] hover:text-[#14532D] font-semibold cursor-pointer transition-colors"
+                  onClick={() => alert('Contate o suporte TI para recuperação de senhas.')}
+                >
+                  Esqueceu a senha?
+                </button>
+              </div>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
+                  <Lock className="h-4 w-4" />
+                </span>
+                <input
+                  id="login-password-input"
+                  type={showPassword ? 'text' : 'password'}
+                  disabled={isLoading}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Sua senha"
+                  className="form-input pl-10 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8] hover:text-[#475569] transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              id="btn-submit-login"
+              type="submit"
+              disabled={isLoading}
+              className="btn-primary w-full py-3 text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:transform-none mt-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Verificando credenciais...
+                </>
+              ) : (
+                'Entrar no Sistema'
+              )}
+            </button>
+          </form>
+
+          {/* Footer note */}
+          <div className="mt-8 text-center space-y-2">
+            <div className="flex items-center justify-center gap-2 text-xs text-[#94A3B8]">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+              <span>Conexão criptografada com SSL-256</span>
+            </div>
+            <p className="text-[10px] text-[#CBD5E1]">
+              © {new Date().getFullYear()} OxCommerce · Agropecuária de Rastreabilidade Integrada S/A
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
