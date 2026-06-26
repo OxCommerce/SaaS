@@ -34,6 +34,14 @@ import {
 import logoWhiteAsset from '@/assets/logo_white.svg';
 import logoBlueAsset from '@/assets/logo_blue.svg';
 
+// Imagens reais da pecuária Nelore importadas localmente
+import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';
+import neloreManejo1 from '@/assets/nelore_manejo_1.png';
+import neloreElite1 from '@/assets/nelore_elite_1.png';
+import neloreManejo2 from '@/assets/nelore_manejo_2.png';
+import neloreRebanho2 from '@/assets/nelore_rebanho_2.png';
+import neloreElite2 from '@/assets/nelore_elite_2.png';
+
 interface SettingsViewProps {
   config: AppConfig;
   onUpdateConfig: (config: AppConfig) => void;
@@ -109,57 +117,43 @@ export default function SettingsView({
       id: 'img-nelore-1',
       title: 'Nelore de Elite no Pasto',
       category: 'Nelore',
-      url: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreElite2,
+      author: 'IA Local'
     },
     {
       id: 'img-nelore-2',
       title: 'Touro Zebu Nelore de Elite',
       category: 'Nelore',
-      url: 'https://images.unsplash.com/photo-1602406900744-6b68d4a331fc?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreElite1,
+      author: 'IA Local'
     },
     {
       id: 'img-rebanho-1',
       title: 'Rebanho Nelore em Pastagem Extensiva',
       category: 'Rebanho',
-      url: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-rebanho-2',
-      title: 'Nelore em Pastejo Rotacionado',
-      category: 'Rebanho',
-      url: 'https://images.unsplash.com/photo-1546445317-29f4545e6d52?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreRebanho1,
+      author: 'IA Local'
     },
     {
       id: 'img-pasto-1',
       title: 'Pastagens da Estância Ox',
       category: 'Campo & Pasto',
-      url: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-pasto-2',
-      title: 'Piquete Pecuário Sombreado',
-      category: 'Campo & Pasto',
-      url: 'https://images.unsplash.com/photo-1527153857715-3908f2bac5e8?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreRebanho2,
+      author: 'IA Local'
     },
     {
       id: 'img-manejo-1',
       title: 'Manejo de Rebanho ao Pôr do Sol',
       category: 'Manejo',
-      url: 'https://images.unsplash.com/photo-1543590535-65a25e6e3c1a?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreManejo1,
+      author: 'IA Local'
     },
     {
       id: 'img-manejo-2',
-      title: 'Zebu Nelore na Estância Operacional',
+      title: 'Manejo de Gado Nelore no Curral',
       category: 'Manejo',
-      url: 'https://images.unsplash.com/photo-1551806235-a05ff1484553?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
+      url: neloreManejo2,
+      author: 'IA Local'
     }
   ]);
 
