@@ -256,14 +256,14 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
     setProgress(0);
   };
 
-  // Timer effect for auto-advancing slides with a smooth linear progress bar
+  // Timer effect for auto-advancing slides with a smooth linear progress bar (slower 8-second interval)
   useEffect(() => {
     if (!isPlaying) {
       setProgress(0);
       return;
     }
     const intervalTime = 50; // update progress state every 50ms
-    const totalTime = 5000; // 5 seconds per slide
+    const totalTime = 8000; // Slower: 8 seconds per slide
     const step = (intervalTime / totalTime) * 100;
 
     const timer = setInterval(() => {
@@ -373,27 +373,27 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         id="hero"
         className="relative min-h-screen flex items-center overflow-hidden"
       >
-        {/* Full-screen Background Image Carousel */}
+        {/* Full-screen Background Image Carousel (discreet, darker, and slower) */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-[#05113b]">
           {CAROUSEL_IMAGES.map((img, index) => (
             <div
               key={index}
-              className={`absolute inset-0 transition-all duration-[5000ms] ease-out ${
+              className={`absolute inset-0 transition-all duration-[8000ms] ease-out ${
                 index === activeIndex
-                  ? 'opacity-100 scale-105 z-0'
+                  ? 'opacity-100 scale-102 z-0'
                   : 'opacity-0 scale-100 pointer-events-none z-0'
               }`}
             >
               <img
                 src={img.url}
                 alt={img.title}
-                className="w-full h-full object-cover select-none filter brightness-75"
+                className="w-full h-full object-cover select-none filter brightness-[0.45] contrast-[0.95]"
               />
             </div>
           ))}
 
-          {/* Premium Gradient Dark Overlay for optimal text legibility */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#05113b]/98 via-[#071757]/80 to-black/35" />
+          {/* Premium Gradient Dark Overlay (darker and more discreet for superb legibility) */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#05113b]/98 via-[#071757]/92 to-black/55" />
           
           {/* Subtle grid pattern overlay */}
           <div
