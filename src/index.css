@@ -2,8 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap');
 
 /* ============================================================
-   OxCommerce — Design System Tokens (AgroTech B2B)
-   Versão: 2.0 | Paleta: Verde Institucional + Fundo Claro
+   OxCommerce — Design System Tokens
+   Versão: 2.1 | Paleta: Azul Institucional + Dourado Premium
    ============================================================ */
 
 @theme {
@@ -11,68 +11,85 @@
   --font-sans: 'Inter', 'Manrope', system-ui, sans-serif;
   --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
 
-  /* --- Paleta Principal (Verde AgroTech) --- */
-  --color-primary:         #14532D;
-  --color-primary-hover:   #166534;
-  --color-primary-light:   #166534;
-  --color-primary-soft:    #DCFCE7;
+  /* --- Paleta Principal (Azul Institucional OxCommerce) --- */
+  --color-brand-dark:          #071757;
+  --color-brand-medium:        #182763;
+  --color-brand-light:         #57628D;
+  --color-brand-charcoal:      #071757;
+  --color-brand-accent:        #D8B46A;
+  --color-brand-accent-hover:  #A9823A;
+  --color-brand-50:            #F8F8FA;
+  --color-brand-100:           #DEE1E9;
+  --color-brand-200:           #DEE1E9;
+  --color-brand-300:           #57628D;
+  --color-brand-400:           #57628D;
+  --color-brand-500:           #182763;
+  --color-brand-600:           #071757;
+  --color-brand-700:           #182763;
+  --color-brand-800:           #071757;
+  --color-brand-900:           #071757;
 
-  --color-success:         #16A34A;
-  --color-success-hover:   #15803D;
-  --color-success-soft:    #DCFCE7;
+  /* --- Alias semânticos → Paleta Azul/Dourado --- */
+  --color-primary:        #071757;
+  --color-primary-hover:  #182763;
+  --color-primary-soft:   #DEE1E9;
+  --color-accent:         #D8B46A;
+  --color-accent-hover:   #A9823A;
 
   /* --- Texto --- */
-  --color-title:           #0F172A;
-  --color-body:            #475569;
-  --color-muted:           #64748B;
+  --color-title:  #071757;
+  --color-body:   #475569;
+  --color-muted:  #64748B;
 
   /* --- Superfícies --- */
-  --color-bg:              #F8FAFC;
-  --color-card:            #FFFFFF;
-  --color-border:          #E2E8F0;
-  --color-border-strong:   #CBD5E1;
+  --color-bg:           #F8F8FA;
+  --color-card:         #FFFFFF;
+  --color-border:       #DEE1E9;
+  --color-border-strong: #C5CAD8;
 
   /* --- Semânticos --- */
-  --color-warning:         #F59E0B;
-  --color-warning-soft:    #FEF3C7;
-  --color-danger:          #DC2626;
-  --color-danger-soft:     #FEE2E2;
-  --color-info:            #2563EB;
-  --color-info-soft:       #DBEAFE;
+  --color-success:       #16A34A;
+  --color-success-soft:  #DCFCE7;
+  --color-warning:       #F59E0B;
+  --color-warning-soft:  #FEF3C7;
+  --color-danger:        #DC2626;
+  --color-danger-soft:   #FEE2E2;
+  --color-info:          #2563EB;
+  --color-info-soft:     #DBEAFE;
 
-  /* --- Compatibilidade com classes existentes (emerald/green) --- */
-  --color-emerald-50:  #F0FDF4;
-  --color-emerald-100: #DCFCE7;
-  --color-emerald-200: #BBF7D0;
-  --color-emerald-300: #86EFAC;
-  --color-emerald-400: #4ADE80;
-  --color-emerald-500: #22C55E;
-  --color-emerald-600: #16A34A;
-  --color-emerald-700: #15803D;
-  --color-emerald-800: #166534;
-  --color-emerald-850: #14532D;
-  --color-emerald-900: #14532D;
-  --color-emerald-950: #052E16;
+  /* --- Escala Azul (override emerald para compatibilidade com classes existentes) --- */
+  --color-emerald-50:  #F8F8FA;
+  --color-emerald-100: #DEE1E9;
+  --color-emerald-200: #DEE1E9;
+  --color-emerald-300: #57628D;
+  --color-emerald-400: #D8B46A;
+  --color-emerald-500: #D8B46A;
+  --color-emerald-600: #A9823A;
+  --color-emerald-700: #071757;
+  --color-emerald-800: #071757;
+  --color-emerald-850: #182763;
+  --color-emerald-900: #071757;
+  --color-emerald-950: #182763;
 
-  --color-green-50:  #F0FDF4;
-  --color-green-100: #DCFCE7;
-  --color-green-200: #BBF7D0;
-  --color-green-300: #86EFAC;
-  --color-green-400: #4ADE80;
-  --color-green-500: #22C55E;
-  --color-green-600: #16A34A;
-  --color-green-700: #15803D;
-  --color-green-800: #166534;
-  --color-green-900: #14532D;
-  --color-green-950: #052E16;
+  --color-green-50:  #F8F8FA;
+  --color-green-100: #DEE1E9;
+  --color-green-200: #57628D;
+  --color-green-300: #57628D;
+  --color-green-400: #D8B46A;
+  --color-green-500: #D8B46A;
+  --color-green-600: #A9823A;
+  --color-green-700: #071757;
+  --color-green-800: #071757;
+  --color-green-900: #182763;
+  --color-green-950: #182763;
 
   /* --- Sombras --- */
-  --shadow-card:   0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
-  --shadow-md:     0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
-  --shadow-lg:     0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --shadow-xl:     0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
-  --shadow-green:  0 4px 14px 0 rgb(20 83 45 / 0.20);
-  --shadow-focus:  0 0 0 3px rgb(20 83 45 / 0.15);
+  --shadow-card:  0 1px 3px 0 rgb(7 23 87 / 0.07), 0 1px 2px -1px rgb(7 23 87 / 0.06);
+  --shadow-md:    0 4px 6px -1px rgb(7 23 87 / 0.08), 0 2px 4px -2px rgb(7 23 87 / 0.06);
+  --shadow-lg:    0 10px 15px -3px rgb(7 23 87 / 0.08), 0 4px 6px -4px rgb(7 23 87 / 0.05);
+  --shadow-xl:    0 20px 25px -5px rgb(7 23 87 / 0.08), 0 8px 10px -6px rgb(7 23 87 / 0.04);
+  --shadow-brand: 0 4px 14px 0 rgb(7 23 87 / 0.25);
+  --shadow-focus: 0 0 0 3px rgb(216 180 106 / 0.25);
 }
 
 /* ============================================================
@@ -89,23 +106,17 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: #F8FAFC;
+  background-color: #F8F8FA;
   color: #475569;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ============================================================
-   Typography Utilities
-   ============================================================ */
-
-.font-display {
-  font-family: var(--font-display);
-}
+.font-display { font-family: var(--font-display); }
 
 /* ============================================================
-   Component Utilities — Botões
+   Botões — Azul Institucional + Dourado
    ============================================================ */
 
 .btn-primary {
@@ -114,7 +125,7 @@ body {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
-  background-color: #14532D;
+  background-color: #071757;
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -122,17 +133,15 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 rgb(20 83 45 / 0.20);
+  box-shadow: 0 4px 14px 0 rgb(7 23 87 / 0.25);
   white-space: nowrap;
 }
 .btn-primary:hover {
-  background-color: #166534;
+  background-color: #182763;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px 0 rgb(20 83 45 / 0.30);
+  box-shadow: 0 6px 20px 0 rgb(7 23 87 / 0.35);
 }
-.btn-primary:active {
-  transform: translateY(0);
-}
+.btn-primary:active { transform: translateY(0); }
 
 .btn-secondary {
   display: inline-flex;
@@ -141,70 +150,88 @@ body {
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
   background-color: transparent;
-  color: #14532D;
+  color: #071757;
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: 9999px;
-  border: 1.5px solid #14532D;
+  border: 1.5px solid #071757;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 .btn-secondary:hover {
-  background-color: #DCFCE7;
+  background-color: #DEE1E9;
   transform: translateY(-1px);
 }
 
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background-color: #D8B46A;
+  color: #071757;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgb(216 180 106 / 0.30);
+  white-space: nowrap;
+}
+.btn-accent:hover {
+  background-color: #A9823A;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgb(169 130 58 / 0.35);
+}
+
 /* ============================================================
-   Component Utilities — Cards
+   Cards
    ============================================================ */
 
 .card {
   background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #DEE1E9;
   border-radius: 1rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
+  box-shadow: 0 1px 3px 0 rgb(7 23 87 / 0.07), 0 1px 2px -1px rgb(7 23 87 / 0.06);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.card:hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+  box-shadow: 0 8px 16px -4px rgb(7 23 87 / 0.10);
 }
 
 /* ============================================================
-   Component Utilities — Inputs
+   Inputs
    ============================================================ */
 
 .form-input {
   width: 100%;
   padding: 0.625rem 0.875rem;
   background-color: #FFFFFF;
-  border: 1.5px solid #E2E8F0;
+  border: 1.5px solid #DEE1E9;
   border-radius: 0.625rem;
   font-size: 0.875rem;
-  color: #0F172A;
+  color: #071757;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   font-family: var(--font-sans);
 }
-.form-input::placeholder {
-  color: #94A3B8;
-}
+.form-input::placeholder { color: #94A3B8; }
 .form-input:focus {
-  border-color: #16A34A;
-  box-shadow: 0 0 0 3px rgb(20 83 45 / 0.10);
+  border-color: #D8B46A;
+  box-shadow: 0 0 0 3px rgb(216 180 106 / 0.20);
 }
 .form-input:disabled {
-  background-color: #F8FAFC;
+  background-color: #F8F8FA;
   color: #94A3B8;
   cursor: not-allowed;
 }
 
 /* ============================================================
-   Status Badges
+   Badges de Status
    ============================================================ */
 
 .badge {
@@ -218,21 +245,24 @@ body {
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
+/* Status semânticos permanecem com cores funcionais */
 .badge-success  { background-color: #DCFCE7; color: #15803D; }
 .badge-warning  { background-color: #FEF3C7; color: #B45309; }
 .badge-danger   { background-color: #FEE2E2; color: #B91C1C; }
 .badge-info     { background-color: #DBEAFE; color: #1D4ED8; }
 .badge-neutral  { background-color: #F1F5F9; color: #475569; }
-.badge-primary  { background-color: #DCFCE7; color: #14532D; }
+/* Badge primário usa dourado da marca */
+.badge-primary  { background-color: #F5EDDB; color: #71551D; }
+.badge-brand    { background-color: #DEE1E9; color: #071757; }
 
 /* ============================================================
-   Scrollbar Personalizada
+   Scrollbar
    ============================================================ */
 
 ::-webkit-scrollbar         { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track   { background: transparent; }
-::-webkit-scrollbar-thumb   { background: #CBD5E1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #16A34A; }
+::-webkit-scrollbar-thumb   { background: #DEE1E9; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #D8B46A; }
 
 /* ============================================================
    Animations
@@ -246,16 +276,15 @@ body {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-@keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(22 163 74 / 0.4); }
-  50%       { box-shadow: 0 0 0 8px rgb(22 163 74 / 0); }
+@keyframes pulse-brand {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(216 180 106 / 0.5); }
+  50%       { box-shadow: 0 0 0 8px rgb(216 180 106 / 0); }
 }
 
 .animate-fade-in-up { animation: fadeInUp 0.5s ease both; }
 .animate-fade-in    { animation: fadeIn 0.4s ease both; }
-.animate-pulse-green { animation: pulse-green 2s infinite; }
+.animate-pulse-brand { animation: pulse-brand 2s infinite; }
 
-/* Animation delays for staggered children */
 .delay-100 { animation-delay: 0.1s; }
 .delay-200 { animation-delay: 0.2s; }
 .delay-300 { animation-delay: 0.3s; }
@@ -263,9 +292,9 @@ body {
 .delay-500 { animation-delay: 0.5s; }
 
 /* ============================================================
-   Section Layout Helpers
+   Layout Helpers
    ============================================================ */
 
-.section-padding { padding: 5rem 0; }
+.section-padding  { padding: 5rem 0; }
 .container-narrow { max-width: 64rem; margin: 0 auto; padding: 0 1.5rem; }
 .container-wide   { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; }

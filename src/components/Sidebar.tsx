@@ -49,22 +49,22 @@ interface SidebarProps {
 const navItem = (active: boolean) =>
   `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
     active
-      ? 'bg-emerald-50 text-emerald-800 font-semibold border-l-4 border-emerald-600 pl-2.5'
-      : 'text-[#475569] hover:bg-slate-50 hover:text-[#0F172A]'
+      ? 'bg-[#DEE1E9] text-[#071757] font-semibold border-l-4 border-[#D8B46A] pl-2.5'
+      : 'text-[#475569] hover:bg-[#F8F8FA] hover:text-[#071757]'
   }`;
 
 const navItemWithChevron = (active: boolean) =>
   `w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
     active
-      ? 'bg-emerald-50 text-emerald-800 font-semibold border-l-4 border-emerald-600 pl-2.5'
-      : 'text-[#475569] hover:bg-slate-50 hover:text-[#0F172A]'
+      ? 'bg-[#DEE1E9] text-[#071757] font-semibold border-l-4 border-[#D8B46A] pl-2.5'
+      : 'text-[#475569] hover:bg-[#F8F8FA] hover:text-[#071757]'
   }`;
 
 const subItem = (active: boolean) =>
   `w-full text-left px-3 py-1.5 rounded-md text-xs transition-all cursor-pointer ${
     active
-      ? 'text-emerald-700 font-semibold bg-emerald-50'
-      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-slate-50'
+      ? 'text-[#071757] font-semibold bg-[#DEE1E9]'
+      : 'text-[#64748B] hover:text-[#071757] hover:bg-[#F8F8FA]'
   }`;
 
 export default function Sidebar({
@@ -338,7 +338,7 @@ export default function Sidebar({
       {/* ── Footer System Status ── */}
       <div className="px-4 py-3 border-t border-[#E2E8F0] bg-[#F8FAFC]">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+            <span className="h-2 w-2 rounded-full bg-[#D8B46A] animate-pulse flex-shrink-0" />
           <span className="text-[10px] text-[#64748B] font-medium leading-tight">
             Sincronizado · SEFAZ & GTA
           </span>

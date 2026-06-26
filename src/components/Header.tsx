@@ -68,7 +68,7 @@ export default function Header({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Pesquisar gado, lote, nota, fornecedor..."
-            className="w-full pl-9 pr-4 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg text-xs text-[#475569] outline-none focus:bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-[#CBD5E1] font-sans"
+            className="w-full pl-9 pr-4 py-2 bg-[#F8F8FA] border border-[#DEE1E9] rounded-lg text-xs text-[#475569] outline-none focus:bg-white focus:border-[#D8B46A] focus:ring-2 focus:ring-[#D8B46A]/20 transition-all placeholder:text-[#CBD5E1] font-sans"
           />
         </div>
 
@@ -94,7 +94,7 @@ export default function Header({
                   <div key={al.id} className="p-3.5 hover:bg-[#F8FAFC] flex items-start gap-3">
                     <div className="flex-shrink-0 mt-0.5">{al.icon}</div>
                     <div>
-                      <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide block mb-0.5">{al.type}</span>
+                      <span className="text-[10px] font-bold text-[#D8B46A] uppercase tracking-wide block mb-0.5">{al.type}</span>
                       <p className="text-xs text-[#475569] leading-snug">{al.msg}</p>
                     </div>
                   </div>
@@ -104,7 +104,7 @@ export default function Header({
                 <button
                   id="btn-dismiss-alerts"
                   onClick={() => setShowNotifications(false)}
-                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[#071757] hover:text-[#D8B46A] transition-colors cursor-pointer"
                 >
                   Marcar todos como lidos
                 </button>
@@ -118,7 +118,7 @@ export default function Header({
 
         {/* User Profile */}
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs ring-2 ring-emerald-100">
+          <div className="h-8 w-8 rounded-full bg-[#071757] text-[#D8B46A] flex items-center justify-center font-bold text-xs ring-2 ring-[#D8B46A]/30">
             {initials}
           </div>
           <div className="hidden sm:block text-left leading-none">

@@ -61,7 +61,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
       {/* ── Left Panel (desktop only) ── */}
       <div
         className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #052E16 0%, #14532D 60%, #166534 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #05113b 0%, #071757 60%, #182763 100%)' }}
       >
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -90,7 +90,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
           <h2 className="text-3xl font-bold text-white font-display leading-tight mb-4">
             Gestão pecuária integrada,<br />do campo ao frigorífico
           </h2>
-          <p className="text-emerald-200 text-base leading-relaxed mb-8 max-w-sm">
+          <p className="text-blue-200 text-base leading-relaxed mb-8 max-w-sm">
             Rastreabilidade total, conformidade fiscal e controle operacional em uma única plataforma.
           </p>
           <div className="space-y-3">
@@ -100,8 +100,8 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
               'Fluxo de caixa e conciliação bancária',
               'Dashboard executivo com BI pecuário',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-3 text-sm text-emerald-100">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+              <div key={item} className="flex items-center gap-3 text-sm text-slate-200">
+                <CheckCircle2 className="h-4 w-4 text-[#D8B46A] flex-shrink-0" />
                 {item}
               </div>
             ))}
@@ -111,8 +111,8 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
         {/* Bottom badges */}
         <div className="relative z-10 flex flex-wrap gap-3">
           {['SEFAZ Homologado', 'SSL-256', 'LGPD Compliant', '99,9% Uptime'].map((tag) => (
-            <span key={tag} className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-300 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
-              <ShieldCheck className="h-3 w-3" />
+            <span key={tag} className="flex items-center gap-1.5 text-[10px] font-semibold text-[#D8B46A] bg-[#D8B46A]/10 border border-[#D8B46A]/20 px-3 py-1.5 rounded-full">
+              <ShieldCheck className="h-3 w-3 text-[#D8B46A]" />
               {tag}
             </span>
           ))}
@@ -204,7 +204,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
                 </label>
                 <button
                   type="button"
-                  className="text-xs text-[#16A34A] hover:text-[#14532D] font-semibold cursor-pointer transition-colors"
+                  className="text-xs text-[#D8B46A] hover:text-[#A9823A] font-semibold cursor-pointer transition-colors"
                   onClick={() => alert('Contate o suporte TI para recuperação de senhas.')}
                 >
                   Esqueceu a senha?
@@ -254,7 +254,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
           {/* Footer note */}
           <div className="mt-8 text-center space-y-2">
             <div className="flex items-center justify-center gap-2 text-xs text-[#94A3B8]">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+              <ShieldCheck className="h-3.5 w-3.5 text-[#D8B46A]" />
               <span>Conexão criptografada com SSL-256</span>
             </div>
             <p className="text-[10px] text-[#CBD5E1]">
