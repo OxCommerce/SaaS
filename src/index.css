@@ -285,6 +285,14 @@ body {
 .animate-fade-in    { animation: fadeIn 0.4s ease both; }
 .animate-pulse-brand { animation: pulse-brand 2s infinite; }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 .delay-100 { animation-delay: 0.1s; }
 .delay-200 { animation-delay: 0.2s; }
 .delay-300 { animation-delay: 0.3s; }

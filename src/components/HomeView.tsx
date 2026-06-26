@@ -372,151 +372,179 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
       <section
         id="hero"
         className="relative min-h-screen flex items-center overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #05113b 0%, #071757 45%, #182763 80%, #57628D 100%)' }}
       >
-        {/* Full-screen Background Image Carousel (discreet, darker, and slower) */}
-        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-[#05113b]">
-          {CAROUSEL_IMAGES.map((img, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-all duration-[8000ms] ease-out ${
-                index === activeIndex
-                  ? 'opacity-100 scale-102 z-0'
-                  : 'opacity-0 scale-100 pointer-events-none z-0'
-              }`}
-            >
-              <img
-                src={img.url}
-                alt={img.title}
-                className="w-full h-full object-cover select-none filter brightness-[0.45] contrast-[0.95]"
-              />
-            </div>
-          ))}
-
-          {/* Premium Gradient Dark Overlay (darker and more discreet for superb legibility) */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#05113b]/98 via-[#071757]/92 to-black/55" />
-          
-          {/* Subtle grid pattern overlay */}
+        {/* Decorations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-[#D8B46A]/8 blur-3xl" />
+          <div className="absolute bottom-0 -left-32 w-[400px] h-[400px] rounded-full bg-[#D8B46A]/5 blur-3xl" />
           <div
-            className="absolute inset-0 z-10 opacity-5 pointer-events-none"
+            className="absolute inset-0 opacity-8"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 60 0 L 0 0 0 60' fill='none' stroke='white' stroke-width='0.4'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)'/%3E%3C/svg%3E")`,
             }}
           />
         </div>
 
-        {/* Hero Content Overlaid on top of background */}
-        <div className="container-wide relative z-20 pt-24 pb-16 min-h-screen flex items-center">
-          <div className="max-w-3xl text-left">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-8 animate-fade-in-up self-start">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
-              Plataforma homologada · SEFAZ & Defesa Agropecuária
+        <div className="container-wide relative z-10 pt-24 pb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Coluna da Esquerda — Texto e CTAs */}
+            <div className="lg:col-span-7 flex flex-col justify-center text-left">
+              {/* Tag */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-8 animate-fade-in-up self-start">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
+                Plataforma homologada · SEFAZ & Defesa Agropecuária
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white font-display leading-tight mb-6 animate-fade-in-up delay-100">
+                Gestão completa para
+                <span className="block text-[#D8B46A] mt-1">operações pecuárias</span>
+              </h1>
+
+              <p className="text-lg text-slate-300 leading-relaxed max-w-xl mb-10 animate-fade-in-up delay-200">
+                OxCommerce é o ERP AgroTech que integra comercial, fiscal, financeiro e logística em uma única plataforma — com rastreabilidade total do gado do campo ao frigorífico.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
+                <button
+                  id="btn-hero-access"
+                  onClick={onNavigateToLogin}
+                  className="btn-accent px-8 py-3.5 text-base"
+                >
+                  Acessar o Sistema
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <a
+                  href="#modulos"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent border-2 border-white/30 text-white font-semibold rounded-full text-base hover:bg-white/10 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
+                >
+                  Ver Módulos
+                  <ChevronRight className="h-4 w-4" />
+                </a>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex flex-wrap items-center gap-6 mt-12 animate-fade-in-up delay-400">
+                {['Rastreabilidade GTA', 'Integração SEFAZ', 'SSL-256', 'LGPD'].map((tag) => (
+                  <div key={tag} className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
+                    {tag}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white font-display leading-tight mb-6 animate-fade-in-up delay-100">
-              Gestão completa para
-              <span className="block text-[#D8B46A] mt-1">operações pecuárias</span>
-            </h1>
+            {/* Coluna da Direita — Slide de Imagens da Pecuária com Moldura Asimétrica e Flutuante */}
+            <div className="lg:col-span-5 w-full flex flex-col justify-center items-center lg:items-end relative z-20 animate-fade-in-up delay-300">
+              
+              {/* Elementos decorativos de fundo (blobs luminosos) */}
+              <div className="absolute -top-12 -left-12 w-64 h-64 bg-[#D8B46A]/10 rounded-full blur-3xl animate-pulse pointer-events-none animate-[pulse_4s_infinite]" />
+              <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#071757]/40 rounded-full blur-3xl animate-pulse pointer-events-none animate-[pulse_6s_infinite]" />
 
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl mb-10 animate-fade-in-up delay-200">
-              OxCommerce é o ERP AgroTech que integra comercial, fiscal, financeiro e logística em uma única plataforma — com rastreabilidade total do gado do campo ao frigorífico.
-            </p>
+              {/* Container principal com formato asimétrico e animação flutuante */}
+              <div className="relative w-full max-w-md aspect-[1.2] rounded-[2.5rem] rounded-tr-[7rem] rounded-bl-[7rem] border-2 border-[#D8B46A]/40 shadow-[0_20px_50px_rgba(7,23,87,0.4)] overflow-hidden bg-[#071757] animate-float group/carousel">
+                
+                {/* Imagens com efeito de Ken Burns sutil e transição fade */}
+                {CAROUSEL_IMAGES.map((img, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-all duration-[8000ms] ease-out ${
+                      index === activeIndex
+                        ? 'opacity-100 scale-102 z-10'
+                        : 'opacity-0 scale-100 pointer-events-none z-0'
+                    }`}
+                  >
+                    {/* Exibe o gado com cores e brilho originais e nítidos */}
+                    <img
+                      src={img.url}
+                      alt={img.title}
+                      className="w-full h-full object-cover select-none filter brightness-[0.95] contrast-[1.02]"
+                    />
+                    
+                    {/* Badge de categoria flutuante no topo esquerdo */}
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="flex items-center gap-1.5 text-[9px] font-bold text-[#D8B46A] bg-[#071757]/85 backdrop-blur-md border border-[#D8B46A]/30 px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
+                        {img.category}
+                      </span>
+                    </div>
+                  </div>
+                ))}
 
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
-              <button
-                id="btn-hero-access"
-                onClick={onNavigateToLogin}
-                className="btn-accent px-8 py-3.5 text-base"
-              >
-                Acessar o Sistema
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <a
-                href="#modulos"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent border-2 border-white/30 text-white font-semibold rounded-full text-base hover:bg-white/10 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
-              >
-                Ver Módulos
-                <ChevronRight className="h-4 w-4" />
-              </a>
-            </div>
+                {/* Barra de Prospecção/Ações inferior (Glassmorphism integrado ao formato da moldura) */}
+                <div className="absolute bottom-0 left-0 right-0 z-20 p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent backdrop-blur-[2px] flex flex-col gap-1 text-left select-none border-t border-white/5">
+                  
+                  {/* Título e legenda da imagem da pecuária */}
+                  <h3 className="text-sm font-bold text-white font-display tracking-wide drop-shadow">
+                    {CAROUSEL_IMAGES[activeIndex].title}
+                  </h3>
+                  <p className="text-[11px] text-slate-300 leading-relaxed drop-shadow-sm mb-2">
+                    {CAROUSEL_IMAGES[activeIndex].caption}
+                  </p>
 
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-6 mt-12 animate-fade-in-up delay-400">
-              {['Rastreabilidade GTA', 'Integração SEFAZ', 'SSL-256', 'LGPD'].map((tag) => (
-                <div key={tag} className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
-                  {tag}
+                  {/* Controles de reprodução e navegação agrupados de forma discreta */}
+                  <div className="flex items-center justify-between mt-1 pt-2 border-t border-white/10 pointer-events-auto">
+                    {/* Bolinhas indicadoras (dots) integradas */}
+                    <div className="flex gap-1.5">
+                      {CAROUSEL_IMAGES.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => { setActiveIndex(idx); setProgress(0); }}
+                          className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${
+                            idx === activeIndex
+                              ? 'w-4 bg-[#D8B46A]'
+                              : 'w-1.5 bg-white/40 hover:bg-white/75'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Botões de navegação e Play/Pause rápidos */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handlePrev}
+                        className="h-6 w-6 rounded bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
+                        title="Imagem anterior"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="h-6 w-6 rounded bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
+                        title={isPlaying ? 'Pausar' : 'Iniciar'}
+                      >
+                        {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        className="h-6 w-6 rounded bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
+                        title="Próxima imagem"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                {/* Barra de progresso do temporizador de 8 segundos no limite inferior interno */}
+                <div className="absolute bottom-0 left-0 right-0 z-30 h-0.5 bg-white/5">
+                  <div
+                    className="h-full bg-[#D8B46A]"
+                    style={{
+                      width: `${progress}%`,
+                      transition: isPlaying && progress > 0 ? 'width 50ms linear' : 'none'
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Premium Glassmorphic Caption Card (Bottom-Right) */}
-        <div className="absolute bottom-8 right-8 z-30 max-w-xs p-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-left hidden md:flex flex-col gap-2 shadow-2xl animate-fade-in pointer-events-auto">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1 text-[9px] font-bold text-[#D8B46A] uppercase tracking-wider">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
-              {CAROUSEL_IMAGES[activeIndex].category}
-            </span>
-            {/* Play/Pause control */}
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="h-6 w-6 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
-              title={isPlaying ? 'Pausar slide' : 'Iniciar slide'}
-            >
-              {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-            </button>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white font-display">
-              {CAROUSEL_IMAGES[activeIndex].title}
-            </h3>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              {CAROUSEL_IMAGES[activeIndex].caption}
-            </p>
-          </div>
-          {/* Manual navigation controls inside caption card */}
-          <div className="flex items-center gap-2 mt-1 pt-1.5 border-t border-white/10 justify-end">
-            <button
-              onClick={handlePrev}
-              className="h-5 w-5 rounded bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="h-5 w-5 rounded bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors"
-            >
-              <ChevronRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Center-Bottom Active Dots for mobile and desktop */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1.5">
-          {CAROUSEL_IMAGES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => { setActiveIndex(idx); setProgress(0); }}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === activeIndex
-                  ? 'w-5 bg-[#D8B46A]'
-                  : 'w-1.5 bg-white/40 hover:bg-white/75'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Global Progress Timer Bar (Bottom edge of Hero section) */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 h-1 bg-white/10">
-          <div
-            className="h-full bg-[#D8B46A]"
-            style={{
-              width: `${progress}%`,
-              transition: isPlaying && progress > 0 ? 'width 50ms linear' : 'none'
-            }}
-          />
+        {/* Scroll hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 text-xs animate-bounce">
+          <div className="h-8 w-px bg-[#D8B46A]/30" />
+          <span>scroll</span>
         </div>
       </section>
 
