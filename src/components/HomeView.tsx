@@ -6,6 +6,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   ChevronRight,
+  ChevronLeft,
+  Play,
+  Pause,
   ShieldCheck,
   Truck,
   BarChart3,
@@ -32,6 +35,53 @@ import {
   Award
 } from 'lucide-react';
 import { OxLogo } from './ui/Logo';
+
+// Import high-quality local livestock assets for the interactive carousel
+import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';
+import neloreManejo1 from '@/assets/nelore_manejo_1.png';
+import neloreElite1 from '@/assets/nelore_elite_1.png';
+import neloreManejo2 from '@/assets/nelore_manejo_2.png';
+import neloreRebanho2 from '@/assets/nelore_rebanho_2.png';
+import neloreElite2 from '@/assets/nelore_elite_2.png';
+
+const CAROUSEL_IMAGES = [
+  {
+    url: neloreElite1,
+    title: 'Nelore de Elite (Matrizes)',
+    caption: 'Alta genética zootécnica e performance produtiva para seleção.',
+    category: 'Nelore Elite'
+  },
+  {
+    url: neloreManejo1,
+    title: 'Manejo Inteligente no Curral',
+    caption: 'Pesagem eletrônica, vacinação e identificação de lotes por chip.',
+    category: 'Manejo Corretivo'
+  },
+  {
+    url: neloreRebanho1,
+    title: 'Rebanho Nelore no Pasto',
+    caption: 'Pastejo rotacionado e manejo sustentável extensivo de precisão.',
+    category: 'Rebanho Comercial'
+  },
+  {
+    url: neloreElite2,
+    title: 'Touro Nelore PO de Elite',
+    caption: 'Padronização racial e melhoramento zootécnico no mercado nacional.',
+    category: 'Zebu de Elite'
+  },
+  {
+    url: neloreManejo2,
+    title: 'Lida de Campo e Embarque',
+    caption: 'Rastreabilidade completa com emissão automática de GTA e guias fiscais.',
+    category: 'Gestão de Lote'
+  },
+  {
+    url: neloreRebanho2,
+    title: 'Suplementação e Nutrição',
+    caption: 'Engorda intensiva de precisão com planejamento e controle de cocho.',
+    category: 'Pasto & Nutrição'
+  }
+];
 
 interface HomeViewProps {
   onNavigateToLogin: () => void;
@@ -191,6 +241,44 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
   const [contactForm, setContactForm] = useState({ nome: '', email: '', empresa: '', mensagem: '' });
   const [contactSent, setContactSent] = useState(false);
 
+  // Stateful interactive carousel controls
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev + 1) % CAROUSEL_IMAGES.length);
+    setProgress(0);
+  };
+
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev - 1 + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length);
+    setProgress(0);
+  };
+
+  // Timer effect for auto-advancing slides with a smooth linear progress bar
+  useEffect(() => {
+    if (!isPlaying) {
+      setProgress(0);
+      return;
+    }
+    const intervalTime = 50; // update progress state every 50ms
+    const totalTime = 5000; // 5 seconds per slide
+    const step = (intervalTime / totalTime) * 100;
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          setActiveIndex((prevIdx) => (prevIdx + 1) % CAROUSEL_IMAGES.length);
+          return 0;
+        }
+        return prev + step;
+      });
+    }, intervalTime);
+
+    return () => clearInterval(timer);
+  }, [isPlaying, activeIndex]);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -299,48 +387,141 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         </div>
 
         <div className="container-wide relative z-10 pt-24 pb-16">
-          <div className="max-w-3xl">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-8 animate-fade-in-up">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
-              Plataforma homologada · SEFAZ & Defesa Agropecuária
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Coluna da Esquerda — Texto e CTAs */}
+            <div className="lg:col-span-7 flex flex-col justify-center text-left">
+              {/* Tag */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D8B46A]/15 border border-[#D8B46A]/30 text-[#D8B46A] text-xs font-semibold mb-8 animate-fade-in-up self-start">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
+                Plataforma homologada · SEFAZ & Defesa Agropecuária
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white font-display leading-tight mb-6 animate-fade-in-up delay-100">
+                Gestão completa para
+                <span className="block text-[#D8B46A] mt-1">operações pecuárias</span>
+              </h1>
+
+              <p className="text-lg text-slate-300 leading-relaxed max-w-xl mb-10 animate-fade-in-up delay-200">
+                OxCommerce é o ERP AgroTech que integra comercial, fiscal, financeiro e logística em uma única plataforma — com rastreabilidade total do gado do campo ao frigorífico.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
+                <button
+                  id="btn-hero-access"
+                  onClick={onNavigateToLogin}
+                  className="btn-accent px-8 py-3.5 text-base"
+                >
+                  Acessar o Sistema
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <a
+                  href="#modulos"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent border-2 border-white/30 text-white font-semibold rounded-full text-base hover:bg-white/10 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
+                >
+                  Ver Módulos
+                  <ChevronRight className="h-4 w-4" />
+                </a>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex flex-wrap items-center gap-6 mt-12 animate-fade-in-up delay-400">
+                {['Rastreabilidade GTA', 'Integração SEFAZ', 'SSL-256', 'LGPD'].map((tag) => (
+                  <div key={tag} className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
+                    {tag}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white font-display leading-tight mb-6 animate-fade-in-up delay-100">
-              Gestão completa para
-              <span className="block text-[#D8B46A] mt-1">operações pecuárias</span>
-            </h1>
+            {/* Coluna da Direita — Slide de Imagens da Pecuária */}
+            <div className="lg:col-span-5 w-full flex justify-center animate-fade-in-up delay-300">
+              <div className="relative w-full max-w-lg aspect-[1.4] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/20 backdrop-blur-sm group/carousel">
+                {/* Imagens com efeito de transição suave (fade) */}
+                {CAROUSEL_IMAGES.map((img, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                      index === activeIndex
+                        ? 'opacity-100 scale-100 z-10'
+                        : 'opacity-0 scale-105 pointer-events-none z-0'
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.title}
+                      className="w-full h-full object-cover select-none"
+                    />
 
-            <p className="text-lg text-slate-300 leading-relaxed max-w-xl mb-10 animate-fade-in-up delay-200">
-              OxCommerce é o ERP AgroTech que integra comercial, fiscal, financeiro e logística em uma única plataforma — com rastreabilidade total do gado do campo ao frigorífico.
-            </p>
+                    {/* Badge de categoria no topo esquerdo */}
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-[#D8B46A] bg-[#071757]/85 backdrop-blur-md border border-[#D8B46A]/30 px-2.5 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#D8B46A] animate-pulse" />
+                        {img.category}
+                      </span>
+                    </div>
+                  </div>
+                ))}
 
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
-              <button
-                id="btn-hero-access"
-                onClick={onNavigateToLogin}
-                className="btn-accent px-8 py-3.5 text-base"
-              >
-                Acessar o Sistema
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <a
-                href="#modulos"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent border-2 border-white/30 text-white font-semibold rounded-full text-base hover:bg-white/10 hover:border-[#D8B46A]/50 transition-all cursor-pointer"
-              >
-                Ver Módulos
-                <ChevronRight className="h-4 w-4" />
-              </a>
-            </div>
-
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-6 mt-12 animate-fade-in-up delay-400">
-              {['Rastreabilidade GTA', 'Integração SEFAZ', 'SSL-256', 'LGPD'].map((tag) => (
-                <div key={tag} className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
-                  {tag}
+                {/* Overlay de gradiente inferior com as legendas */}
+                <div className="absolute bottom-0 left-0 right-0 z-20 p-5 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex flex-col gap-1 text-left pointer-events-none select-none">
+                  <h3 className="text-base font-bold text-white font-display tracking-wide drop-shadow">
+                    {CAROUSEL_IMAGES[activeIndex].title}
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed drop-shadow">
+                    {CAROUSEL_IMAGES[activeIndex].caption}
+                  </p>
                 </div>
-              ))}
+
+                {/* Botão de Play/Pause no topo direito */}
+                <button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="absolute top-4 right-4 z-30 h-8 w-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+                  title={isPlaying ? 'Pausar slide' : 'Iniciar slide'}
+                >
+                  {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                </button>
+
+                {/* Setas de navegação manual (esquerda/direita) */}
+                <button
+                  onClick={handlePrev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 h-9 w-9 rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer opacity-0 group-hover/carousel:opacity-100 transition-all -translate-x-2 group-hover/carousel:translate-x-0"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 h-9 w-9 rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer opacity-0 group-hover/carousel:opacity-100 transition-all translate-x-2 group-hover/carousel:translate-x-0"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+
+                {/* Indicadores (dots) e barra de progresso do timer */}
+                <div className="absolute bottom-0 left-0 right-0 z-30 h-1 bg-white/10">
+                  <div
+                    className="h-full bg-[#D8B46A]"
+                    style={{
+                      width: `${progress}%`,
+                      transition: isPlaying && progress > 0 ? 'width 50ms linear' : 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Indicadores de bolinha por slide */}
+                <div className="absolute bottom-16 right-5 z-30 flex gap-1.5">
+                  {CAROUSEL_IMAGES.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setActiveIndex(idx); setProgress(0); }}
+                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                        idx === activeIndex
+                          ? 'w-5 bg-[#D8B46A]'
+                          : 'w-1.5 bg-white/40 hover:bg-white/75'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
