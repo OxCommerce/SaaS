@@ -220,7 +220,7 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         <div className="container-wide flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <OxLogo variant="white" showText={false} className="h-9 w-auto" />
+            <OxLogo variant="white" className="h-9 w-auto" />
           </div>
 
           {/* Nav (desktop) */}
@@ -639,7 +639,7 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         <div className="container-wide py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="lg:col-span-2">
-              <OxLogo variant="white" showText={false} className="h-8 w-auto mb-4 opacity-90" />
+              <OxLogo variant="white" className="h-8 w-auto mb-4 opacity-90" />
               <p className="text-sm text-slate-400 leading-relaxed max-w-xs mb-5">
                 Plataforma SaaS de gestão AgroTech para o mercado pecuário brasileiro. Da negociação ao frigorífico, com rastreabilidade total.
               </p>

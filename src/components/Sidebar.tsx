@@ -94,7 +94,7 @@ export default function Sidebar({
 
       {/* ── Brand Header ── */}
       <div className="py-5 px-5 border-b border-[#DEE1E9] flex items-center justify-center min-h-[80px]">
-        <OxLogo variant="blue" showText={true} className="h-14 w-auto" />
+        <OxLogo variant="blue" className="h-14 w-auto" />
       </div>
 
       {/* ── Navigation ── */}

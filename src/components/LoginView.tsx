@@ -76,7 +76,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
 
         {/* Logo */}
         <div className="relative z-10">
-          <OxLogo variant="white" showText={false} className="h-10 w-auto" />
+          <OxLogo variant="white" className="h-10 w-auto" />
         </div>
 
         {/* Center content */}
@@ -127,7 +127,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
 
         {/* Mobile logo */}
         <div className="lg:hidden mb-8 flex justify-center">
-          <OxLogo variant="blue" showText={true} className="h-12 w-auto" />
+          <OxLogo variant="blue" className="h-12 w-auto" />
         </div>
 
         <motion.div
