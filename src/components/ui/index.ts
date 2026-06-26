@@ -5,3 +5,4 @@ export { AlertBox } from './AlertBox';
 export { FormInput, FormSelect } from './FormFields';
 export { ConfirmModal } from './ConfirmModal';
 export { SectionHeader } from './SectionHeader';
+export { OxLogo, OxIcon } from './Logo';

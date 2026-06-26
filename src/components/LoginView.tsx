@@ -16,8 +16,7 @@ import {
   ShieldCheck,
   CheckCircle2
 } from 'lucide-react';
-import logoBlue from '@/assets/logo_blue.png';
-import logoWhite from '@/assets/logo_white.png';
+import { OxLogo } from './ui/Logo';
 
 interface LoginViewProps {
   onLoginSuccess: (username: string) => void;
@@ -77,12 +76,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
 
         {/* Logo */}
         <div className="relative z-10">
-          <img
-            src={logoUrl || logoWhite}
-            alt="OxCommerce"
-            className="h-9 w-auto object-contain"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
+          <OxLogo variant="white" showText={false} className="h-10 w-auto" />
         </div>
 
         {/* Center content */}
@@ -132,13 +126,8 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
         </button>
 
         {/* Mobile logo */}
-        <div className="lg:hidden mb-8">
-          <img
-            src={logoUrl || logoBlue}
-            alt="OxCommerce"
-            className="h-10 w-auto object-contain"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
+        <div className="lg:hidden mb-8 flex justify-center">
+          <OxLogo variant="blue" showText={true} className="h-12 w-auto" />
         </div>
 
         <motion.div

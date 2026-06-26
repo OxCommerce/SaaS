@@ -24,8 +24,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
-import logoBlue from '@/assets/logo_blue.png';
-import logoWhite from '@/assets/logo_white.png';
+import { OxLogo } from './ui/Logo';
 
 interface SidebarProps {
   activeMenu: ActiveMenu;
@@ -94,13 +93,8 @@ export default function Sidebar({
     <aside className="w-68 bg-white text-[#0F172A] flex flex-col h-screen fixed top-0 left-0 z-30 border-r border-[#E2E8F0] shadow-sm overflow-y-auto">
 
       {/* ── Brand Header ── */}
-      <div className="py-5 px-5 border-b border-[#E2E8F0] flex items-center justify-center min-h-[72px]">
-        <img
-          src={logoUrl || logoBlue}
-          alt="OxCommerce Logo"
-          className="h-12 w-auto object-contain"
-          onError={(e) => { (e.target as HTMLImageElement).src = logoWhite; }}
-        />
+      <div className="py-5 px-5 border-b border-[#DEE1E9] flex items-center justify-center min-h-[80px]">
+        <OxLogo variant="blue" showText={true} className="h-14 w-auto" />
       </div>
 
       {/* ── Navigation ── */}

@@ -31,8 +31,7 @@ import {
   FileCheck,
   Award
 } from 'lucide-react';
-import logoBlue from '@/assets/logo_blue.png';
-import logoWhite from '@/assets/logo_white.png';
+import { OxLogo } from './ui/Logo';
 
 interface HomeViewProps {
   onNavigateToLogin: () => void;
@@ -221,11 +220,7 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         <div className="container-wide flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img
-              src={logoUrl || logoWhite}
-              alt="OxCommerce Logo"
-              className="h-9 w-auto object-contain"
-            />
+            <OxLogo variant="white" showText={false} className="h-9 w-auto" />
           </div>
 
           {/* Nav (desktop) */}
@@ -644,9 +639,7 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
         <div className="container-wide py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="lg:col-span-2">
-              <img src={logoUrl || logoWhite} alt="OxCommerce Logo"
-                className="h-10 w-auto mb-4 opacity-90"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <OxLogo variant="white" showText={false} className="h-8 w-auto mb-4 opacity-90" />
               <p className="text-sm text-slate-400 leading-relaxed max-w-xs mb-5">
                 Plataforma SaaS de gestão AgroTech para o mercado pecuário brasileiro. Da negociação ao frigorífico, com rastreabilidade total.
               </p>
