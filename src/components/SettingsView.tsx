@@ -101,64 +101,64 @@ export default function SettingsView({
   // Custom image form states
   const [customImageUrl, setCustomImageUrl] = useState('');
   const [customImageTitle, setCustomImageTitle] = useState('');
-  const [customImageCategory, setCustomImageCategory] = useState('Pecuária');
+  const [customImageCategory, setCustomImageCategory] = useState('Nelore');
 
   // Pre-loaded images list
   const [galleryImages, setGalleryImages] = useState([
     {
-      id: 'img-pecuaria-1',
-      title: 'Nelore em Pastagem Verde',
-      category: 'Pecuária',
+      id: 'img-nelore-1',
+      title: 'Nelore de Elite no Pasto',
+      category: 'Nelore',
       url: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&w=800&q=80',
       author: 'Unsplash'
     },
     {
-      id: 'img-pecuaria-2',
-      title: 'Gado Angus sob Sol da Manhã',
-      category: 'Pecuária',
+      id: 'img-nelore-2',
+      title: 'Touro Zebu Nelore de Elite',
+      category: 'Nelore',
+      url: 'https://images.unsplash.com/photo-1602406900744-6b68d4a331fc?auto=format&fit=crop&w=800&q=80',
+      author: 'Unsplash'
+    },
+    {
+      id: 'img-rebanho-1',
+      title: 'Rebanho Nelore em Pastagem Extensiva',
+      category: 'Rebanho',
+      url: 'https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?auto=format&fit=crop&w=800&q=80',
+      author: 'Unsplash'
+    },
+    {
+      id: 'img-rebanho-2',
+      title: 'Nelore em Pastejo Rotacionado',
+      category: 'Rebanho',
+      url: 'https://images.unsplash.com/photo-1546445317-29f4545e6d52?auto=format&fit=crop&w=800&q=80',
+      author: 'Unsplash'
+    },
+    {
+      id: 'img-pasto-1',
+      title: 'Pastagens da Estância Ox',
+      category: 'Campo & Pasto',
+      url: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80',
+      author: 'Unsplash'
+    },
+    {
+      id: 'img-pasto-2',
+      title: 'Piquete Pecuário Sombreado',
+      category: 'Campo & Pasto',
+      url: 'https://images.unsplash.com/photo-1527153857715-3908f2bac5e8?auto=format&fit=crop&w=800&q=80',
+      author: 'Unsplash'
+    },
+    {
+      id: 'img-manejo-1',
+      title: 'Manejo de Rebanho ao Pôr do Sol',
+      category: 'Manejo',
       url: 'https://images.unsplash.com/photo-1543590535-65a25e6e3c1a?auto=format&fit=crop&w=800&q=80',
       author: 'Unsplash'
     },
     {
-      id: 'img-agricultura-1',
-      title: 'Colheitadeira em Campo de Grãos',
-      category: 'Agricultura',
-      url: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-agricultura-2',
-      title: 'Germinação de Soja e Solo Fértil',
-      category: 'Agricultura',
-      url: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-logistica-1',
-      title: 'Transporte Rodoviário de Carga',
-      category: 'Logística',
-      url: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-logistica-2',
-      title: 'Centro de Distribuição Integrado',
-      category: 'Logística',
-      url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-tecnologia-1',
-      title: 'Drone de Mapeamento Agrícola',
-      category: 'Tecnologia',
-      url: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80',
-      author: 'Unsplash'
-    },
-    {
-      id: 'img-corporativo-1',
-      title: 'Escritório de Gestão Corporativa',
-      category: 'Corporativo',
-      url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+      id: 'img-manejo-2',
+      title: 'Zebu Nelore na Estância Operacional',
+      category: 'Manejo',
+      url: 'https://images.unsplash.com/photo-1551806235-a05ff1484553?auto=format&fit=crop&w=800&q=80',
       author: 'Unsplash'
     }
   ]);
@@ -614,7 +614,7 @@ export default function SettingsView({
 
               {/* Category Filter Pills */}
               <div className="flex flex-wrap gap-1.5 items-center">
-                {['Todas', 'Pecuária', 'Agricultura', 'Logística', 'Corporativo', 'Tecnologia'].map((cat) => (
+                {['Todas', 'Nelore', 'Rebanho', 'Campo & Pasto', 'Manejo'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
@@ -673,7 +673,7 @@ export default function SettingsView({
                     onChange={(e) => setCustomImageCategory(e.target.value)}
                     className="w-full px-3 py-1.5 border border-emerald-200 bg-white rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-600"
                   >
-                    {['Pecuária', 'Agricultura', 'Logística', 'Corporativo', 'Tecnologia'].map((cat) => (
+                    {['Nelore', 'Rebanho', 'Campo & Pasto', 'Manejo'].map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
@@ -749,10 +749,10 @@ export default function SettingsView({
 
                     {/* Category pill */}
                     <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[8px] font-black tracking-wider uppercase z-10 border shadow-sm ${
-                      img.category === 'Pecuária' ? 'bg-amber-100 text-amber-800 border-amber-200' :
-                      img.category === 'Agricultura' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
-                      img.category === 'Logística' ? 'bg-blue-100 text-blue-800 border-blue-200' :
-                      img.category === 'Tecnologia' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                      img.category === 'Nelore' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                      img.category === 'Rebanho' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
+                      img.category === 'Campo & Pasto' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                      img.category === 'Manejo' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' :
                       'bg-slate-100 text-slate-800 border-slate-200'
                     }`}>
                       {img.category}
