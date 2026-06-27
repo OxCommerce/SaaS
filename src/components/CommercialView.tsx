@@ -147,6 +147,7 @@ export default function CommercialView({
   // Form State for Compra
   const [compraForm, setCompraForm] = useState({
     numeroOperacao: '',
+    codigoFornecedor: '',
     fornecedor: '',
     fazendaOrigem: '',
     municipio: '',
@@ -178,6 +179,7 @@ export default function CommercialView({
   // Form State for OrdemCompraCliente
   const [vendaForm, setVendaForm] = useState({
     numeroOC: '',
+    codigoCliente: '',
     cliente: '',
     frigorifico: '',
     categoriaAnimal: '' as any,
@@ -192,6 +194,7 @@ export default function CommercialView({
   // Form State for Negociacao
   const [negForm, setNegForm] = useState({
     titulo: '',
+    codigoClienteFornecedor: '',
     clienteFornecedor: '',
     fazenda: '',
     cabecas: '' as any,
@@ -238,12 +241,117 @@ export default function CommercialView({
 
   const handleClientChange = (clientName: string) => {
     const found = clientes.find(c => c.nomeFantasia === clientName);
+    const foundMock = CADASTRO_CLIENTES.find(c => c.nome === clientName);
+    const code = foundMock ? foundMock.codigo : (found ? found.id : '');
     const location = found ? found.nomeFantasia : '';
     setVendaForm(prev => ({
       ...prev,
       cliente: clientName,
+      codigoCliente: code,
       frigorifico: location
     }));
+  };
+
+  const handleCodigoClienteChange = (code: string) => {
+    setVendaForm(prev => {
+      const updated = { ...prev, codigoCliente: code };
+      const foundMock = CADASTRO_CLIENTES.find(c => c.codigo === code || c.id === code);
+      if (foundMock) {
+        updated.cliente = foundMock.nome;
+        updated.frigorifico = foundMock.nome;
+      } else {
+        const foundDb = clientes.find(c => c.id === code || c.codigo === code);
+        if (foundDb) {
+          updated.cliente = foundDb.nomeFantasia;
+          updated.frigorifico = foundDb.nomeFantasia;
+        }
+      }
+      return updated;
+    });
+  };
+
+  const handleCodigoFornecedorChange = (code: string) => {
+    setCompraForm(prev => {
+      const updated = { ...prev, codigoFornecedor: code };
+      const found = CADASTRO_FORNECEDORES.find(f => f.codigo === code || f.id === code);
+      if (found) {
+        updated.fornecedor = found.nome;
+        updated.fazendaOrigem = found.fazenda;
+        updated.estado = found.estado;
+        updated.pais = 'Brasil';
+        if (found.nome === 'José Carlos Albuquerque') updated.municipio = 'Rondonópolis';
+        else if (found.nome === 'Agropecuária Vale Verde S/A') updated.municipio = 'Rio Verde';
+        else if (found.nome === 'Marcos de Souza Neves') updated.municipio = 'Redenção';
+        else if (found.nome === 'Alfa Transportes LTDA') updated.municipio = 'Redenção';
+        else if (found.nome === 'Norte Pegaso Serviços LTDA') updated.municipio = 'Redenção';
+        else if (found.nome === 'Armazéns Estações & Comércio LTDA') updated.municipio = 'Belém';
+        else if (found.nome === 'Carlos Henrique Abreu') updated.municipio = 'Tucumã';
+        else if (found.nome === 'Expresso Pará Logística LTDA') updated.municipio = 'Castanhal';
+        else if (found.nome === 'TechNorte Sistemas LTDA') updated.municipio = 'Belém';
+      }
+      return updated;
+    });
+  };
+
+  const handleFornecedorNameChange = (name: string) => {
+    setCompraForm(prev => {
+      const updated = { ...prev, fornecedor: name };
+      const found = CADASTRO_FORNECEDORES.find(f => f.nome === name);
+      if (found) {
+        updated.codigoFornecedor = found.codigo;
+        updated.fazendaOrigem = found.fazenda;
+        updated.estado = found.estado;
+        updated.pais = 'Brasil';
+        if (found.nome === 'José Carlos Albuquerque') updated.municipio = 'Rondonópolis';
+        else if (found.nome === 'Agropecuária Vale Verde S/A') updated.municipio = 'Rio Verde';
+        else if (found.nome === 'Marcos de Souza Neves') updated.municipio = 'Redenção';
+        else if (found.nome === 'Alfa Transportes LTDA') updated.municipio = 'Redenção';
+        else if (found.nome === 'Norte Pegaso Serviços LTDA') updated.municipio = 'Redenção';
+        else if (found.nome === 'Armazéns Estações & Comércio LTDA') updated.municipio = 'Belém';
+        else if (found.nome === 'Carlos Henrique Abreu') updated.municipio = 'Tucumã';
+        else if (found.nome === 'Expresso Pará Logística LTDA') updated.municipio = 'Castanhal';
+        else if (found.nome === 'TechNorte Sistemas LTDA') updated.municipio = 'Belém';
+      }
+      return updated;
+    });
+  };
+
+  const handleCodigoClienteFornecedorChange = (code: string) => {
+    setNegForm(prev => {
+      const updated = { ...prev, codigoClienteFornecedor: code };
+      const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.codigo === code || x.id === code);
+      if (found) {
+        updated.clienteFornecedor = found.nome;
+        updated.fazenda = 'fazenda' in found ? found.fazenda : '';
+        updated.estado = found.estado;
+        updated.cidade = 'fazenda' in found ? (
+          found.nome === 'José Carlos Albuquerque' ? 'Rondonópolis' :
+          found.nome === 'Agropecuária Vale Verde S/A' ? 'Rio Verde' :
+          found.nome === 'Marcos de Souza Neves' ? 'Redenção' : 'Redenção'
+        ) : '';
+        updated.contatoTelefone = 'telefone' in found ? found.telefone : '';
+      }
+      return updated;
+    });
+  };
+
+  const handleClienteFornecedorNameChange = (name: string) => {
+    setNegForm(prev => {
+      const updated = { ...prev, clienteFornecedor: name };
+      const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.nome === name);
+      if (found) {
+        updated.codigoClienteFornecedor = found.codigo;
+        updated.fazenda = 'fazenda' in found ? found.fazenda : '';
+        updated.estado = found.estado;
+        updated.cidade = 'fazenda' in found ? (
+          found.nome === 'José Carlos Albuquerque' ? 'Rondonópolis' :
+          found.nome === 'Agropecuária Vale Verde S/A' ? 'Rio Verde' :
+          found.nome === 'Marcos de Souza Neves' ? 'Redenção' : 'Redenção'
+        ) : '';
+        updated.contatoTelefone = 'telefone' in found ? found.telefone : '';
+      }
+      return updated;
+    });
   };
 
   // Submódulo calculations & filters
@@ -259,6 +367,7 @@ export default function CommercialView({
     const novaCompra: Compra = {
       id: 'c-' + Math.random().toString(36).substr(2, 9),
       numeroOperacao: compraForm.numeroOperacao || 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
+      codigoFornecedor: compraForm.codigoFornecedor,
       fornecedor: compraForm.fornecedor,
       fazendaOrigem: compraForm.fazendaOrigem,
       municipio: compraForm.municipio,
@@ -285,15 +394,16 @@ export default function CommercialView({
       placa: Number(compraForm.quantidade) > 50 ? '' : compraForm.placa,
       destinoFrigorifico: compraForm.destinoFrigorifico,
       destinoCidade: compraForm.destinoCidade,
-      destinoEstado: compraForm.destinoEstado,
+      destinoState: compraForm.destinoEstado,
       destinoPais: compraForm.destinoPais
-    };
+    } as any;
 
     onAddCompra(novaCompra);
     setShowAddCompraModal(false);
     // Reset keys
     setCompraForm({
       numeroOperacao: '',
+      codigoFornecedor: '',
       fornecedor: '',
       fazendaOrigem: '',
       municipio: '',
@@ -333,6 +443,7 @@ export default function CommercialView({
     const novaVenda: OrdemCompraCliente = {
       id: 'v-' + Math.random().toString(36).substr(2, 9),
       numeroOC: vendaForm.numeroOC || 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
+      codigoCliente: vendaForm.codigoCliente,
       cliente: vendaForm.cliente,
       frigorifico: vendaForm.frigorifico,
       categoriaAnimal: vendaForm.categoriaAnimal,
@@ -349,13 +460,14 @@ export default function CommercialView({
     setShowAddVendaModal(false);
     setVendaForm({
       numeroOC: '',
+      codigoCliente: '',
       cliente: '',
       frigorifico: '',
-      categoriaAnimal: 'Boi Gordo',
-      quantidade: 100,
-      peso: 30000,
-      valorArroba: 290,
-      comissao: 1.0,
+      categoriaAnimal: '' as any,
+      quantidade: '' as any,
+      peso: '' as any,
+      valorArroba: '' as any,
+      comissao: '' as any,
       status: 'Pendente',
       dataEmissao: new Date().toISOString().split('T')[0]
     });
@@ -366,6 +478,7 @@ export default function CommercialView({
     const novaNeg: Negociacao = {
       id: 'n-' + Math.random().toString(36).substr(2, 9),
       titulo: negForm.titulo,
+      codigoClienteFornecedor: negForm.codigoClienteFornecedor,
       clienteFornecedor: negForm.clienteFornecedor,
       fazenda: negForm.fazenda,
       cabecas: Number(negForm.cabecas),
@@ -383,10 +496,11 @@ export default function CommercialView({
     setShowAddNegModal(false);
     setNegForm({
       titulo: '',
+      codigoClienteFornecedor: '',
       clienteFornecedor: '',
       fazenda: '',
-      cabecas: 100,
-      valorEstimado: 300000,
+      cabecas: '' as any,
+      valorEstimado: '' as any,
       contatoTelefone: '',
       fase: 'prospeccao',
       ordemCompraClienteId: '',
@@ -914,7 +1028,19 @@ export default function CommercialView({
               <div className="mt-1">
                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">A. Procedência (Origem)</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Fornecedor</label>
+                  <input
+                    type="text"
+                    required
+                    list="fornecedores-codigo-list"
+                    value={compraForm.codigoFornecedor}
+                    onChange={(e) => handleCodigoFornecedorChange(e.target.value)}
+                    placeholder="Ex: F-2706260004"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                  />
+                </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Fornecedor</label>
                   <input
@@ -922,26 +1048,7 @@ export default function CommercialView({
                     required
                     list="fornecedores-list"
                     value={compraForm.fornecedor}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => {
-                        const updated = { ...prev, fornecedor: val };
-                        const found = CADASTRO_FORNECEDORES.find(f => f.nome === val);
-                        if (found) {
-                          updated.fazendaOrigem = found.fazenda;
-                          updated.estado = found.estado;
-                          updated.pais = 'Brasil';
-                          if (found.nome === 'José Carlos Albuquerque') {
-                            updated.municipio = 'Rondonópolis';
-                          } else if (found.nome === 'Agropecuária Vale Verde S/A') {
-                            updated.municipio = 'Rio Verde';
-                          } else if (found.nome === 'Marcos de Souza Neves') {
-                            updated.municipio = 'Redenção';
-                          }
-                        }
-                        return updated;
-                      });
-                    }}
+                    onChange={(e) => handleFornecedorNameChange(e.target.value)}
                     placeholder="Nome do produtor rural"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -1439,8 +1546,20 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Row 2: Cliente, Destino, Categoria */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Row 2: Cód. Cliente, Cliente, Destino, Categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Cliente</label>
+                  <input
+                    type="text"
+                    required
+                    list="clientes-codigo-list"
+                    value={vendaForm.codigoCliente}
+                    onChange={(e) => handleCodigoClienteChange(e.target.value)}
+                    placeholder="Ex: C-2706260004"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cliente</label>
                   <select
@@ -1609,7 +1728,19 @@ export default function CommercialView({
                   className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Parceiro</label>
+                  <input
+                    type="text"
+                    required
+                    list="parceiros-codigo-list"
+                    value={negForm.codigoClienteFornecedor}
+                    onChange={(e) => handleCodigoClienteFornecedorChange(e.target.value)}
+                    placeholder="Ex: C-2706260005"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro Comercial</label>
                   <input
@@ -1617,47 +1748,9 @@ export default function CommercialView({
                     required
                     list="parceiros-list"
                     value={negForm.clienteFornecedor}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setNegForm(prev => {
-                        const updated = { ...prev, clienteFornecedor: val };
-                        const foundCli = CADASTRO_CLIENTES.find(c => c.nome === val);
-                        const foundSup = CADASTRO_FORNECEDORES.find(f => f.nome === val);
-                        
-                        if (foundCli) {
-                          updated.estado = foundCli.estado;
-                          updated.contatoTelefone = foundCli.telefone;
-                          updated.pais = 'Brasil';
-                          if (foundCli.nome === 'Frigorífico JBS S/A') {
-                            updated.fazenda = 'Unidade Rondonópolis - JBS';
-                            updated.cidade = 'Rondonópolis';
-                          } else if (foundCli.nome === 'Frigorífico Marfrig Global Foods') {
-                            updated.fazenda = 'Planta de Bataguassu - Marfrig';
-                            updated.cidade = 'Bataguassu';
-                          } else if (foundCli.nome === 'Minerva Foods S/A') {
-                            updated.fazenda = 'Unidade Barretos - Minerva';
-                            updated.cidade = 'Barretos';
-                          }
-                        } else if (foundSup) {
-                          updated.fazenda = foundSup.fazenda;
-                          updated.estado = foundSup.estado;
-                          updated.pais = 'Brasil';
-                          if (foundSup.nome === 'José Carlos Albuquerque') {
-                            updated.cidade = 'Rondonópolis';
-                            updated.contatoTelefone = '(66) 99882-1244';
-                          } else if (foundSup.nome === 'Agropecuária Vale Verde S/A') {
-                            updated.cidade = 'Rio Verde';
-                            updated.contatoTelefone = '(34) 99121-7890';
-                          } else if (foundSup.nome === 'Marcos de Souza Neves') {
-                            updated.cidade = 'Redenção';
-                            updated.contatoTelefone = '(67) 98111-5432';
-                          }
-                        }
-                        return updated;
-                      });
-                    }}
+                    onChange={(e) => handleClienteFornecedorNameChange(e.target.value)}
                     placeholder="Nome"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
                 <div>
@@ -1668,9 +1761,12 @@ export default function CommercialView({
                     value={negForm.fazenda}
                     onChange={(e) => setNegForm({ ...negForm, fazenda: e.target.value })}
                     placeholder="Nome Propriedade"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cabeças gado</label>
                   <input
@@ -1814,6 +1910,24 @@ export default function CommercialView({
       <datalist id="destino-list">
         {clientes.map(c => (
           <option key={c.id} value={c.nomeFantasia} />
+        ))}
+      </datalist>
+
+      <datalist id="fornecedores-codigo-list">
+        {CADASTRO_FORNECEDORES.map(f => (
+          <option key={f.id} value={f.codigo} />
+        ))}
+      </datalist>
+
+      <datalist id="clientes-codigo-list">
+        {CADASTRO_CLIENTES.map(c => (
+          <option key={c.id} value={c.codigo} />
+        ))}
+      </datalist>
+
+      <datalist id="parceiros-codigo-list">
+        {[...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES, ...CADASTRO_PARCEIROS].map(p => (
+          <option key={p.id} value={p.codigo} />
         ))}
       </datalist>
 

@@ -53,6 +53,7 @@ export interface Compra {
   destinoCidade?: string;
   destinoEstado?: string;
   destinoPais?: string;
+  codigoFornecedor?: string;
 }
 
 export interface OrdemCompraCliente {
@@ -68,6 +69,7 @@ export interface OrdemCompraCliente {
   resultadoOperacao: number; // total calculated profit/loss
   status: 'Pendente' | 'Faturada' | 'Entregue';
   dataCriacao: string;
+  codigoCliente?: string;
 }
 
 export interface Negociacao {
@@ -85,6 +87,7 @@ export interface Negociacao {
   pais?: string;
   estado?: string;
   cidade?: string;
+  codigoClienteFornecedor?: string;
 }
 
 export interface Lote {
