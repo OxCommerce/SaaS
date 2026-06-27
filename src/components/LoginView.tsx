@@ -74,42 +74,22 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
           />
         </div>
 
-        {/* Logo */}
-        <div className="relative z-10">
-          <OxLogo variant="white" className="h-10 w-auto" />
-        </div>
-
-        {/* Center content */}
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold text-white font-display leading-tight mb-4">
-            Gestão pecuária integrada,<br />do campo ao frigorífico
-          </h2>
-          <p className="text-blue-200 text-base leading-relaxed mb-8 max-w-sm">
-            Rastreabilidade total, conformidade fiscal e controle operacional em uma única plataforma.
-          </p>
-          <div className="space-y-3">
-            {[
-              'Integração direta com SEFAZ & GTA',
-              'Rastreamento logístico em tempo real',
-              'Fluxo de caixa e conciliação bancária',
-              'Dashboard executivo com BI pecuário',
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-3 text-sm text-slate-200">
-                <CheckCircle2 className="h-4 w-4 text-[#D8B46A] flex-shrink-0" />
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom badges */}
-        <div className="relative z-10 flex flex-wrap gap-3">
-          {['SEFAZ Homologado', 'SSL-256', 'LGPD Compliant', '99,9% Uptime'].map((tag) => (
-            <span key={tag} className="flex items-center gap-1.5 text-[10px] font-semibold text-[#D8B46A] bg-[#D8B46A]/10 border border-[#D8B46A]/20 px-3 py-1.5 rounded-full">
-              <ShieldCheck className="h-3 w-3 text-[#D8B46A]" />
-              {tag}
-            </span>
-          ))}
+        {/* Center content - large centered logo and name */}
+        <div className="flex-1 flex flex-col justify-center items-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center"
+          >
+            <OxLogo variant="white" className="h-48 w-auto mx-auto drop-shadow-2xl" />
+            <h1 className="text-white text-5xl font-black font-display mt-8 tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
+              OxCommerce
+            </h1>
+            <p className="text-blue-200 text-sm tracking-widest uppercase mt-2 font-medium opacity-80">
+              Agropecuária de Rastreabilidade Integrada
+            </p>
+          </motion.div>
         </div>
       </div>
 
