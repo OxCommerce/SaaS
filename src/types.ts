@@ -71,6 +71,7 @@ export interface OrdemCompraCliente {
   status: 'Pendente' | 'Faturada' | 'Entregue';
   dataCriacao: string;
   codigoCliente?: string;
+  codigoOrdemCompraCliente?: string;
 }
 
 export interface Negociacao {

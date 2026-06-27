@@ -69,41 +69,54 @@ export default function CommercialView({
   onGoToLogistica
 }: CommercialViewProps) {
   
-  // Clientes state loaded from Supabase
+  // Clientes and Fornecedores states loaded from Supabase
   const [clientes, setClientes] = useState<any[]>(MOCK_CLIENT_UNITS);
+  const [fornecedores, setFornecedores] = useState<any[]>([]);
 
   useEffect(() => {
-    async function loadClientes() {
+    async function loadRelations() {
       try {
         const { data, error } = await supabase
           .from('clientes_fornecedores')
           .select('*');
 
         if (!error && data && data.length > 0) {
-          const filtered = data.filter(item => item.relacionamento === 'CLI' || item.relacionamento === 'AMB');
-          if (filtered.length > 0) {
-            const mapped = filtered.map(item => {
-              const raw = item.raw_data || {};
-              const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
-              const nFantasia = raw.nomeFantasia || item.nome || rSocial;
-              const cid = raw.cidade || item.fazenda || 'Não Informada';
-              const estadoUf = raw.uf || item.estado || 'SP';
-              return {
-                id: item.id,
-                nomeFantasia: nFantasia,
-                razaoSocial: rSocial,
-                cidade: cid,
-                uf: estadoUf
-              };
-            });
-            setClientes(mapped);
+          const allRelations = data.map(item => {
+            const raw = item.raw_data || {};
+            const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+            const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+            const cid = raw.cidade || item.fazenda || 'Não Informada';
+            const estadoUf = raw.uf || item.estado || 'SP';
+            return {
+              id: item.id,
+              codigo: item.codigo || raw.codigo || '',
+              nome: item.nome,
+              nomeFantasia: nFantasia,
+              razaoSocial: rSocial,
+              cidade: cid,
+              uf: estadoUf,
+              documento: item.documento || '',
+              telefone: item.telefone || '',
+              relacionamento: item.relacionamento || 'CLI',
+              fazenda: item.fazenda || ''
+            };
+          });
+
+          const clientList = allRelations.filter(item => item.relacionamento === 'CLI' || item.relacionamento === 'AMB');
+          const supplierList = allRelations.filter(item => item.relacionamento === 'FOR' || item.relacionamento === 'AMB');
+
+          if (clientList.length > 0) {
+            setClientes(clientList);
+          }
+          if (supplierList.length > 0) {
+            setFornecedores(supplierList);
           }
         }
       } catch (err) {
-        console.warn('Failed to load clients from Supabase in CommercialView:', err);
+        console.warn('Failed to load relations from Supabase in CommercialView:', err);
       }
     }
-    loadClientes();
+    loadRelations();
   }, []);
 
   // Categorias state loaded from Supabase
@@ -193,7 +206,8 @@ export default function CommercialView({
     valorArroba: '' as any,
     comissao: '' as any,
     status: 'Pendente' as OrdemCompraCliente['status'],
-    dataEmissao: new Date().toISOString().split('T')[0]
+    dataEmissao: new Date().toISOString().split('T')[0],
+    codigoOrdemCompraCliente: ''
   });
 
   // Form State for Negociacao
@@ -319,6 +333,18 @@ export default function CommercialView({
   };
 
   const triggerFornecedorCodigoLookup = (code: string) => {
+    const foundDb = fornecedores.find(f => f.codigo === code || f.id === code);
+    if (foundDb) {
+      setCompraForm(prev => ({
+        ...prev,
+        fornecedor: foundDb.nomeFantasia || foundDb.nome,
+        fazendaOrigem: foundDb.fazenda,
+        estado: foundDb.uf,
+        pais: 'Brasil',
+        municipio: foundDb.cidade
+      }));
+      return;
+    }
     const found = CADASTRO_FORNECEDORES.find(f => f.codigo === code || f.id === code);
     if (found) {
       setCompraForm(prev => ({
@@ -333,6 +359,18 @@ export default function CommercialView({
   };
 
   const triggerFornecedorNameLookup = (name: string) => {
+    const foundDb = fornecedores.find(f => f.nomeFantasia === name || f.razaoSocial === name || f.nome === name);
+    if (foundDb) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoFornecedor: foundDb.codigo || foundDb.id,
+        fazendaOrigem: foundDb.fazenda,
+        estado: foundDb.uf,
+        pais: 'Brasil',
+        municipio: foundDb.cidade
+      }));
+      return;
+    }
     const found = CADASTRO_FORNECEDORES.find(f => f.nome === name);
     if (found) {
       setCompraForm(prev => ({
@@ -347,6 +385,18 @@ export default function CommercialView({
   };
 
   const triggerClienteFornecedorCodigoLookup = (code: string) => {
+    const foundDb = [...clientes, ...fornecedores].find(x => x.codigo === code || x.id === code);
+    if (foundDb) {
+      setNegForm(prev => ({
+        ...prev,
+        clienteFornecedor: foundDb.nomeFantasia || foundDb.nome,
+        fazenda: foundDb.fazenda || '',
+        estado: foundDb.uf || foundDb.estado || '',
+        cidade: foundDb.cidade || '',
+        contatoTelefone: foundDb.telefone || ''
+      }));
+      return;
+    }
     const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.codigo === code || x.id === code);
     if (found) {
       setNegForm(prev => ({
@@ -361,6 +411,18 @@ export default function CommercialView({
   };
 
   const triggerClienteFornecedorNameLookup = (name: string) => {
+    const foundDb = [...clientes, ...fornecedores].find(x => x.nomeFantasia === name || x.razaoSocial === name || x.nome === name);
+    if (foundDb) {
+      setNegForm(prev => ({
+        ...prev,
+        codigoClienteFornecedor: foundDb.codigo || foundDb.id,
+        fazenda: foundDb.fazenda || '',
+        estado: foundDb.uf || foundDb.estado || '',
+        cidade: foundDb.cidade || '',
+        contatoTelefone: foundDb.telefone || ''
+      }));
+      return;
+    }
     const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.nome === name);
     if (found) {
       setNegForm(prev => ({
@@ -487,7 +549,8 @@ export default function CommercialView({
       comissao: Number(vendaForm.comissao),
       resultadoOperacao: resultado,
       status: vendaForm.status,
-      dataCriacao: vendaForm.dataEmissao || new Date().toISOString().split('T')[0]
+      dataCriacao: vendaForm.dataEmissao || new Date().toISOString().split('T')[0],
+      codigoOrdemCompraCliente: vendaForm.codigoOrdemCompraCliente
     };
 
     onAddOrdemCompraCliente(novaVenda);
@@ -503,7 +566,8 @@ export default function CommercialView({
       valorArroba: '' as any,
       comissao: '' as any,
       status: 'Pendente',
-      dataEmissao: new Date().toISOString().split('T')[0]
+      dataEmissao: new Date().toISOString().split('T')[0],
+      codigoOrdemCompraCliente: ''
     });
   };
 
@@ -829,7 +893,8 @@ export default function CommercialView({
                   valorArroba: '' as any,
                   comissao: '' as any,
                   status: 'Pendente',
-                  dataEmissao: new Date().toISOString().split('T')[0]
+                  dataEmissao: new Date().toISOString().split('T')[0],
+                  codigoOrdemCompraCliente: ''
                 });
                 setShowAddVendaModal(true);
               }}
@@ -1627,8 +1692,8 @@ export default function CommercialView({
             </div>
 
             <form onSubmit={handleAddVendaSubmit} className="mt-4 space-y-4">
-              {/* Row 1: ID OC, Data de Emissão, Status */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Row 1: ID OC, Ordem de Compra do Cliente, Data de Emissão, Status */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
                   <input
@@ -1636,6 +1701,16 @@ export default function CommercialView({
                     required
                     value={vendaForm.numeroOC}
                     onChange={(e) => setVendaForm({ ...vendaForm, numeroOC: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
+                  <input
+                    type="text"
+                    value={vendaForm.codigoOrdemCompraCliente}
+                    onChange={(e) => setVendaForm({ ...vendaForm, codigoOrdemCompraCliente: e.target.value })}
+                    placeholder="Opcional (preenchimento manual)"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
