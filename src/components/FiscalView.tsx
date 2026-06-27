@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { GTA, CTE, NFE, SubMenuFiscal, ViagemLogistica, Lote } from '../types';
+import { GTA, CTE, NFE, SubMenuFiscal, Negociacao, Lote } from '../types';
 import {
   FileText,
   Truck,
@@ -34,7 +34,7 @@ interface FiscalViewProps {
   searchQuery: string;
   activeSubMenu: SubMenuFiscal;
   setActiveSubMenu: (sub: SubMenuFiscal) => void;
-  viagens: ViagemLogistica[];
+  negociacoes: Negociacao[];
   lotes: Lote[];
 }
 
@@ -50,7 +50,7 @@ export default function FiscalView({
   searchQuery,
   activeSubMenu,
   setActiveSubMenu,
-  viagens,
+  negociacoes,
   lotes
 }: FiscalViewProps) {
   
@@ -94,21 +94,21 @@ export default function FiscalView({
     processoId: ''
   });
 
-  // Helper functions for autocompleting forms when linking a process (Viagem)
+  // Helper functions for autocompleting forms when linking a process (ID de Operação / Negociação)
   const handleGtaProcessChange = (procId: string) => {
     if (!procId) {
       setNewGtaForm(prev => ({ ...prev, processoId: '' }));
       return;
     }
-    const voyage = viagens.find(v => v.id === procId);
-    if (voyage) {
+    const neg = negociacoes.find(n => n.id === procId);
+    if (neg) {
       setNewGtaForm(prev => ({
         ...prev,
         processoId: procId,
-        quantidadeAnimais: voyage.quantidadeCabecas,
-        origem: `${voyage.origem} (Fazenda Santa Rita)`,
-        destino: `${voyage.destino} (Planta Frigorífico)`,
-        observacoes: `Nelore para abate imediato. Trânsito interestadual autorizado. Vacinação anti-aftosa em dia. Ref. Viagem ${voyage.id}.`
+        quantidadeAnimais: neg.cabecas,
+        origem: neg.fazenda || neg.clienteFornecedor || 'Não Informada',
+        destino: neg.cidade ? `${neg.cidade} - ${neg.estado || 'SP'}` : 'Não Informado',
+        observacoes: `Nelore para abate imediato. Trânsito interestadual autorizado. Vacinação anti-aftosa em dia. Ref. Operação ${neg.id} - ${neg.titulo}.`
       }));
     }
   };
@@ -118,16 +118,16 @@ export default function FiscalView({
       setNewCteForm(prev => ({ ...prev, processoId: '' }));
       return;
     }
-    const voyage = viagens.find(v => v.id === procId);
-    if (voyage) {
+    const neg = negociacoes.find(n => n.id === procId);
+    if (neg) {
       setNewCteForm(prev => ({
         ...prev,
         processoId: procId,
         transportadora: 'TransGado Matogrosso',
-        motorista: voyage.motorista,
-        veiculo: voyage.veiculo,
-        placa: voyage.placa,
-        valorFrete: voyage.freteContratado
+        motorista: '',
+        veiculo: '',
+        placa: '',
+        valorFrete: 0
       }));
     }
   };
@@ -137,15 +137,14 @@ export default function FiscalView({
       setNewNfeForm(prev => ({ ...prev, processoId: '' }));
       return;
     }
-    const voyage = viagens.find(v => v.id === procId);
-    if (voyage) {
-      const estimatedVal = voyage.quantidadeCabecas * 4800; // rough estimation for cattle value
+    const neg = negociacoes.find(n => n.id === procId);
+    if (neg) {
       setNewNfeForm(prev => ({
         ...prev,
         processoId: procId,
-        remetente: `Fazenda Santa Rita (Ox Commerce S/A - ${voyage.origem})`,
-        destinatario: `Marfrig Global Foods (${voyage.destino})`,
-        valor: estimatedVal
+        remetente: `${neg.clienteFornecedor} (${neg.fazenda || ''})`,
+        destinatario: neg.cidade ? `${neg.cidade} - ${neg.estado || 'SP'}` : 'Não Informado',
+        valor: neg.valorEstimado
       }));
     }
   };
@@ -332,18 +331,20 @@ export default function FiscalView({
                   <form onSubmit={handleCreateGTA} className="p-6 space-y-4 text-xs">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (Viagem Logística)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (ID de Operação / Negociação)</label>
                         <select
                           value={newGtaForm.processoId}
                           onChange={(e) => handleGtaProcessChange(e.target.value)}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-850 focus:outline-none focus:ring-2 focus:ring-[#071757]/20 focus:border-[#071757] bg-white font-medium"
                         >
-                          <option value="">-- Selecionar viagem ativa para autocompletar (Opcional) --</option>
-                          {viagens.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.id} - {v.motorista} ({v.origem} → {v.destino} | {v.quantidadeCabecas} cab.)
-                            </option>
-                          ))}
+                          <option value="">-- Selecionar operação em aberto para autocompletar (Opcional) --</option>
+                          {negociacoes
+                            .filter((n) => n.fase !== 'aprovado' && n.fase !== 'cancelado')
+                            .map((n) => (
+                              <option key={n.id} value={n.id}>
+                                {n.id} - {n.titulo} ({n.clienteFornecedor} | {n.cabecas} cab. | {n.fase})
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -567,7 +568,7 @@ export default function FiscalView({
 
                   {/* Unified Process Traceability Pane */}
                   {selectedGta.processoId && (() => {
-                    const voyage = viagens.find(v => v.id === selectedGta.processoId);
+                    const neg = negociacoes.find(n => n.id === selectedGta.processoId);
                     const lot = lotes.find(l => 
                       l.quantidade === selectedGta.quantidadeAnimais ||
                       (selectedGta.processoId === 'PRC-260610-MT-0001' && l.id === 'l-1') ||
@@ -589,7 +590,7 @@ export default function FiscalView({
                         
                         <div className="border-t border-gray-200/60 pt-2 space-y-1.5 text-[10px] text-gray-500">
                           <div>
-                            <span className="font-semibold text-gray-700">Origem da Rota:</span> Herdada da contratação da Viagem Logística <strong>{voyage?.id}</strong> (Veículo: {voyage?.veiculo} | Placa: {voyage?.placa} | Condutor: {voyage?.motorista}).
+                            <span className="font-semibold text-gray-700">Origem do Processo:</span> Herdada do ID de Operação/Negociação <strong>{neg?.id}</strong> (Título: {neg?.titulo} | Parceiro: {neg?.clienteFornecedor} | Fase: {neg?.fase}).
                           </div>
                           {lot && (
                             <div>
@@ -669,18 +670,20 @@ export default function FiscalView({
                   <form onSubmit={handleCreateCTE} className="p-6 space-y-4 text-xs">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (Viagem Logística)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (ID de Operação / Negociação)</label>
                         <select
                           value={newCteForm.processoId}
                           onChange={(e) => handleCteProcessChange(e.target.value)}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-850 focus:outline-none focus:ring-2 focus:ring-[#071757]/20 focus:border-[#071757] bg-white font-medium"
                         >
-                          <option value="">-- Selecionar viagem ativa para autocompletar (Opcional) --</option>
-                          {viagens.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.id} - {v.motorista} ({v.origem} → {v.destino} | {v.quantidadeCabecas} cab.)
-                            </option>
-                          ))}
+                          <option value="">-- Selecionar operação em aberto para autocompletar (Opcional) --</option>
+                          {negociacoes
+                            .filter((n) => n.fase !== 'aprovado' && n.fase !== 'cancelado')
+                            .map((n) => (
+                              <option key={n.id} value={n.id}>
+                                {n.id} - {n.titulo} ({n.clienteFornecedor} | {n.cabecas} cab. | {n.fase})
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -925,7 +928,7 @@ export default function FiscalView({
 
                   {/* Unified Process Traceability Pane */}
                   {selectedCte.processoId && (() => {
-                    const voyage = viagens.find(v => v.id === selectedCte.processoId);
+                    const neg = negociacoes.find(n => n.id === selectedCte.processoId);
                     const lot = lotes.find(l => 
                       (selectedCte.processoId === 'PRC-260610-MT-0001' && l.id === 'l-1') ||
                       (selectedCte.processoId === 'PRC-260612-GO-0002' && l.id === 'l-2') ||
@@ -946,11 +949,11 @@ export default function FiscalView({
                         
                         <div className="border-t border-gray-200/60 pt-2 space-y-1.5 text-[10px] text-gray-500">
                           <div>
-                            <span className="font-semibold text-gray-700">Origem da Rota:</span> Obtida das coordenadas logísticas da Viagem <strong>{voyage?.id}</strong> ({voyage?.origem} → {voyage?.destino}).
+                            <span className="font-semibold text-gray-700">Origem do Processo:</span> Obtida da Negociação <strong>{neg?.id}</strong> ({neg?.titulo}).
                           </div>
                           {lot && (
                             <div>
-                              <span className="font-semibold text-gray-700">Lote e Carga:</span> Relacionado ao Lote <strong>{lot.codigoLote}</strong> ({voyage?.quantidadeCabecas || lot.quantidade} Cab. Nelore sob cuidados do motorista {selectedCte.motorista}).
+                              <span className="font-semibold text-gray-700">Lote e Carga:</span> Relacionado ao Lote <strong>{lot.codigoLote}</strong> ({neg?.cabecas || lot.quantidade} Cab. Nelore sob faturamento de {neg?.clienteFornecedor}).
                             </div>
                           )}
                           <div className="flex flex-wrap gap-1.5 items-center mt-2.5 pt-2 border-t border-gray-150">
@@ -1026,18 +1029,20 @@ export default function FiscalView({
                   <form onSubmit={handleCreateNFE} className="p-6 space-y-4 text-xs">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (Viagem Logística)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Vincular Processo de Origem (ID de Operação / Negociação)</label>
                         <select
                           value={newNfeForm.processoId}
                           onChange={(e) => handleNfeProcessChange(e.target.value)}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-855 focus:outline-none focus:ring-2 focus:ring-[#071757]/20 focus:border-[#071757] bg-white font-medium"
                         >
-                          <option value="">-- Selecionar viagem ativa para autocompletar (Opcional) --</option>
-                          {viagens.map((v) => (
-                            <option key={v.id} value={v.id}>
-                              {v.id} - {v.motorista} ({v.origem} → {v.destino} | {v.quantidadeCabecas} cab.)
-                            </option>
-                          ))}
+                          <option value="">-- Selecionar operação em aberto para autocompletar (Opcional) --</option>
+                          {negociacoes
+                            .filter((n) => n.fase !== 'aprovado' && n.fase !== 'cancelado')
+                            .map((n) => (
+                              <option key={n.id} value={n.id}>
+                                {n.id} - {n.titulo} ({n.clienteFornecedor} | {n.cabecas} cab. | {n.fase})
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -1226,7 +1231,7 @@ export default function FiscalView({
 
                 {/* Unified Process Traceability Pane */}
                 {selectedNfe.processoId && (() => {
-                  const voyage = viagens.find(v => v.id === selectedNfe.processoId);
+                  const neg = negociacoes.find(n => n.id === selectedNfe.processoId);
                   const lot = lotes.find(l => 
                     (selectedNfe.processoId === 'PRC-260610-MT-0001' && l.id === 'l-1') ||
                     (selectedNfe.processoId === 'PRC-260612-GO-0002' && l.id === 'l-2') ||
@@ -1247,7 +1252,7 @@ export default function FiscalView({
                       
                       <div className="border-t border-gray-200/60 pt-2 space-y-1.5 text-[10px] text-gray-500">
                         <div>
-                          <span className="font-semibold text-gray-700">Base de Cálculo:</span> Faturamento com base na pesagem do Lote <strong>{lot?.codigoLote || 'N/A'}</strong> ({voyage?.quantidadeCabecas || lot?.quantidade || 0} Cab. | Peso Estimado: {lot?.peso || 0} kg).
+                          <span className="font-semibold text-gray-700">Base de Cálculo:</span> Faturamento com base na pesagem do Lote <strong>{lot?.codigoLote || 'N/A'}</strong> ({neg?.cabecas || lot?.quantidade || 0} Cab. | Valor Estimado: {neg?.valorEstimado ? neg.valorEstimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}).
                         </div>
                         <div>
                           <span className="font-semibold text-gray-700">Origem Financeira:</span> Negociação de Venda de Gado Gordo com o comprador/frigorífico.

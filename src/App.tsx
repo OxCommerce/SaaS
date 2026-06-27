@@ -469,7 +469,7 @@ export default function App() {
               searchQuery={searchQuery}
               activeSubMenu={subMenuFiscal}
               setActiveSubMenu={setSubMenuFiscal}
-              viagens={viagens}
+              negociacoes={negociacoes}
               lotes={lotes}
             />
           )}
