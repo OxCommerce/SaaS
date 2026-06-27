@@ -117,6 +117,25 @@ export default function CommercialView({
       }
     }
     loadRelations();
+
+    const channel = supabase
+      .channel('commercial-relations-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'clientes_fornecedores'
+        },
+        () => {
+          loadRelations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Categorias state loaded from Supabase
