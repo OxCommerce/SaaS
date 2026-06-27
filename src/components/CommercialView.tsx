@@ -252,6 +252,20 @@ export default function CommercialView({
     return '';
   };
 
+  const getClientCity = (nome: string) => {
+    if (nome === 'Frigorífico JBS S/A') return 'Rondonópolis';
+    if (nome === 'Frigorífico Marfrig Global Foods') return 'Bataguassu';
+    if (nome === 'Minerva Foods S/A') return 'Barretos';
+    if (nome === 'João Marcelo Santos') return 'Redenção';
+    if (nome === 'Norte Pegaso Serviços LTDA') return 'Redenção';
+    if (nome === 'Maria Eduarda Lima') return 'Belém';
+    if (nome === 'Carlos Henrique Abreu') return 'Tucumã';
+    if (nome === 'Fernanda Rocha Martins') return 'Castanhal';
+    if (nome === 'TechNorte Sistemas LTDA') return 'Belém';
+    if (nome === 'Rafael Augusto Pereira') return 'Belém';
+    return '';
+  };
+
   const triggerClienteCodigoLookup = (code: string) => {
     const foundMock = CADASTRO_CLIENTES.find(c => c.codigo === code || c.id === code);
     if (foundMock) {
@@ -1639,9 +1653,10 @@ export default function CommercialView({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {(() => {
                   const selectedUnit = clientes.find(c => c.nomeFantasia === vendaForm.frigorifico);
+                  const foundMock = CADASTRO_CLIENTES.find(c => c.nome === vendaForm.frigorifico);
                   const modalPais = selectedUnit ? (selectedUnit.pais || 'Brasil') : 'Brasil';
-                  const modalUf = selectedUnit ? selectedUnit.uf : '';
-                  const modalCidade = selectedUnit ? selectedUnit.cidade : '';
+                  const modalUf = selectedUnit ? selectedUnit.uf : (foundMock ? foundMock.estado : '');
+                  const modalCidade = selectedUnit ? selectedUnit.cidade : (foundMock ? getClientCity(foundMock.nome) : '');
                   
                   return (
                     <>
