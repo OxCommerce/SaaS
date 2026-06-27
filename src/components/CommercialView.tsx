@@ -87,6 +87,10 @@ export default function CommercialView({
             const nFantasia = raw.nomeFantasia || item.nome || rSocial;
             const cid = raw.cidade || item.fazenda || 'Não Informada';
             const estadoUf = raw.uf || item.estado || 'SP';
+            let rel = item.relacionamento;
+            if (rel === 'Cliente') rel = 'CLI';
+            if (rel === 'Fornecedor') rel = 'FOR';
+            if (rel === 'Ambos') rel = 'AMB';
             return {
               id: item.id,
               codigo: item.codigo || raw.codigo || '',
@@ -97,7 +101,7 @@ export default function CommercialView({
               uf: estadoUf,
               documento: item.documento || '',
               telefone: item.telefone || '',
-              relacionamento: item.relacionamento || 'CLI',
+              relacionamento: rel || 'CLI',
               fazenda: item.fazenda || ''
             };
           });

@@ -143,17 +143,28 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('clientes_fornecedores').select('*');
         if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            nome: item.nome,
-            documento: item.documento,
-            telefone: item.telefone,
-            estado: item.estado,
-            relacionamento: item.relacionamento,
-            tipo: item.tipo,
-            fazenda: item.fazenda
-          }));
+          const mapped = data.map(item => {
+            let rel = item.relacionamento;
+            if (rel === 'Cliente') rel = 'CLI';
+            if (rel === 'Fornecedor') rel = 'FOR';
+            if (rel === 'Ambos') rel = 'AMB';
+            
+            const raw = item.raw_data || {};
+            const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
+            return {
+              ...raw,
+              id: item.id,
+              nome: item.nome,
+              documento: item.documento,
+              telefone: item.telefone,
+              estado: item.estado,
+              relacionamento: rel,
+              tipo: item.tipo || (raw.tipoPessoa === 'Física' ? 'Pessoa Física' : 'Pessoa Jurídica'),
+              fazenda: item.fazenda,
+              clientType: cType,
+              raw_data: { ...raw, clientType: cType }
+            };
+          });
           setClientesFornecedores(mapped.filter(item => !deletedMockIds.includes(item.id)));
         }
       } catch (err) {
@@ -335,10 +346,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     cnpjCpf: '',
     razaoSocial: '',
     nomeFantasia: '',
-    relacionamento: 'Cliente' as 'Cliente' | 'Fornecedor' | 'Ambos',
+    relacionamento: 'CLI' as 'CLI' | 'FOR' | 'AMB',
     inscricaoEstadual: '',
     inscricaoMunicipal: '',
     tipoPessoa: 'Jurídica' as 'Física' | 'Jurídica',
+    clientType: 'PJ' as 'PJ' | 'PF',
     fazendaPrincipal: '',
 
     // Contato
@@ -813,7 +825,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'CLIENT') {
-      const rel = formData.relacionamento || 'CLI';
+      let rel = formData.relacionamento || 'CLI';
+      if (rel === 'Cliente') rel = 'CLI';
+      if (rel === 'Fornecedor') rel = 'FOR';
+      if (rel === 'Ambos') rel = 'AMB';
+
       const isFornecedor = rel === 'FOR';
       const charPrefix = isFornecedor ? 'F' : 'C';
       const relevantList = clientesFornecedores.filter(c => c.relacionamento === rel);
@@ -828,7 +844,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         telefone: formData.contatoTelefone || '',
         estado: formData.uf || 'SP',
         relacionamento: rel,
-        tipo: formData.clientType === 'PJ' ? 'Pessoa Jurídica' : 'Pessoa Física',
+        tipo: (formData.clientType === 'PJ' || formData.tipoPessoa === 'Jurídica') ? 'Pessoa Jurídica' : 'Pessoa Física',
         fazenda: formData.logradouro || 'Não Informada',
         codigo: codeVal,
         raw_data: { ...formData, codigo: codeVal }
