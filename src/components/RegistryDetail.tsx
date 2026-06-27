@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select } from './Input';
 import { Button } from './Button';
-import { GoogleGenAI } from "@google/genai";
 
 interface RegistryDetailProps {
   type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'VEHICLE' | 'BROKER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY';
@@ -94,7 +93,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
     setBankInfo({ code: code, name: bank ? bank.name : '' });
   };
 
-  // CEP Automation Logic using Gemini + Google Maps Grounding
+  // CEP Automation Logic using public ViaCEP API
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newCep = e.target.value.replace(/\D/g, '');
     setAddress(prev => ({ ...prev, cep: newCep }));
@@ -104,60 +103,42 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
         setMapSourceUri(null);
         
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: `Busque no Google Maps o endereço exato para o CEP ${newCep} no Brasil.
-                Retorne os dados estritamente no seguinte formato de texto (uma informação por linha):
-                Logradouro: [Nome da Rua]
-                Bairro: [Nome do Bairro]
-                Cidade: [Nome da Cidade]
-                Estado: [Nome Completo do Estado]
-                UF: [Sigla do Estado de 2 letras]
-                
-                Se não encontrar, retorne apenas "Não encontrado".`,
-                config: {
-                    tools: [{ googleMaps: {} }],
+            const res = await fetch(`https://viacep.com.br/ws/${newCep}/json/`);
+            if (res.ok) {
+                const data = await res.json();
+                if (!data.erro) {
+                    const ufToEstado: Record<string, string> = {
+                        AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia', CE: 'Ceará',
+                        DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão',
+                        MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais', PA: 'Pará',
+                        PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí', RJ: 'Rio de Janeiro',
+                        RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul', RO: 'Rondônia', RR: 'Roraima',
+                        SC: 'Santa Catarina', SP: 'São Paulo', SE: 'Sergipe', TO: 'Tocantins'
+                    };
+                    const logradouro = data.logradouro || '';
+                    const bairro = data.bairro || '';
+                    const cidade = data.localidade || '';
+                    const uf = data.uf || '';
+                    const estado = data.estado || ufToEstado[uf] || '';
+
+                    setAddress(prev => ({
+                        ...prev,
+                        logradouro,
+                        bairro,
+                        cidade,
+                        estado,
+                        uf,
+                        pais: 'Brasil'
+                    }));
+
+                    if (logradouro) {
+                        const query = `${logradouro}, ${bairro}, ${cidade} - ${uf}`;
+                        setMapSourceUri(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
+                    }
                 }
-            });
-
-            const text = response.text || '';
-            
-            // Extract Grounding Source URI if available
-            const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-            if (chunks && chunks.length > 0) {
-                // Prioritize Maps URI, fallback to Web URI
-                const uri = chunks[0].maps?.uri || chunks[0].web?.uri;
-                if (uri) setMapSourceUri(uri);
             }
-
-            // Simple parsing of the formatted text response
-            const extract = (key: string) => {
-                const match = text.match(new RegExp(`${key}:\\s*(.*)`, 'i'));
-                return match ? match[1].trim() : '';
-            };
-
-            const logradouro = extract('Logradouro');
-            const bairro = extract('Bairro');
-            const cidade = extract('Cidade');
-            const estado = extract('Estado');
-            const uf = extract('UF');
-
-            if (cidade && uf) {
-                setAddress(prev => ({
-                    ...prev,
-                    logradouro: logradouro !== 'Não encontrado' ? logradouro : prev.logradouro,
-                    bairro: bairro !== 'Não encontrado' ? bairro : prev.bairro,
-                    cidade: cidade,
-                    estado: estado,
-                    uf: uf,
-                    pais: 'Brasil'
-                }));
-            }
-
         } catch (error) {
-            console.error("Erro ao consultar CEP via Gemini:", error);
-            // Fallback: User types manually
+            console.error("Erro ao consultar CEP via ViaCEP:", error);
         } finally {
             setIsLoadingCep(false);
         }
