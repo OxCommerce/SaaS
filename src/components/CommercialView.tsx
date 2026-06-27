@@ -1077,7 +1077,7 @@ export default function CommercialView({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID de ordem de compra do cliente</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC do Cliente</label>
                   <input
                     type="text"
                     value={compraForm.codigoOrdemCompraCliente}
