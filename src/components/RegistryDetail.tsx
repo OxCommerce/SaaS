@@ -103,6 +103,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
     complemento: data.complemento || ''
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
   const [mapSourceUri, setMapSourceUri] = useState<string | null>(null);
 
   // Sync parent data change down to internal states (e.g. on mount or edit load)
@@ -241,6 +242,75 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
       updateObj.contatoNomeContato = data.col1;
     }
     onChange(updateObj);
+
+    if (val.length === 14) {
+      setIsLoadingCnpj(true);
+      (async () => {
+        try {
+          const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${val}`);
+          if (res.ok) {
+            const result = await res.json();
+            
+            let phoneVal = '';
+            if (result.ddd_telefone_1) {
+              phoneVal = formatTelefone(result.ddd_telefone_1);
+            }
+
+            const ufToEstado: Record<string, string> = {
+              AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia', CE: 'Ceará',
+              DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão',
+              MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais', PA: 'Pará',
+              PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí', RJ: 'Rio de Janeiro',
+              RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul', RO: 'Rondônia', RR: 'Roraima',
+              SC: 'Santa Catarina', SP: 'São Paulo', SE: 'Sergipe', TO: 'Tocantins'
+            };
+            const estadoName = ufToEstado[result.uf] || '';
+
+            const rSocial = result.razao_social || '';
+            const nFantasia = result.nome_fantasia || rSocial;
+            const formattedCep = result.cep ? formatCep(result.cep) : '';
+
+            const finalObj = {
+              ...data,
+              cnpjCpf: formatted,
+              clientType: 'PJ',
+              col1: rSocial,
+              razaoSocial: rSocial,
+              nomeFantasia: nFantasia,
+              contatoNome: rSocial,
+              contatoNomeContato: rSocial,
+              contatoTelefone: phoneVal,
+              cep: formattedCep,
+              logradouro: result.logradouro || '',
+              numero: result.numero || '',
+              bairro: result.bairro || '',
+              cidade: result.municipio || '',
+              estado: estadoName,
+              uf: result.uf || '',
+              pais: 'Brasil'
+            };
+            
+            onChange(finalObj);
+            
+            setAddress({
+              cep: formattedCep,
+              logradouro: result.logradouro || '',
+              numero: result.numero || '',
+              bairro: result.bairro || '',
+              pais: 'Brasil',
+              estado: estadoName,
+              cidade: result.municipio || '',
+              uf: result.uf || '',
+              complemento: result.complemento || ''
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao consultar CNPJ via BrasilAPI:", error);
+        } finally {
+          setIsLoadingCnpj(false);
+        }
+      })();
+    }
   };
 
   // --- REUSABLE SECTIONS ---
@@ -483,13 +553,20 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
 
              {/* Row 1: CNPJ/CPF, Razão Social, Nome Fantasia, Relacionamento */}
              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <Input 
-                    label="CNPJ / CPF" 
-                    fullWidth 
-                    placeholder="Digite apenas números..."
-                    onChange={handleIdentityChange}
-                    value={data.cnpjCpf || ''}
-                />
+                 <div className="relative">
+                   <Input 
+                       label="CNPJ / CPF" 
+                       fullWidth 
+                       placeholder="Digite apenas números..."
+                       onChange={handleIdentityChange}
+                       value={data.cnpjCpf || ''}
+                   />
+                   {isLoadingCnpj && (
+                       <div className="absolute right-2 top-8">
+                           <span className="material-symbols-outlined text-brand-600 animate-spin text-sm">progress_activity</span>
+                       </div>
+                   )}
+                 </div>
                 <Input 
                     label="Razão Social / Nome Completo" 
                     value={data.col1 || ''} 
