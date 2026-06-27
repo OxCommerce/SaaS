@@ -2,6 +2,69 @@ import React, { useState, useEffect } from 'react';
 import { Input, Select } from './Input';
 import { Button } from './Button';
 
+const formatCpfCnpj = (value: string) => {
+  const nums = value.replace(/\D/g, '');
+  if (nums.length <= 11) {
+    // CPF: 999.999.999-99
+    return nums
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  } else {
+    // CNPJ: 99.999.999/9999-99
+    return nums
+      .substring(0, 14)
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+  }
+};
+
+const formatTelefone = (value: string) => {
+  const nums = value.replace(/\D/g, '');
+  if (nums.length <= 10) {
+    // (99) 9999-9999
+    return nums
+      .replace(/^(\d{2})(\d)/g, '($1) $2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  } else {
+    // (99) 99999-9999
+    return nums
+      .substring(0, 11)
+      .replace(/^(\d{2})(\d)/g, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2');
+  }
+};
+
+const formatIE = (value: string) => {
+  if (value.toLowerCase().includes('ise') || value.toLowerCase().includes('isen')) {
+    return value;
+  }
+  const nums = value.replace(/\D/g, '');
+  if (!nums) return value;
+  
+  if (nums.length <= 9) {
+    return nums
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1})$/, '$1-$2');
+  } else {
+    return nums
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2');
+  }
+};
+
+const formatPlaca = (value: string) => {
+  const clean = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  if (clean.length <= 3) {
+    return clean;
+  }
+  return `${clean.substring(0, 3)}-${clean.substring(3, 7)}`;
+};
+
 interface RegistryDetailProps {
   type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'VEHICLE' | 'BROKER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY';
   data: any;
@@ -158,6 +221,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
   };
 
   const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCpfCnpj(e.target.value);
     const val = e.target.value.replace(/\D/g, '');
     const isPJ = val.length > 11;
     if (isPJ) {
@@ -165,7 +229,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
     } else {
         setClientType('PF');
     }
-    const updateObj: any = { ...data, cnpjCpf: e.target.value, clientType: isPJ ? 'PJ' : 'PF' };
+    const updateObj: any = { ...data, cnpjCpf: formatted, clientType: isPJ ? 'PJ' : 'PF' };
     if (isPJ && data.col1) {
       updateObj.contatoNome = data.col1;
       updateObj.contatoNomeContato = data.col1;
@@ -298,7 +362,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
               label="CPF" 
               placeholder="000.000.000-00" 
               value={data.cpf || ''}
-              onChange={(e) => onChange({ ...data, cpf: e.target.value })}
+              onChange={(e) => onChange({ ...data, cpf: formatCpfCnpj(e.target.value) })}
               fullWidth 
             />
             <Input 
@@ -458,7 +522,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 <Input 
                     label="Inscrição Estadual" 
                     value={data.inscricaoEstadual || ''} 
-                    onChange={(e) => onChange({ ...data, inscricaoEstadual: e.target.value })} 
+                    onChange={(e) => onChange({ ...data, inscricaoEstadual: formatIE(e.target.value) })} 
                     fullWidth 
                 />
                 <Input 
@@ -522,7 +586,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                   placeholder="ABC-1234" 
                   className="uppercase font-mono" 
                   value={data.veiculoPlaca || ''}
-                  onChange={(e) => onChange({ ...data, veiculoPlaca: e.target.value })}
+                  onChange={(e) => onChange({ ...data, veiculoPlaca: formatPlaca(e.target.value) })}
                   fullWidth 
                 />
              </div>
@@ -851,7 +915,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 <Input 
                     label="Telefone / Celular" 
                     value={data.contatoTelefone || ''} 
-                    onChange={(e) => onChange({ ...data, contatoTelefone: e.target.value })} 
+                    onChange={(e) => onChange({ ...data, contatoTelefone: formatTelefone(e.target.value) })} 
                     fullWidth 
                 />
                 <Input 
