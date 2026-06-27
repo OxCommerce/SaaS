@@ -180,11 +180,11 @@ export default function CommercialView({
     numeroOC: '',
     cliente: '',
     frigorifico: '',
-    categoriaAnimal: 'Boi Gordo' as OrdemCompraCliente['categoriaAnimal'],
-    quantidade: 100,
-    peso: 30000,
-    valorArroba: 290,
-    comissao: 1.0,
+    categoriaAnimal: '' as any,
+    quantidade: '' as any,
+    peso: '' as any,
+    valorArroba: '' as any,
+    comissao: '' as any,
     status: 'Pendente' as OrdemCompraCliente['status'],
     dataEmissao: new Date().toISOString().split('T')[0]
   });
@@ -194,8 +194,8 @@ export default function CommercialView({
     titulo: '',
     clienteFornecedor: '',
     fazenda: '',
-    cabecas: 100,
-    valorEstimado: 300000,
+    cabecas: '' as any,
+    valorEstimado: '' as any,
     contatoTelefone: '',
     fase: 'prospeccao' as Negociacao['fase'],
     ordemCompraClienteId: '',
@@ -215,18 +215,16 @@ export default function CommercialView({
 
   useEffect(() => {
     if (showAddVendaModal) {
-      const firstCli = clientes[0];
-      const initialClient = firstCli ? firstCli.nomeFantasia : '';
       setVendaForm(prev => ({
         ...prev,
         numeroOC: 'OC-2026-' + Math.floor(Math.random() * 9000 + 1000),
-        cliente: initialClient,
-        frigorifico: initialClient,
+        cliente: '',
+        frigorifico: '',
         dataEmissao: new Date().toISOString().split('T')[0],
         status: 'Pendente'
       }));
     }
-  }, [showAddVendaModal, clientes]);
+  }, [showAddVendaModal]);
 
   useEffect(() => {
     if (showAddCompraModal) {
@@ -619,7 +617,21 @@ export default function CommercialView({
             </div>
             <button
               id="btn-add-venda"
-              onClick={() => setShowAddVendaModal(true)}
+              onClick={() => {
+                setVendaForm({
+                  numeroOC: 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
+                  cliente: '',
+                  frigorifico: '',
+                  categoriaAnimal: '' as any,
+                  quantidade: '' as any,
+                  peso: '' as any,
+                  valorArroba: '' as any,
+                  comissao: '' as any,
+                  status: 'Pendente',
+                  dataEmissao: new Date().toISOString().split('T')[0]
+                });
+                setShowAddVendaModal(true);
+              }}
               className="flex items-center space-x-1 bg-[#071757] hover:bg-[#182763] px-3.5 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-all uppercase cursor-pointer"
             >
               <Plus className="h-4 w-4" />
@@ -1436,6 +1448,7 @@ export default function CommercialView({
                     onChange={(e) => handleClientChange(e.target.value)}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-855 bg-white"
                   >
+                    <option value="">-- Selecione --</option>
                     {clientes.map((cli) => (
                       <option key={cli.id} value={cli.nomeFantasia}>
                         {cli.nomeFantasia}

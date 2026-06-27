@@ -66,31 +66,31 @@ export default function FiscalView({
 
   // Form State for manual GTA input
   const [newGtaForm, setNewGtaForm] = useState({
-    numeroGTA: '351' + Math.floor(Math.random() * 900000 + 100000) + '287',
-    origem: 'Rondonópolis - MT (Fazenda Santa Rita)',
-    destino: 'Barretos - SP (Planta Frigorífico Minerva)',
-    quantidadeAnimais: 120,
-    observacoes: 'Gado Nelore para abate imediato. Vacinação anti-aftosa em dia.',
+    numeroGTA: '',
+    origem: '',
+    destino: '',
+    quantidadeAnimais: '' as any,
+    observacoes: '',
     processoId: ''
   });
 
   // Form State for manual CT-e input
   const [newCteForm, setNewCteForm] = useState({
-    numeroCTE: 'CTE-' + Math.floor(Math.random() * 90000 + 10000),
-    transportadora: 'TransGado Matogrosso',
-    motorista: 'Valdecir Rodrigues Alves',
-    veiculo: 'Bitrem Scania R440',
-    placa: 'OQY-8E12',
-    valorFrete: 4800,
+    numeroCTE: '',
+    transportadora: '',
+    motorista: '',
+    veiculo: '',
+    placa: '',
+    valorFrete: '' as any,
     processoId: ''
   });
 
   // Form State for dynamic NF-e simulator
   const [newNfeForm, setNewNfeForm] = useState({
-    numero: 'NFE-000109' + Math.floor(Math.random() * 1000 + 100),
-    remetente: 'Fazenda Santa Rita (Ox Commerce S/A)',
-    destinatario: 'Marfrig Global Foods Bataguassu',
-    valor: 450000,
+    numero: '',
+    remetente: '',
+    destinatario: '',
+    valor: '' as any,
     processoId: ''
   });
 
@@ -170,11 +170,11 @@ export default function FiscalView({
     setShowAddGtaForm(false);
     // Reset forms
     setNewGtaForm({
-      numeroGTA: '351' + Math.floor(Math.random() * 900000 + 100000) + '287',
-      origem: 'Rondonópolis - MT (Fazenda Santa Rita)',
-      destino: 'Barretos - SP (Planta Frigorífico Minerva)',
-      quantidadeAnimais: 120,
-      observacoes: 'Gado Nelore para abate imediato. Vacinação anti-aftosa em dia.',
+      numeroGTA: '',
+      origem: '',
+      destino: '',
+      quantidadeAnimais: '' as any,
+      observacoes: '',
       processoId: ''
     });
   };
@@ -198,12 +198,12 @@ export default function FiscalView({
     setShowAddCteForm(false);
     // Reset forms
     setNewCteForm({
-      numeroCTE: 'CTE-' + Math.floor(Math.random() * 90000 + 10000),
-      transportadora: 'TransGado Matogrosso',
-      motorista: 'Valdecir Rodrigues Alves',
-      veiculo: 'Bitrem Scania R440',
-      placa: 'OQY-8E12',
-      valorFrete: 4500,
+      numeroCTE: '',
+      transportadora: '',
+      motorista: '',
+      veiculo: '',
+      placa: '',
+      valorFrete: '' as any,
       processoId: ''
     });
   };
@@ -229,10 +229,10 @@ export default function FiscalView({
     setShowAddNfeForm(false);
     // Reset forms
     setNewNfeForm({
-      numero: 'NFE-000109' + Math.floor(Math.random() * 1000 + 100),
-      remetente: 'Fazenda Santa Rita (Ox Commerce S/A)',
-      destinatario: 'Marfrig Global Foods Bataguassu',
-      valor: 450000,
+      numero: '',
+      remetente: '',
+      destinatario: '',
+      valor: '' as any,
       processoId: ''
     });
   };
