@@ -82,7 +82,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-center"
           >
-            <OxLogo variant="white" className="h-48 w-auto mx-auto drop-shadow-2xl" />
+            <OxLogo variant="white" className="h-[24rem] w-auto mx-auto drop-shadow-2xl" />
             <h1 className="text-white text-5xl font-black font-display mt-8 tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
               OxCommerce
             </h1>
