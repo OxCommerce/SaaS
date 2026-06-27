@@ -59,20 +59,35 @@ import {
 
 export default function App() {
   // Global Active Navigation state
-  const [activeMenu, setActiveMenu] = useState<ActiveMenu>('dashboard');
+  // Global Active Navigation state
+  const [activeMenu, setActiveMenu] = useState<ActiveMenu>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_active_menu') as ActiveMenu : null) || 'dashboard';
+  });
   
   // Categorized Submenu states
-  const [subMenuComercial, setSubMenuComercial] = useState<SubMenuComercial>('compras');
-  const [subMenuFiscal, setSubMenuFiscal] = useState<SubMenuFiscal>('gta');
-  const [subMenuFinanceiro, setSubMenuFinanceiro] = useState<SubMenuFinanceiro>('receber');
-  const [subMenuLogistica, setSubMenuLogistica] = useState<SubMenuLogistica>('transporte');
-  const [subMenuConfiguracoes, setSubMenuConfiguracoes] = useState<SubMenuConfiguracoes>('usuarios');
+  const [subMenuComercial, setSubMenuComercial] = useState<SubMenuComercial>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_comercial') as SubMenuComercial : null) || 'compras';
+  });
+  const [subMenuFiscal, setSubMenuFiscal] = useState<SubMenuFiscal>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_fiscal') as SubMenuFiscal : null) || 'gta';
+  });
+  const [subMenuFinanceiro, setSubMenuFinanceiro] = useState<SubMenuFinanceiro>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_financeiro') as SubMenuFinanceiro : null) || 'receber';
+  });
+  const [subMenuLogistica, setSubMenuLogistica] = useState<SubMenuLogistica>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_logistica') as SubMenuLogistica : null) || 'transporte';
+  });
+  const [subMenuConfiguracoes, setSubMenuConfiguracoes] = useState<SubMenuConfiguracoes>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_configuracoes') as SubMenuConfiguracoes : null) || 'usuarios';
+  });
 
   // Search filter query
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentUser, setCurrentUser] = useState('Diego Silveira');
-  const [currentRoute, setCurrentRoute] = useState<'home' | 'login' | 'app'>('home');
+  const [currentRoute, setCurrentRoute] = useState<'home' | 'login' | 'app'>(() => {
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_current_route') as any : null) || 'home';
+  });
 
   // In-Memory Mutatable States
   const [compras, setCompras] = useState<Compra[]>(INITIAL_COMPRAS);
@@ -90,6 +105,49 @@ export default function App() {
   const [dbStats, setDbStats] = useState<DatabaseStats>(INITIAL_DB_STATS);
   const [auditoriaLogs, setAuditoriaLogs] = useState(CHANNELS_AUDITORIA);
   const [usuariosList, setUsuariosList] = useState(CADASTRO_USUARIOS);
+
+  // Synchronize navigation selections to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_current_route', currentRoute);
+    }
+  }, [currentRoute]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_active_menu', activeMenu);
+    }
+  }, [activeMenu]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_submenu_comercial', subMenuComercial);
+    }
+  }, [subMenuComercial]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_submenu_fiscal', subMenuFiscal);
+    }
+  }, [subMenuFiscal]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_submenu_financeiro', subMenuFinanceiro);
+    }
+  }, [subMenuFinanceiro]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_submenu_logistica', subMenuLogistica);
+    }
+  }, [subMenuLogistica]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ox_submenu_configuracoes', subMenuConfiguracoes);
+    }
+  }, [subMenuConfiguracoes]);
 
   useEffect(() => {
     async function loadUsuarios() {
