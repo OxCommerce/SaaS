@@ -32,6 +32,58 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
     }
   }, [isOpen, initialData]);
 
+  const validateForm = (data: any) => {
+    if (type !== 'CLIENT') return true;
+
+    // Geral fields validation
+    if (!data.cnpjCpf || !data.cnpjCpf.trim()) {
+      alert("Por favor, preencha o campo CNPJ / CPF na aba Geral.");
+      return false;
+    }
+    if ((!data.col1 || !data.col1.trim()) && (!data.razaoSocial || !data.razaoSocial.trim())) {
+      alert("Por favor, preencha o campo Razão Social / Nome Completo na aba Geral.");
+      return false;
+    }
+    if (!data.nomeFantasia || !data.nomeFantasia.trim()) {
+      alert("Por favor, preencha o campo Nome Fantasia / Apelido na aba Geral.");
+      return false;
+    }
+
+    // Contato fields validation
+    if (!data.contatoNomeContato || !data.contatoNomeContato.trim()) {
+      alert("Por favor, preencha o campo Nome de Contato na aba Contato.");
+      return false;
+    }
+    if (!data.contatoTelefone || !data.contatoTelefone.trim()) {
+      alert("Por favor, preencha o campo Telefone / Celular na aba Contato.");
+      return false;
+    }
+
+    // Endereço fields validation
+    if (!data.cep || !data.cep.trim()) {
+      alert("Por favor, preencha o campo CEP na aba Endereço.");
+      return false;
+    }
+    if (!data.logradouro || !data.logradouro.trim()) {
+      alert("Por favor, preencha o campo Logradouro na aba Endereço.");
+      return false;
+    }
+    if (!data.bairro || !data.bairro.trim()) {
+      alert("Por favor, preencha o campo Bairro na aba Endereço.");
+      return false;
+    }
+    if (!data.cidade || !data.cidade.trim()) {
+      alert("Por favor, preencha o campo Cidade na aba Endereço.");
+      return false;
+    }
+    if (!data.uf || !data.uf.trim()) {
+      alert("Por favor, preencha o campo UF na aba Endereço.");
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -87,8 +139,10 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
               </button>
               <button 
                 onClick={() => {
-                  onSave(formData);
-                  onClose();
+                  if (validateForm(formData)) {
+                    onSave(formData);
+                    onClose();
+                  }
                 }}
                 type="button"
                 className="px-6 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 shadow-lg shadow-brand-200 transition-all flex items-center gap-2 uppercase tracking-wide cursor-pointer"

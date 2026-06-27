@@ -555,7 +555,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                  <div className="relative">
                    <Input 
-                       label="CNPJ / CPF" 
+                       label="CNPJ / CPF *" 
                        fullWidth 
                        placeholder="Digite apenas números..."
                        onChange={handleIdentityChange}
@@ -568,7 +568,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                    )}
                  </div>
                 <Input 
-                    label="Razão Social / Nome Completo" 
+                    label="Razão Social / Nome Completo *" 
                     value={data.col1 || ''} 
                     onChange={(e) => {
                       const val = e.target.value;
@@ -582,7 +582,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                     fullWidth 
                 />
                 <Input 
-                    label="Nome Fantasia / Apelido" 
+                    label="Nome Fantasia / Apelido *" 
                     value={data.nomeFantasia || ''} 
                     onChange={(e) => onChange({ ...data, nomeFantasia: e.target.value })} 
                     fullWidth 
@@ -987,7 +987,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                         fullWidth 
                     />
                     <Input 
-                        label="Nome de Contato" 
+                        label={type === 'CLIENT' ? "Nome de Contato *" : "Nome de Contato"} 
                         value={data.contatoNomeContato || ''} 
                         onChange={(e) => onChange({ ...data, contatoNomeContato: e.target.value })} 
                         fullWidth 
@@ -996,7 +996,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
             )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Input 
-                    label="Telefone / Celular" 
+                    label={type === 'CLIENT' ? "Telefone / Celular *" : "Telefone / Celular"} 
                     value={data.contatoTelefone || ''} 
                     onChange={(e) => onChange({ ...data, contatoTelefone: formatTelefone(e.target.value) })} 
                     fullWidth 
@@ -1041,7 +1041,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
            <div className="md:col-span-2 relative">
              <Input 
-                 label="CEP" 
+                 label={type === 'CLIENT' ? "CEP *" : "CEP"} 
                  value={address.cep} 
                  onChange={handleCepChange} 
                  placeholder="00000-000" 
@@ -1056,7 +1056,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
            </div>
            <div className="md:col-span-6">
              <Input 
-                 label="Logradouro" 
+                 label={type === 'CLIENT' ? "Logradouro *" : "Logradouro"} 
                  value={address.logradouro} 
                  onChange={(e) => setAddress({...address, logradouro: e.target.value})}
                  fullWidth 
@@ -1072,7 +1072,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
            </div>
            <div className="md:col-span-2">
               <Input 
-                 label="Bairro" 
+                 label={type === 'CLIENT' ? "Bairro *" : "Bairro"} 
                  value={address.bairro}
                  onChange={(e) => setAddress({...address, bairro: e.target.value})}
                  fullWidth 
@@ -1089,10 +1089,10 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
              <Input label="Estado" value={address.estado} readOnly className="bg-slate-50" fullWidth />
            </div>
            <div className="md:col-span-4">
-              <Input label="Cidade" value={address.cidade} readOnly className="bg-slate-50" fullWidth />
+              <Input label={type === 'CLIENT' ? "Cidade *" : "Cidade"} value={address.cidade} readOnly className="bg-slate-50" fullWidth />
            </div>
            <div className="md:col-span-2">
-              <Input label="UF" value={address.uf} readOnly className="bg-slate-50 uppercase" fullWidth />
+              <Input label={type === 'CLIENT' ? "UF *" : "UF"} value={address.uf} readOnly className="bg-slate-50 uppercase" fullWidth />
            </div>
         </div>
 
