@@ -17,7 +17,7 @@ import RelatoriosView from './components/RelatoriosView';
 import SettingsView from './components/SettingsView';
 import HomeView from './components/HomeView';
 import LoginView from './components/LoginView';
-import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';
+import neloreRebanho2 from '@/assets/nelore_rebanho_2.png';
 
 import {
   ActiveMenu,
@@ -373,7 +373,7 @@ export default function App() {
       {/* Global Background Image for Glassmorphism ERP theme */}
       <div
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none select-none filter brightness-[0.93]"
-        style={{ backgroundImage: `url(${neloreRebanho1})` }}
+        style={{ backgroundImage: `url(${neloreRebanho2})` }}
       />
       
       {/* 1. FIXED LEFT SIDEBAR */}
