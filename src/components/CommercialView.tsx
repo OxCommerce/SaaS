@@ -31,7 +31,8 @@ import {
   TrendingUp,
   Tag,
   MapPin,
-  FileCheck
+  FileCheck,
+  Edit2
 } from 'lucide-react';
 
 interface CommercialViewProps {
@@ -144,6 +145,9 @@ export default function CommercialView({
   const [showAddVendaModal, setShowAddVendaModal] = useState(false);
   const [showAddNegModal, setShowAddNegModal] = useState(false);
 
+  const [isEditCompraMode, setIsEditCompraMode] = useState(false);
+  const [editCompraId, setEditCompraId] = useState<string | null>(null);
+
   // Form State for Compra
   const [compraForm, setCompraForm] = useState({
     numeroOperacao: '',
@@ -231,12 +235,19 @@ export default function CommercialView({
   }, [showAddVendaModal]);
 
   useEffect(() => {
-    if (showAddCompraModal) {
+    if (showAddCompraModal && !isEditCompraMode) {
       setCompraForm(prev => ({
         ...prev,
         numeroOperacao: 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
         dataEmissao: new Date().toISOString().split('T')[0]
       }));
+    }
+  }, [showAddCompraModal, isEditCompraMode]);
+
+  useEffect(() => {
+    if (!showAddCompraModal) {
+      setIsEditCompraMode(false);
+      setEditCompraId(null);
     }
   }, [showAddCompraModal]);
 
@@ -379,7 +390,7 @@ export default function CommercialView({
     const valorTotal = Math.round(valorGado + comissaoValor + freteValor);
 
     const novaCompra: Compra = {
-      id: 'c-' + Math.random().toString(36).substr(2, 9),
+      id: isEditCompraMode && editCompraId ? editCompraId : 'c-' + Math.random().toString(36).substr(2, 9),
       numeroOperacao: compraForm.numeroOperacao || 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
       codigoFornecedor: compraForm.codigoFornecedor,
       codigoOrdemCompraCliente: compraForm.codigoOrdemCompraCliente,
@@ -415,6 +426,8 @@ export default function CommercialView({
 
     onAddCompra(novaCompra);
     setShowAddCompraModal(false);
+    setIsEditCompraMode(false);
+    setEditCompraId(null);
     // Reset keys
     setCompraForm({
       numeroOperacao: '',
@@ -727,7 +740,50 @@ export default function CommercialView({
                     <td className="p-3 text-right font-mono font-bold text-gray-900 bg-[#FDF6E3]/20">
                       {c.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="p-3 text-center flex items-center justify-center space-x-1.5">
+                      <button
+                        id={`edit-compra-${c.id}`}
+                        onClick={() => {
+                          setCompraForm({
+                            numeroOperacao: c.numeroOperacao,
+                            codigoFornecedor: c.codigoFornecedor || '',
+                            codigoOrdemCompraCliente: c.codigoOrdemCompraCliente || '',
+                            fornecedor: c.fornecedor,
+                            fazendaOrigem: c.fazendaOrigem,
+                            municipio: c.municipio,
+                            estado: c.estado,
+                            categoriaAnimal: c.categoriaAnimal,
+                            quantidade: c.quantidade as any,
+                            pesoMedio: c.pesoMedio as any,
+                            valorArroba: c.valorArroba as any,
+                            comissao: c.comissao as any,
+                            frete: c.frete as any,
+                            ordemCompraClienteId: c.ordemCompraClienteId || '',
+                            prazoPagamento: c.prazoPagamento || '',
+                            formaPagamento: c.formaPagamento || '',
+                            observacoes: c.observacoes || '',
+                            dataEmissao: c.dataCriacao,
+                            dataEntrega: c.dataEntrega || c.dataCriacao,
+                            status: c.status || 'Aberta',
+                            pais: c.pais || '',
+                            corretor: c.corretor || '',
+                            motorista: c.motorista || '',
+                            veiculo: c.veiculo || '',
+                            placa: c.placa || '',
+                            destinoFrigorifico: c.destinoFrigorifico || '',
+                            destinoCidade: c.destinoCidade || '',
+                            destinoEstado: c.destinoEstado || '',
+                            destinoPais: c.destinoPais || ''
+                          });
+                          setIsEditCompraMode(true);
+                          setEditCompraId(c.id);
+                          setShowAddCompraModal(true);
+                        }}
+                        className="p-1 text-gray-400 hover:text-indigo-600 rounded transition-all cursor-pointer"
+                        title="Editar Registro"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </button>
                       <button
                         id={`del-compra-${c.id}`}
                         onClick={() => onDeleteCompra(c.id)}
@@ -981,7 +1037,9 @@ export default function CommercialView({
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
-              <h3 className="text-sm font-bold text-gray-800">Lançar Compra de Bovinos (Entrada)</h3>
+              <h3 className="text-sm font-bold text-gray-800">
+                {isEditCompraMode ? 'Editar Compra de Bovinos (Entrada)' : 'Lançar Compra de Bovinos (Entrada)'}
+              </h3>
               <button id="close-compra-modal" onClick={() => setShowAddCompraModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                 <X className="h-4 w-4 text-gray-500" />
               </button>

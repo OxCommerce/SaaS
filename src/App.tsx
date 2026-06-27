@@ -132,7 +132,13 @@ export default function App() {
 
   // 2. Add cattle entry operation (Compra)
   const handleAddCompra = (novaCompra: Compra) => {
-    setCompras([novaCompra, ...compras]);
+    setCompras(prev => {
+      const exists = prev.some(c => c.id === novaCompra.id);
+      if (exists) {
+        return prev.map(c => c.id === novaCompra.id ? novaCompra : c);
+      }
+      return [novaCompra, ...prev];
+    });
     
     // Resolve destinations dynamically if linked to a client purchase order
     let destinoFinal = 'Barretos - SP (Planta Frigorífico Minerva)';
