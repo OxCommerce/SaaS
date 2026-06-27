@@ -65,6 +65,11 @@ const formatPlaca = (value: string) => {
   return `${clean.substring(0, 3)}-${clean.substring(3, 7)}`;
 };
 
+const formatCep = (value: string) => {
+  const nums = value.replace(/\D/g, '');
+  return nums.replace(/(\d{5})(\d)/, '$1-$2').substring(0, 9);
+};
+
 interface RegistryDetailProps {
   type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'VEHICLE' | 'BROKER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY';
   data: any;
@@ -158,8 +163,9 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
 
   // CEP Automation Logic using public ViaCEP API
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCep(e.target.value);
     const newCep = e.target.value.replace(/\D/g, '');
-    setAddress(prev => ({ ...prev, cep: newCep }));
+    setAddress(prev => ({ ...prev, cep: formatted }));
 
     if (newCep.length === 8) {
         setIsLoadingCep(true);
