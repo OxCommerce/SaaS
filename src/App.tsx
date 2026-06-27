@@ -544,9 +544,10 @@ export default function App() {
 
         </main>
 
-        {/* Outer bottom-bar credits */}
-        <footer className="py-4 border-t border-[#DEE1E9] mt-auto text-center text-[11px] text-[#57628D]">
-          <p>© 2026 {config.sistemaNome} S/A — Todos os direitos reservados. Agropecuária de Rastreabilidade Integrada.</p>
+        {/* Outer bottom-bar credits in premium glassmorphic style */}
+        <footer className="py-4 px-6 border-t border-[#E2E8F0]/40 bg-white/60 backdrop-blur-md mt-auto text-center text-[11px] text-[#57628D] flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p>© 2026 {config.sistemaNome} S/A — Todos os direitos reservados.</p>
+          <p className="font-semibold text-[#071757]">Agropecuária de Rastreabilidade Integrada.</p>
         </footer>
 
       </div>
