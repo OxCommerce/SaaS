@@ -47,7 +47,7 @@ export default function Header({
   const initials = currentUser.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <header className={`h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-6 fixed top-0 right-0 z-20 shadow-xs transition-all duration-300 ${collapsed ? 'left-20' : 'left-68'}`}>
+    <header className={`h-16 bg-white/80 backdrop-blur-lg border-b border-[#E2E8F0]/40 flex items-center justify-between px-6 fixed top-0 right-0 z-20 shadow-xs transition-all duration-300 ${collapsed ? 'left-20' : 'left-68'}`}>
 
       {/* Title */}
       <div>

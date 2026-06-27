@@ -17,6 +17,7 @@ import RelatoriosView from './components/RelatoriosView';
 import SettingsView from './components/SettingsView';
 import HomeView from './components/HomeView';
 import LoginView from './components/LoginView';
+import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';
 
 import {
   ActiveMenu,
@@ -368,7 +369,12 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F8FA] flex font-sans antialiased">
+    <div className="min-h-screen flex font-sans antialiased relative glass-panel-mode overflow-x-hidden">
+      {/* Global Background Image for Glassmorphism ERP theme */}
+      <div
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none select-none filter brightness-[0.93]"
+        style={{ backgroundImage: `url(${neloreRebanho1})` }}
+      />
       
       {/* 1. FIXED LEFT SIDEBAR */}
       <Sidebar
@@ -394,7 +400,7 @@ export default function App() {
       />
 
       {/* Main Content Layout area */}
-      <div className={`flex-1 pt-16 min-h-screen flex flex-col transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
+      <div className={`flex-1 pt-16 min-h-screen flex flex-col transition-all duration-300 relative z-10 ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
         
         {/* 2. TOP ACTIONS TASKBAR */}
         <Header

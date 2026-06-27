@@ -95,10 +95,10 @@ export default function Sidebar({
   const [openConfig, setOpenConfig] = useState(false);
 
   return (
-    <aside className={`bg-white text-[#0F172A] flex flex-col h-screen fixed top-0 left-0 z-30 border-r border-[#E2E8F0] shadow-sm overflow-y-auto transition-all duration-300 ${collapsed ? 'w-20' : 'w-68'}`}>
+    <aside className={`bg-white/80 backdrop-blur-lg text-[#0F172A] flex flex-col h-screen fixed top-0 left-0 z-30 border-r border-[#E2E8F0]/40 shadow-sm overflow-y-auto transition-all duration-300 ${collapsed ? 'w-20' : 'w-68'}`}>
 
       {/* ── Brand Header ── */}
-      <div className="py-5 px-5 border-b border-[#DEE1E9] flex items-center justify-center min-h-[80px] relative">
+      <div className="py-5 px-5 border-b border-[#DEE1E9]/40 flex items-center justify-center min-h-[80px] relative">
         <OxLogo variant="blue" className={`${collapsed ? 'h-10' : 'h-18'} w-auto transition-all duration-300`} />
         
         {/* Toggle Collapse Button */}
@@ -378,7 +378,7 @@ export default function Sidebar({
       </nav>
 
       {/* ── Footer System Status ── */}
-      <div className="px-4 py-3 border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col items-center justify-center">
+      <div className="px-4 py-3 border-t border-[#E2E8F0]/40 bg-transparent flex flex-col items-center justify-center">
         <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2 w-full'}`}>
           <span className="h-2.5 w-2.5 rounded-full bg-[#D8B46A] animate-pulse flex-shrink-0" />
           {!collapsed && (
