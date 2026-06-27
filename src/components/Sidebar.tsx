@@ -23,6 +23,7 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import { OxLogo } from './ui/Logo';
 
@@ -42,20 +43,22 @@ interface SidebarProps {
   appName: string;
   primaryColor: string;
   logoUrl?: string;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 // ── Style helpers ──
-const navItem = (active: boolean) =>
-  `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+const navItem = (active: boolean, collapsed: boolean) =>
+  `w-full flex items-center ${collapsed ? 'justify-center px-2.5' : 'gap-3 px-3'} py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
     active
-      ? 'bg-[#DEE1E9] text-[#071757] font-semibold border-l-4 border-[#D8B46A] pl-2.5'
+      ? `bg-[#DEE1E9] text-[#071757] font-semibold ${collapsed ? 'border-l-4 border-[#D8B46A]' : 'border-l-4 border-[#D8B46A] pl-2.5'}`
       : 'text-[#475569] hover:bg-[#F8F8FA] hover:text-[#071757]'
   }`;
 
-const navItemWithChevron = (active: boolean) =>
-  `w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+const navItemWithChevron = (active: boolean, collapsed: boolean) =>
+  `w-full flex items-center ${collapsed ? 'justify-center px-2.5' : 'justify-between px-3'} py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
     active
-      ? 'bg-[#DEE1E9] text-[#071757] font-semibold border-l-4 border-[#D8B46A] pl-2.5'
+      ? `bg-[#DEE1E9] text-[#071757] font-semibold ${collapsed ? 'border-l-4 border-[#D8B46A]' : 'border-l-4 border-[#D8B46A] pl-2.5'}`
       : 'text-[#475569] hover:bg-[#F8F8FA] hover:text-[#071757]'
   }`;
 
@@ -81,7 +84,9 @@ export default function Sidebar({
   setSubMenuConfiguracoes,
   appName,
   primaryColor,
-  logoUrl
+  logoUrl,
+  collapsed,
+  onToggleCollapse
 }: SidebarProps) {
   const [openComercial, setOpenComercial] = useState(true);
   const [openFiscal, setOpenFiscal] = useState(false);
@@ -90,29 +95,41 @@ export default function Sidebar({
   const [openConfig, setOpenConfig] = useState(false);
 
   return (
-    <aside className="w-68 bg-white text-[#0F172A] flex flex-col h-screen fixed top-0 left-0 z-30 border-r border-[#E2E8F0] shadow-sm overflow-y-auto">
+    <aside className={`bg-white text-[#0F172A] flex flex-col h-screen fixed top-0 left-0 z-30 border-r border-[#E2E8F0] shadow-sm overflow-y-auto transition-all duration-300 ${collapsed ? 'w-20' : 'w-68'}`}>
 
       {/* ── Brand Header ── */}
-      <div className="py-5 px-5 border-b border-[#DEE1E9] flex items-center justify-center min-h-[80px]">
-        <OxLogo variant="blue" className="h-14 w-auto" />
+      <div className="py-5 px-5 border-b border-[#DEE1E9] flex items-center justify-center min-h-[80px] relative">
+        <OxLogo variant="blue" className={`${collapsed ? 'h-10' : 'h-18'} w-auto transition-all duration-300`} />
+        
+        {/* Toggle Collapse Button */}
+        <button
+          onClick={onToggleCollapse}
+          className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-40 h-7 w-7 rounded-full bg-white border border-[#DEE1E9] shadow-sm flex items-center justify-center cursor-pointer text-[#64748B] hover:text-[#071757] hover:border-[#D8B46A] transition-all"
+          title={collapsed ? "Expandir menu" : "Recolher menu"}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
       </div>
 
       {/* ── Navigation ── */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
 
         {/* Section label */}
-        <p className="px-3 mb-2 text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
-          Menu Principal
-        </p>
+        {!collapsed && (
+          <p className="px-3 mb-2 text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
+            Menu Principal
+          </p>
+        )}
 
         {/* Dashboard */}
         <button
           id="sidebar-btn-dashboard"
           onClick={() => setActiveMenu('dashboard')}
-          className={navItem(activeMenu === 'dashboard')}
+          className={navItem(activeMenu === 'dashboard', collapsed)}
+          title={collapsed ? "Dashboard" : undefined}
         >
           <LayoutDashboard className="h-4 w-4 flex-shrink-0" />
-          <span>Dashboard</span>
+          {!collapsed && <span>Dashboard</span>}
         </button>
 
         {/* ── COMERCIAL ── */}
@@ -120,21 +137,24 @@ export default function Sidebar({
           <button
             id="sidebar-btn-comercial-toggle"
             onClick={() => {
+              if (collapsed) onToggleCollapse();
               setOpenComercial(!openComercial);
               setActiveMenu('comercial');
             }}
-            className={navItemWithChevron(activeMenu === 'comercial')}
+            className={navItemWithChevron(activeMenu === 'comercial', collapsed)}
+            title={collapsed ? "Comercial" : undefined}
           >
             <div className="flex items-center gap-3">
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
-              <span>Comercial</span>
+              {!collapsed && <span>Comercial</span>}
             </div>
-            {openComercial
-              ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-              : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-            }
+            {!collapsed && (
+              openComercial
+                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            )}
           </button>
-          {openComercial && (
+          {openComercial && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
               <button id="submenu-vendas" onClick={() => { setActiveMenu('comercial'); setSubMenuComercial('vendas'); }}
                 className={subItem(activeMenu === 'comercial' && subMenuComercial === 'vendas')}>
@@ -156,19 +176,25 @@ export default function Sidebar({
         <div className="space-y-0.5">
           <button
             id="sidebar-btn-fiscal-toggle"
-            onClick={() => { setOpenFiscal(!openFiscal); setActiveMenu('fiscal'); }}
-            className={navItemWithChevron(activeMenu === 'fiscal')}
+            onClick={() => {
+              if (collapsed) onToggleCollapse();
+              setOpenFiscal(!openFiscal);
+              setActiveMenu('fiscal');
+            }}
+            className={navItemWithChevron(activeMenu === 'fiscal', collapsed)}
+            title={collapsed ? "Fiscal" : undefined}
           >
             <div className="flex items-center gap-3">
               <FileSpreadsheet className="h-4 w-4 flex-shrink-0" />
-              <span>Fiscal</span>
+              {!collapsed && <span>Fiscal</span>}
             </div>
-            {openFiscal
-              ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-              : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-            }
+            {!collapsed && (
+              openFiscal
+                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            )}
           </button>
-          {openFiscal && (
+          {openFiscal && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
               <button id="submenu-gta" onClick={() => { setActiveMenu('fiscal'); setSubMenuFiscal('gta'); }}
                 className={subItem(activeMenu === 'fiscal' && subMenuFiscal === 'gta')}>
@@ -190,19 +216,25 @@ export default function Sidebar({
         <div className="space-y-0.5">
           <button
             id="sidebar-btn-financeiro-toggle"
-            onClick={() => { setOpenFinanceiro(!openFinanceiro); setActiveMenu('financeiro'); }}
-            className={navItemWithChevron(activeMenu === 'financeiro')}
+            onClick={() => {
+              if (collapsed) onToggleCollapse();
+              setOpenFinanceiro(!openFinanceiro);
+              setActiveMenu('financeiro');
+            }}
+            className={navItemWithChevron(activeMenu === 'financeiro', collapsed)}
+            title={collapsed ? "Financeiro" : undefined}
           >
             <div className="flex items-center gap-3">
               <Coins className="h-4 w-4 flex-shrink-0" />
-              <span>Financeiro</span>
+              {!collapsed && <span>Financeiro</span>}
             </div>
-            {openFinanceiro
-              ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-              : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-            }
+            {!collapsed && (
+              openFinanceiro
+                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            )}
           </button>
-          {openFinanceiro && (
+          {openFinanceiro && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
               <button id="submenu-receber" onClick={() => { setActiveMenu('financeiro'); setSubMenuFinanceiro('receber'); }}
                 className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'receber')}>
@@ -228,19 +260,25 @@ export default function Sidebar({
         <div className="space-y-0.5">
           <button
             id="sidebar-btn-logistica-toggle"
-            onClick={() => { setOpenLogistica(!openLogistica); setActiveMenu('logistica'); }}
-            className={navItemWithChevron(activeMenu === 'logistica')}
+            onClick={() => {
+              if (collapsed) onToggleCollapse();
+              setOpenLogistica(!openLogistica);
+              setActiveMenu('logistica');
+            }}
+            className={navItemWithChevron(activeMenu === 'logistica', collapsed)}
+            title={collapsed ? "Logística" : undefined}
           >
             <div className="flex items-center gap-3">
               <Truck className="h-4 w-4 flex-shrink-0" />
-              <span>Logística</span>
+              {!collapsed && <span>Logística</span>}
             </div>
-            {openLogistica
-              ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-              : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-            }
+            {!collapsed && (
+              openLogistica
+                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            )}
           </button>
-          {openLogistica && (
+          {openLogistica && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
               <button id="submenu-transporte" onClick={() => { setActiveMenu('logistica'); setSubMenuLogistica('transporte'); }}
                 className={subItem(activeMenu === 'logistica' && subMenuLogistica === 'transporte')}>
@@ -264,46 +302,56 @@ export default function Sidebar({
 
         {/* ── Divider ── */}
         <div className="border-t border-[#E2E8F0] my-2" />
-        <p className="px-3 mb-2 text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
-          Gestão
-        </p>
+        {!collapsed && (
+          <p className="px-3 mb-2 text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
+            Gestão
+          </p>
+        )}
 
         {/* Cadastros */}
         <button
           id="sidebar-btn-cadastros"
           onClick={() => setActiveMenu('cadastros')}
-          className={navItem(activeMenu === 'cadastros')}
+          className={navItem(activeMenu === 'cadastros', collapsed)}
+          title={collapsed ? "Cadastro" : undefined}
         >
           <UserPlus className="h-4 w-4 flex-shrink-0" />
-          <span>Cadastro</span>
+          {!collapsed && <span>Cadastro</span>}
         </button>
 
         {/* Relatórios */}
         <button
           id="sidebar-btn-relatorios"
           onClick={() => setActiveMenu('relatorios')}
-          className={navItem(activeMenu === 'relatorios')}
+          className={navItem(activeMenu === 'relatorios', collapsed)}
+          title={collapsed ? "Relatórios Gerenciais" : undefined}
         >
           <BarChart3 className="h-4 w-4 flex-shrink-0" />
-          <span>Relatórios Gerenciais</span>
+          {!collapsed && <span>Relatórios Gerenciais</span>}
         </button>
 
         {/* Configurações */}
         <button
           id="sidebar-btn-configuracoes"
-          onClick={() => { setOpenConfig(!openConfig); setActiveMenu('configuracoes'); }}
-          className={navItemWithChevron(activeMenu === 'configuracoes')}
+          onClick={() => {
+            if (collapsed) onToggleCollapse();
+            setOpenConfig(!openConfig);
+            setActiveMenu('configuracoes');
+          }}
+          className={navItemWithChevron(activeMenu === 'configuracoes', collapsed)}
+          title={collapsed ? "Configurações" : undefined}
         >
           <div className="flex items-center gap-3">
             <Settings className="h-4 w-4 flex-shrink-0" />
-            <span>Configurações</span>
+            {!collapsed && <span>Configurações</span>}
           </div>
-          {openConfig
-            ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-          }
+          {!collapsed && (
+            openConfig
+              ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+              : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+          )}
         </button>
-        {openConfig && (
+        {openConfig && !collapsed && (
           <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
             {(['usuarios', 'identidade', 'banco', 'integracoes', 'auditoria'] as const).map((sub) => {
               const labels: Record<string, string> = {
@@ -330,14 +378,16 @@ export default function Sidebar({
       </nav>
 
       {/* ── Footer System Status ── */}
-      <div className="px-4 py-3 border-t border-[#E2E8F0] bg-[#F8FAFC]">
-        <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#D8B46A] animate-pulse flex-shrink-0" />
-          <span className="text-[10px] text-[#64748B] font-medium leading-tight">
-            Sincronizado · SEFAZ & GTA
-          </span>
+      <div className="px-4 py-3 border-t border-[#E2E8F0] bg-[#F8FAFC] flex flex-col items-center justify-center">
+        <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2 w-full'}`}>
+          <span className="h-2.5 w-2.5 rounded-full bg-[#D8B46A] animate-pulse flex-shrink-0" />
+          {!collapsed && (
+            <span className="text-[10px] text-[#64748B] font-medium leading-tight">
+              Sincronizado · SEFAZ & GTA
+            </span>
+          )}
         </div>
-        <p className="text-[10px] text-[#94A3B8] mt-0.5 pl-4">v4.0.2 · Licença Premium</p>
+        {!collapsed && <p className="text-[10px] text-[#94A3B8] mt-0.5 pl-4 w-full text-left">v4.0.2 · Licença Premium</p>}
       </div>
     </aside>
   );

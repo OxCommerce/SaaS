@@ -85,6 +85,7 @@ export default function App() {
   const [conciliacoes, setConciliacoes] = useState<ConciliacaoBancaria[]>(INITIAL_CONCILIACOES);
   const [viagens, setViagens] = useState<ViagemLogistica[]>(INITIAL_VIAGENS);
   const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [dbStats, setDbStats] = useState<DatabaseStats>(INITIAL_DB_STATS);
   const [auditoriaLogs, setAuditoriaLogs] = useState(CHANNELS_AUDITORIA);
   const [usuariosList, setUsuariosList] = useState(CADASTRO_USUARIOS);
@@ -388,10 +389,12 @@ export default function App() {
         appName={config.sistemaNome}
         primaryColor={config.corPrincipal}
         logoUrl={config.logoUrl}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
       {/* Main Content Layout area */}
-      <div className="flex-1 pl-68 pt-16 min-h-screen flex flex-col">
+      <div className={`flex-1 pt-16 min-h-screen flex flex-col transition-all duration-300 ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
         
         {/* 2. TOP ACTIONS TASKBAR */}
         <Header
@@ -399,6 +402,7 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           currentUser={currentUser}
+          collapsed={sidebarCollapsed}
         />
 
         {/* 3. DYNAMIC PAGES VIEW */}

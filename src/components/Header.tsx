@@ -12,13 +12,15 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   currentUser: string;
+  collapsed?: boolean;
 }
 
 export default function Header({
   activeMenu,
   searchQuery,
   setSearchQuery,
-  currentUser
+  currentUser,
+  collapsed = false
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -38,14 +40,14 @@ export default function Header({
 
   const alerts = [
     { id: 1, type: 'fiscal',    icon: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />, msg: 'GTA interestadual homologado com sucesso (#351403)' },
-    { id: 2, type: 'financeiro', icon: <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />, msg: 'Contas a pagar: Fatura Vale Verde vence em 8 dias' },
+    { id: 2, type: 'financeiro', icon: <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />, msg: 'Contas a pagar: Fatura Vale Verde vence in 8 dias' },
     { id: 3, type: 'logistica', icon: <Clock className="h-3.5 w-3.5 text-blue-500" />, msg: 'Bitrem OQY-8E12 em trânsito com 120 cabeças de gado' },
   ];
 
   const initials = currentUser.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <header className="h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-6 fixed top-0 right-0 left-68 z-20 shadow-xs">
+    <header className={`h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-6 fixed top-0 right-0 z-20 shadow-xs transition-all duration-300 ${collapsed ? 'left-20' : 'left-68'}`}>
 
       {/* Title */}
       <div>
