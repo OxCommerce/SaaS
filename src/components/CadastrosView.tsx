@@ -720,13 +720,15 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `P-${dateStr}${String(count).padStart(4, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newPartner = {
+        ...formData,
         id: formData.id || ('pa-' + Math.random().toString(36).substr(2, 9)),
         nome: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Sem Nome',
         contato: formData.nickname || 'Sem Apelido',
         telefone: formData.contatoTelefone || 'Não Informado',
         regiao: formData.cidade || 'Não Informada',
         tipo: formData.parceiroTipo === 'LOG' ? 'Parceiro/Corretor' : 'Parceiro Comercial',
-        codigo: codeVal
+        codigo: codeVal,
+        raw_data: { ...formData, codigo: codeVal }
       };
       setParceiros(prev => {
         const exists = prev.some(p => p.id === newPartner.id);
@@ -767,6 +769,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `${charPrefix}-${dateStr}${String(count).padStart(4, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCliFor = {
+        ...formData,
         id: formData.id || ('cf-' + Math.random().toString(36).substr(2, 9)),
         nome: formData.col1 || formData.razaoSocial || 'Sem Razão Social',
         documento: formData.cnpjCpf || '',
@@ -775,7 +778,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         relacionamento: rel,
         tipo: formData.clientType === 'PJ' ? 'Pessoa Jurídica' : 'Pessoa Física',
         fazenda: formData.logradouro || 'Não Informada',
-        codigo: codeVal
+        codigo: codeVal,
+        raw_data: { ...formData, codigo: codeVal }
       };
       setClientesFornecedores(prev => {
         const exists = prev.some(c => c.id === newCliFor.id);

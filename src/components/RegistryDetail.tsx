@@ -178,12 +178,18 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
 
   const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '');
-    if (val.length > 11) {
+    const isPJ = val.length > 11;
+    if (isPJ) {
         setClientType('PJ');
     } else {
         setClientType('PF');
     }
-    onChange({ ...data, cnpjCpf: e.target.value });
+    const updateObj: any = { ...data, cnpjCpf: e.target.value, clientType: isPJ ? 'PJ' : 'PF' };
+    if (isPJ && data.col1) {
+      updateObj.contatoNome = data.col1;
+      updateObj.contatoNomeContato = data.col1;
+    }
+    onChange(updateObj);
   };
 
   // --- REUSABLE SECTIONS ---
@@ -436,7 +442,15 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 <Input 
                     label="Razão Social / Nome Completo" 
                     value={data.col1 || ''} 
-                    onChange={(e) => onChange({ ...data, col1: e.target.value })} 
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const updateObj: any = { ...data, col1: val };
+                      if (clientType === 'PJ') {
+                        updateObj.contatoNome = val;
+                        updateObj.contatoNomeContato = val;
+                      }
+                      onChange(updateObj);
+                    }}
                     fullWidth 
                 />
                 <Input 
