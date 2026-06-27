@@ -7,12 +7,12 @@ const srcDir = '/Users/BS_Dados/.gemini/antigravity-ide/brain/491b2a0e-3f63-422c
 const destDir = path.join(__dirname, 'assets');
 
 const files = [
-  { src: 'nelore_rebanho_1_1782440388308.png', dest: 'nelore_rebanho_1.png' },
-  { src: 'nelore_manejo_1_1782440428704.png', dest: 'nelore_manejo_1.png' },
-  { src: 'nelore_elite_1_1782440455849.png', dest: 'nelore_elite_1.png' },
-  { src: 'nelore_manejo_2_1782440489446.png', dest: 'nelore_manejo_2.png' },
-  { src: 'nelore_rebanho_2_1782440526127.png', dest: 'nelore_rebanho_2.png' },
-  { src: 'nelore_elite_2_1782440570391.png', dest: 'nelore_elite_2.png' }
+  { src: 'nelore_elite_1_1782576025196.png', dest: 'nelore_elite_1.png' },
+  { src: 'nelore_elite_2_1782576048190.png', dest: 'nelore_elite_2.png' },
+  { src: 'nelore_manejo_1_1782576082390.png', dest: 'nelore_manejo_1.png' },
+  { src: 'nelore_manejo_2_1782576120589.png', dest: 'nelore_manejo_2.png' },
+  { src: 'nelore_rebanho_1_1782576158459.png', dest: 'nelore_rebanho_1.png' },
+  { src: 'nelore_rebanho_2_1782576202178.png', dest: 'nelore_rebanho_2.png' }
 ];
 
 console.log('Iniciando a cópia das imagens Nelore reais...');

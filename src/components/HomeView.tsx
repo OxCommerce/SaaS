@@ -387,7 +387,7 @@ export default function HomeView({ onNavigateToLogin, logoUrl }: HomeViewProps) 
               <img
                 src={img.url}
                 alt={img.title}
-                className="w-full h-full object-cover filter brightness-105 contrast-[1.05] saturate-[1.15] transition-transform duration-[8000ms] ease-out"
+                className="w-full h-full object-cover high-res-bg filter brightness-105 contrast-[1.05] saturate-[1.15] transition-transform duration-[8000ms] ease-out"
               />
             </div>
           ))}

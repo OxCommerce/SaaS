@@ -321,3 +321,14 @@ body {
 body:has(.glass-panel-mode) {
   background-color: transparent !important;
 }
+
+/* Force high-quality image scaling and GPU hardware acceleration for full-screen slide backgrounds */
+.high-res-bg {
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+  object-fit: cover;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
