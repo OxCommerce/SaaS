@@ -369,7 +369,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex font-sans antialiased relative glass-panel-mode overflow-x-hidden">
+    <div className="h-screen flex font-sans antialiased relative glass-panel-mode overflow-hidden">
       {/* Global Background Image for Glassmorphism ERP theme */}
       <div
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none select-none filter brightness-[0.93]"
@@ -400,7 +400,7 @@ export default function App() {
       />
 
       {/* Main Content Layout area */}
-      <div className={`flex-1 pt-16 min-h-screen flex flex-col transition-all duration-300 relative z-10 ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
+      <div className={`flex-1 pt-16 h-screen flex flex-col transition-all duration-300 relative z-10 overflow-hidden ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
         
         {/* 2. TOP ACTIONS TASKBAR */}
         <Header
@@ -412,7 +412,7 @@ export default function App() {
         />
 
         {/* 3. DYNAMIC PAGES VIEW */}
-        <main className="flex-1 p-6 w-full max-w-none animate-fade-in">
+        <main className="flex-1 p-6 w-full max-w-none animate-fade-in overflow-y-auto">
           
           {activeMenu === 'dashboard' && (
             <DashboardView
