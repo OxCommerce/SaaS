@@ -54,6 +54,7 @@ export interface Compra {
   destinoEstado?: string;
   destinoPais?: string;
   codigoFornecedor?: string;
+  codigoOrdemCompraCliente?: string;
 }
 
 export interface OrdemCompraCliente {

@@ -173,7 +173,8 @@ export default function CommercialView({
     destinoFrigorifico: '',
     destinoCidade: '',
     destinoEstado: '',
-    destinoPais: ''
+    destinoPais: '',
+    codigoOrdemCompraCliente: ''
   });
 
   // Form State for OrdemCompraCliente
@@ -381,6 +382,7 @@ export default function CommercialView({
       id: 'c-' + Math.random().toString(36).substr(2, 9),
       numeroOperacao: compraForm.numeroOperacao || 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
       codigoFornecedor: compraForm.codigoFornecedor,
+      codigoOrdemCompraCliente: compraForm.codigoOrdemCompraCliente,
       fornecedor: compraForm.fornecedor,
       fazendaOrigem: compraForm.fazendaOrigem,
       municipio: compraForm.municipio,
@@ -442,7 +444,8 @@ export default function CommercialView({
       destinoFrigorifico: '',
       destinoCidade: '',
       destinoEstado: '',
-      destinoPais: ''
+      destinoPais: '',
+      codigoOrdemCompraCliente: ''
     });
   };
 
@@ -651,7 +654,8 @@ export default function CommercialView({
                   destinoFrigorifico: '',
                   destinoCidade: '',
                   destinoEstado: '',
-                  destinoPais: ''
+                  destinoPais: '',
+                  codigoOrdemCompraCliente: ''
                 });
                 setShowAddCompraModal(true);
               }}
@@ -697,6 +701,10 @@ export default function CommercialView({
                       {c.ordemCompraClienteId ? (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#071757]/10 text-[#071757] font-mono border border-[#071757]/20" title={ordensCompraCliente.find(o => o.id === c.ordemCompraClienteId)?.cliente}>
                           {ordensCompraCliente.find(o => o.id === c.ordemCompraClienteId)?.numeroOC || 'Conectada'}
+                        </span>
+                      ) : c.codigoOrdemCompraCliente ? (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 font-mono border border-amber-200" title="Inserido manualmente">
+                          {c.codigoOrdemCompraCliente}
                         </span>
                       ) : (
                         <span className="text-[10px] text-gray-400 italic">Disponível / Recria</span>
@@ -984,7 +992,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
                   <input
@@ -1009,6 +1017,16 @@ export default function CommercialView({
                       </option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID de ordem de compra do cliente</label>
+                  <input
+                    type="text"
+                    value={compraForm.codigoOrdemCompraCliente}
+                    onChange={(e) => setCompraForm({ ...compraForm, codigoOrdemCompraCliente: e.target.value })}
+                    placeholder="Opcional (preenchimento manual)"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Compra</label>
@@ -1557,9 +1575,10 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
                   <input
                     type="text"
-                    readOnly
+                    required
                     value={vendaForm.numeroOC}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-mono cursor-not-allowed"
+                    onChange={(e) => setVendaForm({ ...vendaForm, numeroOC: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
                 <div>
