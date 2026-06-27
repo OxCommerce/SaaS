@@ -602,7 +602,7 @@ export default function CommercialView({
       {/* -------------------- GESTÃO DE COMPRAS -------------------- */}
       {activeSubMenu === 'compras' && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-sm">
             <div>
               <h3 className="text-sm font-bold text-gray-800">Negociação de Compra Bovina</h3>
               <p className="text-xs text-gray-400 font-medium">Controle de entrada de gado, cálculo de arrobas e fretes</p>
@@ -733,7 +733,7 @@ export default function CommercialView({
       {/* -------------------- GESTÃO DE VENDAS (ORDENS DE COMPRA CLIENTE) -------------------- */}
       {activeSubMenu === 'vendas' && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-sm">
             <div>
               <h3 className="text-sm font-bold text-gray-800">Ordem de Compra (Demandas)</h3>
               <p className="text-xs text-gray-400 font-medium">Controle de pedidos de compras enviados para clientes</p>
@@ -849,7 +849,7 @@ export default function CommercialView({
       {/* -------------------- CRM KANBAN -------------------- */}
       {activeSubMenu === 'negociacoes' && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-sm">
             <div>
               <h3 className="text-sm font-bold text-gray-800">Funil de Negociação & Captação</h3>
               <p className="text-xs text-gray-400 font-medium">Pipeline visual do CRM Pecuário. Avance cartões para fechamento de contratos</p>
