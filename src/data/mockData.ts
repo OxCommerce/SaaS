@@ -401,13 +401,26 @@ export const CHANNELS_AUDITORIA = [
 export const CADASTRO_CLIENTES = [
   { id: 'cl-1', codigo: 'C-1006260001', nome: 'Frigorífico JBS S/A', documento: '01.234.567/0001-89', telefone: '(66) 3411-9000', estado: 'MT', tipo: 'Cliente' },
   { id: 'cl-2', codigo: 'C-1206260002', nome: 'Frigorífico Marfrig Global Foods', documento: '02.444.111/0001-22', telefone: '(67) 3541-1122', estado: 'MS', tipo: 'Cliente' },
-  { id: 'cl-3', codigo: 'C-1406260003', nome: 'Minerva Foods S/A', documento: '05.555.777/0003-44', telefone: '(17) 3321-1500', estado: 'SP', tipo: 'Cliente' }
+  { id: 'cl-3', codigo: 'C-1406260003', nome: 'Minerva Foods S/A', documento: '05.555.777/0003-44', telefone: '(17) 3321-1500', estado: 'SP', tipo: 'Cliente' },
+  { id: 'cf-joao-marcelo', codigo: 'C-2706260004', nome: 'João Marcelo Santos', documento: '987.654.321-00', telefone: '(91) 98888-2222', estado: 'PA', tipo: 'Cliente' },
+  { id: 'cf-norte-pegaso', codigo: 'C-2706260005', nome: 'Norte Pegaso Serviços LTDA', documento: '23.456.789/0001-55', telefone: '(91) 98888-3333', estado: 'PA', tipo: 'Ambos' },
+  { id: 'cf-maria-eduarda', codigo: 'C-2706260006', nome: 'Maria Eduarda Lima', documento: '456.789.123-44', telefone: '(91) 98888-4444', estado: 'PA', tipo: 'Cliente' },
+  { id: 'cf-carlos-henrique', codigo: 'C-2706260007', nome: 'Carlos Henrique Abreu', documento: '654.321.987-10', telefone: '(91) 98888-6666', estado: 'PA', tipo: 'Ambos' },
+  { id: 'cf-fernanda-rocha', codigo: 'C-2706260008', nome: 'Fernanda Rocha Martins', documento: '789.123.456-88', telefone: '(91) 98888-8888', estado: 'PA', tipo: 'Cliente' },
+  { id: 'cf-technorte-sistemas', codigo: 'C-2706260009', nome: 'TechNorte Sistemas LTDA', documento: '56.789.012/0001-33', telefone: '(91) 98888-9999', estado: 'PA', tipo: 'Ambos' },
+  { id: 'cf-rafael-augusto', codigo: 'C-2706260010', nome: 'Rafael Augusto Pereira', documento: '121.654.987-22', telefone: '(91) 98888-0000', estado: 'PA', tipo: 'Cliente' }
 ];
 
 export const CADASTRO_FORNECEDORES = [
   { id: 'fo-1', codigo: 'F-1006260001', nome: 'José Carlos Albuquerque', documento: '003.444.921-22', fazenda: 'Fazenda Santa Rita', estado: 'MT', tipo: 'Fornecedor' },
   { id: 'fo-2', codigo: 'F-1206260002', nome: 'Agropecuária Vale Verde S/A', documento: '10.987.654/0001-32', fazenda: 'Estância do Sol', estado: 'GO', tipo: 'Fornecedor' },
-  { id: 'fo-3', codigo: 'F-1406260003', nome: 'Marcos de Souza Neves', documento: '544.111.900-53', fazenda: 'Sítio Novo', estado: 'PA', tipo: 'Fornecedor' }
+  { id: 'fo-3', codigo: 'F-1406260003', nome: 'Marcos de Souza Neves', documento: '544.111.900-53', fazenda: 'Sítio Novo', estado: 'PA', tipo: 'Fornecedor' },
+  { id: 'cf-alfa-transportes', codigo: 'F-2706260004', nome: 'Alfa Transportes LTDA', documento: '12.345.678/0001-90', fazenda: 'Av. Presidente Vargas', estado: 'PA', tipo: 'Fornecedor' },
+  { id: 'cf-norte-pegaso', codigo: 'C-2706260005', nome: 'Norte Pegaso Serviços LTDA', documento: '23.456.789/0001-55', fazenda: 'Av. Brasil', estado: 'PA', tipo: 'Ambos' },
+  { id: 'cf-armazens-estacoes', codigo: 'F-2706260005', nome: 'Armazéns Estações & Comércio LTDA', documento: '34.567.890/0001-12', fazenda: 'Travessa Mauriti', estado: 'PA', tipo: 'Fornecedor' },
+  { id: 'cf-carlos-henrique', codigo: 'C-2706260007', nome: 'Carlos Henrique Abreu', documento: '654.321.987-10', fazenda: 'Av. Carajás', estado: 'PA', tipo: 'Ambos' },
+  { id: 'cf-expresso-para', codigo: 'F-2706260006', nome: 'Expresso Pará Logística LTDA', documento: '45.678.901/0001-77', fazenda: 'Rodovia BR-316', estado: 'PA', tipo: 'Fornecedor' },
+  { id: 'cf-technorte-sistemas', codigo: 'C-2706260009', nome: 'TechNorte Sistemas LTDA', documento: '56.789.012/0001-33', fazenda: 'Rua dos Pariquis', estado: 'PA', tipo: 'Ambos' }
 ];
 
 export const CADASTRO_PARCEIROS = [
