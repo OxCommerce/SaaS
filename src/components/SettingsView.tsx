@@ -31,8 +31,8 @@ import {
   Plus,
   Eye
 } from 'lucide-react';
-import logoWhiteAsset from '@/assets/logo_white.svg';
-import logoBlueAsset from '@/assets/logo_blue.svg';
+import logoWhiteAsset from '@/assets/logo_white.png';
+import logoBlueAsset from '@/assets/logo_blue.png';
 
 // Imagens reais da pecuária Nelore importadas localmente
 import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';

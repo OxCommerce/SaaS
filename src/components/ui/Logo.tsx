@@ -4,8 +4,8 @@
  */
 
 import React from 'react';
-import logoWhiteSvg from '@/assets/logo_white.svg';
-import logoBlueSvg from '@/assets/logo_blue.svg';
+import logoWhitePng from '@/assets/logo_white.png';
+import logoBluePng from '@/assets/logo_blue.png';
 
 interface LogoProps {
   className?: string;
@@ -15,7 +15,7 @@ interface LogoProps {
 }
 
 export function OxLogo({ className = 'h-10 w-auto', variant = 'white', alt = 'OxCommerce' }: LogoProps) {
-  const src = variant === 'white' ? logoWhiteSvg : logoBlueSvg;
+  const src = variant === 'white' ? logoWhitePng : logoBluePng;
   return (
     <img
       src={src}
