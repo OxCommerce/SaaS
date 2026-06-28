@@ -14,6 +14,55 @@ interface RegistryModalProps {
   initialData?: any;
 }
 
+const isValidCPF = (value: string): boolean => {
+  if (!value) return true;
+  const cleanCPF = value.replace(/[^\d]/g, '');
+  if (cleanCPF.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+  }
+  let remainder = 11 - (sum % 11);
+  let digit1 = remainder >= 10 ? 0 : remainder;
+  if (parseInt(cleanCPF.charAt(9)) !== digit1) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+  }
+  remainder = 11 - (sum % 11);
+  let digit2 = remainder >= 10 ? 0 : remainder;
+  return parseInt(cleanCPF.charAt(10)) === digit2;
+};
+
+const isValidCNPJ = (value: string): boolean => {
+  if (!value) return true;
+  const cleanCNPJ = value.replace(/[^\d]/g, '');
+  if (cleanCNPJ.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(cleanCNPJ)) return false;
+  let size = cleanCNPJ.length - 2;
+  let numbers = cleanCNPJ.substring(0, size);
+  let digits = cleanCNPJ.substring(size);
+  let sum = 0;
+  let pos = size - 7;
+  for (let i = size; i >= 1; i--) {
+    sum += parseInt(numbers.charAt(size - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  let result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (result !== parseInt(digits.charAt(0))) return false;
+  size = size + 1;
+  numbers = cleanCNPJ.substring(0, size);
+  sum = 0;
+  pos = size - 7;
+  for (let i = size; i >= 1; i--) {
+    sum += parseInt(numbers.charAt(size - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  return result === parseInt(digits.charAt(1));
+};
+
 export const RegistryModal: React.FC<RegistryModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -33,52 +82,79 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
   }, [isOpen, initialData]);
 
   const validateForm = (data: any) => {
-    if (type !== 'CLIENT') return true;
-
-    // Geral fields validation
-    if (!data.cnpjCpf || !data.cnpjCpf.trim()) {
-      alert("Por favor, preencha o campo CNPJ / CPF na aba Geral.");
-      return false;
-    }
-    if ((!data.col1 || !data.col1.trim()) && (!data.razaoSocial || !data.razaoSocial.trim())) {
-      alert("Por favor, preencha o campo Razão Social / Nome Completo na aba Geral.");
-      return false;
-    }
-    if (!data.nomeFantasia || !data.nomeFantasia.trim()) {
-      alert("Por favor, preencha o campo Nome Fantasia / Apelido na aba Geral.");
-      return false;
+    // 1. CPF Validation for personal registrations (TEAM, DRIVER, BROKER, PARTNER)
+    if (type === 'TEAM' || type === 'DRIVER' || type === 'BROKER' || type === 'PARTNER') {
+      if (data.cpf && data.cpf.trim() !== '') {
+        if (!isValidCPF(data.cpf)) {
+          alert("O CPF informado é inválido. Por favor, verifique a digitação ou informe um CPF válido.");
+          return false;
+        }
+      }
     }
 
-    // Contato fields validation
-    if (!data.contatoNomeContato || !data.contatoNomeContato.trim()) {
-      alert("Por favor, preencha o campo Nome de Contato na aba Contato.");
-      return false;
-    }
-    if (!data.contatoTelefone || !data.contatoTelefone.trim()) {
-      alert("Por favor, preencha o campo Telefone / Celular na aba Contato.");
-      return false;
-    }
+    // 2. Client registration validation
+    if (type === 'CLIENT') {
+      // Geral fields validation
+      if (!data.cnpjCpf || !data.cnpjCpf.trim()) {
+        alert("Por favor, preencha o campo CNPJ / CPF na aba Geral.");
+        return false;
+      }
+      
+      const cleanDoc = data.cnpjCpf.replace(/[^\d]/g, '');
+      const isPJ = cleanDoc.length > 11;
+      
+      if (isPJ) {
+        if (!isValidCNPJ(data.cnpjCpf)) {
+          alert("O CNPJ informado é inválido. Por favor, verifique a digitação.");
+          return false;
+        }
+      } else {
+        if (!isValidCPF(data.cnpjCpf)) {
+          alert("O CPF informado é inválido. Por favor, verifique a digitação.");
+          return false;
+        }
+      }
 
-    // Endereço fields validation
-    if (!data.cep || !data.cep.trim()) {
-      alert("Por favor, preencha o campo CEP na aba Endereço.");
-      return false;
-    }
-    if (!data.logradouro || !data.logradouro.trim()) {
-      alert("Por favor, preencha o campo Logradouro na aba Endereço.");
-      return false;
-    }
-    if (!data.bairro || !data.bairro.trim()) {
-      alert("Por favor, preencha o campo Bairro na aba Endereço.");
-      return false;
-    }
-    if (!data.cidade || !data.cidade.trim()) {
-      alert("Por favor, preencha o campo Cidade na aba Endereço.");
-      return false;
-    }
-    if (!data.uf || !data.uf.trim()) {
-      alert("Por favor, preencha o campo UF na aba Endereço.");
-      return false;
+      if ((!data.col1 || !data.col1.trim()) && (!data.razaoSocial || !data.razaoSocial.trim())) {
+        alert("Por favor, preencha o campo Razão Social / Nome Completo na aba Geral.");
+        return false;
+      }
+      if (!data.nomeFantasia || !data.nomeFantasia.trim()) {
+        alert("Por favor, preencha o campo Nome Fantasia / Apelido na aba Geral.");
+        return false;
+      }
+
+      // Contato fields validation
+      if (!data.contatoNomeContato || !data.contatoNomeContato.trim()) {
+        alert("Por favor, preencha o campo Nome de Contato na aba Contato.");
+        return false;
+      }
+      if (!data.contatoTelefone || !data.contatoTelefone.trim()) {
+        alert("Por favor, preencha o campo Telefone / Celular na aba Contato.");
+        return false;
+      }
+
+      // Endereço fields validation
+      if (!data.cep || !data.cep.trim()) {
+        alert("Por favor, preencha o campo CEP na aba Endereço.");
+        return false;
+      }
+      if (!data.logradouro || !data.logradouro.trim()) {
+        alert("Por favor, preencha o campo Logradouro na aba Endereço.");
+        return false;
+      }
+      if (!data.bairro || !data.bairro.trim()) {
+        alert("Por favor, preencha o campo Bairro na aba Endereço.");
+        return false;
+      }
+      if (!data.cidade || !data.cidade.trim()) {
+        alert("Por favor, preencha o campo Cidade na aba Endereço.");
+        return false;
+      }
+      if (!data.uf || !data.uf.trim()) {
+        alert("Por favor, preencha o campo UF na aba Endereço.");
+        return false;
+      }
     }
 
     return true;
