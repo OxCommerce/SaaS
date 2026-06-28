@@ -586,15 +586,15 @@ export default function CommercialView({
 
   const handleAddVendaSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validate required fields
-    if (!vendaForm.codigoCliente || !vendaForm.cliente || !vendaForm.frigorifico || !vendaForm.categoriaAnimal || !vendaForm.quantidade || !vendaForm.peso || !vendaForm.valorArroba) {
-      alert("Por favor, preencha todos os campos obrigatórios (Código do Cliente, Cliente, Destino, Categoria, Quantidade, Peso Total e Valor da Arroba).");
+    // Validate required fields (omitting weight check)
+    if (!vendaForm.codigoCliente || !vendaForm.cliente || !vendaForm.frigorifico || !vendaForm.categoriaAnimal || !vendaForm.quantidade || !vendaForm.valorArroba) {
+      alert("Por favor, preencha todos os campos obrigatórios (Código do Cliente, Cliente, Destino, Categoria, Quantidade e Preço Unitário).");
       return;
     }
-    const arrobas = vendaForm.peso / 30;
-    const valorBruto = arrobas * vendaForm.valorArroba;
-    const comissaoDedução = valorBruto * (vendaForm.comissao / 100);
+    const valorBruto = Number(vendaForm.quantidade) * Number(vendaForm.valorArroba);
+    const comissaoDedução = valorBruto * (Number(vendaForm.comissao || 0) / 100);
     const resultado = Math.round(valorBruto - comissaoDedução);
+    const calculatedWeight = Number(vendaForm.quantidade) * 15 * 30; // 15 @ per animal standard
 
     const novaVenda: OrdemCompraCliente = {
       id: 'v-' + Math.random().toString(36).substr(2, 9),
@@ -604,7 +604,7 @@ export default function CommercialView({
       frigorifico: vendaForm.frigorifico,
       categoriaAnimal: vendaForm.categoriaAnimal,
       quantidade: Number(vendaForm.quantidade),
-      peso: Number(vendaForm.peso),
+      peso: calculatedWeight,
       valorArroba: Number(vendaForm.valorArroba),
       comissao: Number(vendaForm.comissao),
       resultadoOperacao: resultado,
@@ -1927,16 +1927,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso</label>
-                  <input
-                    type="number"
-                    value={vendaForm.peso}
-                    onChange={(e) => setVendaForm({ ...vendaForm, peso: Number(e.target.value) })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço Unitário</label>
                   <input
                     type="number"
                     value={vendaForm.valorArroba}
@@ -1953,6 +1944,12 @@ export default function CommercialView({
                     onChange={(e) => setVendaForm({ ...vendaForm, comissao: Number(e.target.value) })}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
                   />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Quantidade x Preço Unitário">
+                    {((vendaForm.quantidade || 0) * (vendaForm.valorArroba || 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </div>
                 </div>
               </div>
 
