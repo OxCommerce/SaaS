@@ -79,16 +79,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
   });
 
-  const [clientesFornecedores, setClientesFornecedores] = useState<any[]>(() => {
-    const deleted = (() => {
-      try { return JSON.parse(localStorage.getItem('deleted_mock_ids') || '[]'); } catch { return []; }
-    })();
-    const initialList = [
-      ...CADASTRO_CLIENTES.map(c => ({ ...c, relacionamento: 'CLI' })),
-      ...CADASTRO_FORNECEDORES.map(f => ({ ...f, relacionamento: 'FOR', telefone: '(66) 9999-9999' }))
-    ];
-    return initialList.filter(item => !deleted.includes(item.id));
-  });
+  const [clientesFornecedores, setClientesFornecedores] = useState<any[]>([]);
 
   const [parceiros, setParceiros] = useState(() => {
     const deleted = (() => {
@@ -142,30 +133,84 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 1. Clientes / Fornecedores
       try {
         const { data, error } = await supabase.from('clientes_fornecedores').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => {
-            let rel = item.relacionamento;
-            if (rel === 'Cliente') rel = 'CLI';
-            if (rel === 'Fornecedor') rel = 'FOR';
-            if (rel === 'Ambos') rel = 'AMB';
-            
-            const raw = item.raw_data || {};
-            const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
-            return {
-              ...raw,
-              id: item.id,
-              nome: item.nome,
-              documento: item.documento,
-              telefone: item.telefone,
-              estado: item.estado,
-              relacionamento: rel,
-              tipo: item.tipo || (raw.tipoPessoa === 'Física' ? 'Pessoa Física' : 'Pessoa Jurídica'),
-              fazenda: item.fazenda,
-              clientType: cType,
-              raw_data: { ...raw, clientType: cType }
-            };
-          });
-          setClientesFornecedores(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0) {
+            // Seed database with mock data
+            const initialList = [
+              ...CADASTRO_CLIENTES.map(c => ({ ...c, relacionamento: 'CLI' })),
+              ...CADASTRO_FORNECEDORES.map(f => ({ ...f, relacionamento: 'FOR', telefone: '(66) 9999-9999' }))
+            ];
+            const toUpsert = initialList.map(item => {
+              let rel = item.relacionamento;
+              if (rel === 'Cliente') rel = 'CLI';
+              if (rel === 'Fornecedor') rel = 'FOR';
+              if (rel === 'Ambos') rel = 'AMB';
+              const anyItem = item as any;
+              return {
+                id: item.id,
+                nome: anyItem.razaoSocial || anyItem.nome || 'Sem Nome',
+                documento: anyItem.cnpjCpf || anyItem.documento || '',
+                telefone: anyItem.contatoTelefone || anyItem.telefone || '',
+                estado: anyItem.uf || anyItem.estado || 'SP',
+                relacionamento: rel,
+                tipo: (anyItem.clientType === 'PJ' || anyItem.tipoPessoa === 'Jurídica' || anyItem.tipo === 'Pessoa Jurídica') ? 'Pessoa Jurídica' : 'Pessoa Física',
+                fazenda: anyItem.logradouro || anyItem.fazenda || 'Não Informada',
+                raw_data: { ...item, relacionamento: rel }
+              };
+            });
+            await supabase.from('clientes_fornecedores').upsert(toUpsert);
+            // Re-fetch seeded data
+            const refetched = await supabase.from('clientes_fornecedores').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => {
+                let rel = item.relacionamento;
+                if (rel === 'Cliente') rel = 'CLI';
+                if (rel === 'Fornecedor') rel = 'FOR';
+                if (rel === 'Ambos') rel = 'AMB';
+                
+                const raw = item.raw_data || {};
+                const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
+                return {
+                  ...raw,
+                  id: item.id,
+                  nome: item.nome,
+                  documento: item.documento,
+                  telefone: item.telefone,
+                  estado: item.estado,
+                  relacionamento: rel,
+                  tipo: item.tipo || (raw.tipoPessoa === 'Física' ? 'Pessoa Física' : 'Pessoa Jurídica'),
+                  fazenda: item.fazenda,
+                  clientType: cType,
+                  raw_data: { ...raw, clientType: cType }
+                };
+              });
+              setClientesFornecedores(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => {
+              let rel = item.relacionamento;
+              if (rel === 'Cliente') rel = 'CLI';
+              if (rel === 'Fornecedor') rel = 'FOR';
+              if (rel === 'Ambos') rel = 'AMB';
+              
+              const raw = item.raw_data || {};
+              const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
+              return {
+                ...raw,
+                id: item.id,
+                nome: item.razaoSocial || item.nome,
+                documento: item.documento,
+                telefone: item.telefone,
+                estado: item.estado,
+                relacionamento: rel,
+                tipo: item.tipo || (raw.tipoPessoa === 'Física' ? 'Pessoa Física' : 'Pessoa Jurídica'),
+                fazenda: item.fazenda,
+                clientType: cType,
+                raw_data: { ...raw, clientType: cType }
+              };
+            });
+            setClientesFornecedores(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load clientes_fornecedores from Supabase:', err);
