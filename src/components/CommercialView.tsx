@@ -767,7 +767,7 @@ export default function CommercialView({
           </div>
 
           {/* TABLE GRID */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)]">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)]">
             <table className="w-full text-left border-collapse min-w-[1100px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -928,7 +928,7 @@ export default function CommercialView({
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)]">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)]">
             <table className="w-full text-left border-collapse min-w-[900px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">

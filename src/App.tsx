@@ -491,7 +491,7 @@ export default function App() {
         })()}
 
         {/* 3. DYNAMIC PAGES VIEW */}
-        <main className="flex-1 p-6 w-full max-w-none animate-fade-in overflow-y-auto">
+        <main className={`flex-1 p-6 w-full max-w-none animate-fade-in ${activeMenu === 'cadastros' || activeMenu === 'comercial' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           
           {activeMenu === 'dashboard' && (
             <DashboardView

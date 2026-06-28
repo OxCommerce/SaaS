@@ -1239,7 +1239,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1323,7 +1323,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1399,7 +1399,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1469,7 +1469,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1548,7 +1548,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1626,7 +1626,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1699,7 +1699,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
@@ -1774,7 +1774,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-360px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
