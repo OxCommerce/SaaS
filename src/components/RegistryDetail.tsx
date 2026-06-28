@@ -1006,8 +1006,8 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                     label="Código do Banco" 
                     placeholder="Ex: 001, 237, 341"
                     value={data.codigo || data.code || ''}
-                    readOnly
-                    className="bg-slate-50 text-slate-800 font-mono cursor-not-allowed"
+                    onChange={(e) => onChange({ ...data, codigo: e.target.value, code: e.target.value })}
+                    className="font-mono"
                     fullWidth 
                 />
                 <Input 
