@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import logoWhiteAsset from '@/assets/logo_white.png';
 import logoBlueAsset from '@/assets/logo_blue.png';
+import { supabase } from '../supabaseClient';
 
 // Imagens reais da pecuária Nelore importadas localmente
 import neloreRebanho1 from '@/assets/nelore_rebanho_1.png';
@@ -75,6 +76,32 @@ export default function SettingsView({
   const [memUsage, setMemUsage] = useState(dbStats.usoMemoria);
   const [latency, setLatency] = useState(dbStats.latenciaMs);
   const [isBackupRunning, setIsBackupRunning] = useState(false);
+  const [dbConnected, setDbConnected] = useState<'online' | 'offline' | 'online_schema_error' | 'checking'>('checking');
+
+  useEffect(() => {
+    async function checkConnection() {
+      try {
+        const { error } = await supabase.from('clientes_fornecedores').select('id').limit(1);
+        if (error) {
+          const errMsg = error.message || '';
+          if (errMsg.includes('fetch failed') || errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError') || error.code === 'PGRST102') {
+            setDbConnected('offline');
+          } else if (errMsg.includes('Could not find the table') || errMsg.includes('relation') || errMsg.includes('does not exist')) {
+            setDbConnected('online_schema_error');
+          } else {
+            setDbConnected('online');
+          }
+        } else {
+          setDbConnected('online');
+        }
+      } catch {
+        setDbConnected('offline');
+      }
+    }
+    checkConnection();
+    const interval = setInterval(checkConnection, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fluctuating metric simulator
   useEffect(() => {
@@ -966,6 +993,44 @@ export default function SettingsView({
             
             {/* Status & Sync widgets moved from Header */}
             <div className="flex items-center space-x-3 self-stretch sm:self-auto justify-end">
+              {/* Supabase Database Connection Status */}
+              <div 
+                className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#F8F8FA] border border-[#DEE1E9] rounded-full cursor-help hover:bg-slate-100/50 transition-all select-none"
+                title={
+                  dbConnected === 'online' ? 'Banco de Dados Supabase Conectado com sucesso' : 
+                  dbConnected === 'online_schema_error' ? 'Conexão ativa com o Supabase, mas a tabela "clientes_fornecedores" não foi encontrada. Por favor, execute o script SQL "supabase_setup.sql".' :
+                  dbConnected === 'offline' ? 'Erro de conexão física/rede com o Supabase (Verifique suas chaves de ambiente no arquivo .env)' : 
+                  'Verificando conexão com o banco de dados...'
+                }
+              >
+                <div className="relative flex">
+                  {dbConnected === 'online' && (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                    </>
+                  )}
+                  {dbConnected === 'online_schema_error' && (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                    </>
+                  )}
+                  {dbConnected === 'offline' && (
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 animate-pulse" />
+                  )}
+                  {dbConnected === 'checking' && (
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 animate-bounce" />
+                  )}
+                </div>
+                <span className="text-[10px] font-mono font-bold text-[#071757]">
+                  {dbConnected === 'online' ? 'SUPABASE ONLINE' : 
+                   dbConnected === 'online_schema_error' ? 'SUPABASE SEM TABELA' : 
+                   dbConnected === 'offline' ? 'SUPABASE OFFLINE' : 
+                   'SUPABASE CONECTANDO...'}
+                </span>
+              </div>
+
               <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#F8F8FA] border border-[#DEE1E9] rounded-full">
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#D8B46A]" />
                 <span className="text-[10px] font-mono font-medium text-[#071757]">SEFAZ ONLINE</span>
