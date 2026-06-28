@@ -467,20 +467,28 @@ export default function App() {
       <div className={`flex-1 pt-16 h-screen flex flex-col transition-all duration-300 relative z-10 overflow-hidden ${sidebarCollapsed ? 'pl-20' : 'pl-68'}`}>
         
         {/* 2. TOP ACTIONS TASKBAR */}
-        <Header
-          activeMenu={activeMenu}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          currentUser={currentUser}
-          collapsed={sidebarCollapsed}
-          onLogout={() => {
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('ox_current_route');
-              localStorage.removeItem('ox_active_menu');
-            }
-            setCurrentRoute('home');
-          }}
-        />
+        {/* 2. TOP ACTIONS TASKBAR */}
+        {(() => {
+          const matchedUser = usuariosList.find(u => u.nome.toLowerCase() === currentUser.toLowerCase());
+          return (
+            <Header
+              activeMenu={activeMenu}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              currentUser={currentUser}
+              currentUserMatricula={matchedUser?.matricula}
+              currentUserPapel={matchedUser?.papel}
+              collapsed={sidebarCollapsed}
+              onLogout={() => {
+                if (typeof window !== 'undefined') {
+                  localStorage.removeItem('ox_current_route');
+                  localStorage.removeItem('ox_active_menu');
+                }
+                setCurrentRoute('home');
+              }}
+            />
+          );
+        })()}
 
         {/* 3. DYNAMIC PAGES VIEW */}
         <main className="flex-1 p-6 w-full max-w-none animate-fade-in overflow-y-auto">

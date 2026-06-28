@@ -7,6 +7,8 @@ interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   currentUser: string;
+  currentUserMatricula?: string;
+  currentUserPapel?: string;
   collapsed?: boolean;
   onLogout?: () => void;
 }
@@ -16,6 +18,8 @@ export default function Header({
   searchQuery,
   setSearchQuery,
   currentUser,
+  currentUserMatricula,
+  currentUserPapel,
   collapsed = false,
   onLogout
 }: HeaderProps) {
@@ -43,6 +47,16 @@ export default function Header({
   ];
 
   const initials = currentUser.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  const getUserDepartment = (papel: string) => {
+    const p = (papel || '').toLowerCase();
+    if (p.includes('admin') || p.includes('tecnologia') || p.includes('erp')) return 'Tecnologia';
+    if (p.includes('fiscal') || p.includes('gta')) return 'Fiscal';
+    if (p.includes('financeiro') || p.includes('operador')) return 'Financeiro';
+    if (p.includes('logística') || p.includes('supervisora') || p.includes('log')) return 'Logística';
+    if (p.includes('diretor') || p.includes('gerente') || p.includes('diretoria')) return 'Diretoria';
+    return 'Comercial';
+  };
 
   return (
     <header className={`h-16 bg-white/80 backdrop-blur-lg border-b border-[#E2E8F0]/40 flex items-center justify-between px-6 fixed top-0 right-0 z-20 shadow-xs transition-all duration-300 ${collapsed ? 'left-20' : 'left-68'}`}>
@@ -140,7 +154,7 @@ export default function Header({
                 <div>
                   <h4 className="text-sm font-bold text-slate-800 leading-tight">{currentUser}</h4>
                   <p className="text-[10px] text-[#D8B46A] uppercase font-bold tracking-wide mt-0.5">
-                    {currentUser.includes('Admin') ? 'Administrador' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'}
+                    {currentUserPapel || (currentUser.includes('Admin') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
                   </p>
                 </div>
               </div>
@@ -149,13 +163,13 @@ export default function Header({
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Departamento</span>
                   <span className="font-semibold text-slate-800">
-                    {currentUser.includes('Admin') ? 'Tecnologia' : currentUser.includes('Wagner') ? 'Diretoria' : 'Comercial'}
+                    {getUserDepartment(currentUserPapel || (currentUser.includes('Admin') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'))}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Matrícula</span>
                   <span className="font-mono text-slate-800">
-                    {currentUser.includes('Admin') ? 'OX-00001' : currentUser.includes('Wagner') ? 'OX-15648' : 'OX-38519'}
+                    {currentUserMatricula || (currentUser.includes('Admin') ? 'OX-00001' : currentUser.includes('Wagner') ? 'OX-15648' : 'OX-38519')}
                   </span>
                 </div>
                 <div className="flex justify-between">
