@@ -67,6 +67,12 @@ const DEFAULT_ANIMAL_CATEGORIES = [
   { id: 'cat-bez', code: 'BEZ', name: 'Bezerro(a)', status: 'Ativo', descricao: 'Bovino recém-desmamado' }
 ];
 
+const DEFAULT_COST_CENTERS = [
+  { id: 'cc-1', codigo: '01.100.001', nome: 'Matriz - Administrativo', tipo: 'Administrativo', responsavel: 'Diego Silveira', status: 'Ativo', descricao: 'Despesas gerais administrativas da sede' },
+  { id: 'cc-2', codigo: '02.100.001', nome: 'Fazenda Santa Rita - Recria', tipo: 'Produtivo', responsavel: 'José Carlos Albuquerque', status: 'Ativo', descricao: 'Manejo, nutrição e pastagem de recria' },
+  { id: 'cc-3', codigo: '02.200.001', nome: 'Fazenda Real MT - Confinamento', tipo: 'Produtivo', responsavel: 'Diego Silveira', status: 'Ativo', descricao: 'Operação de confinamento e engorda de machos' }
+];
+
 export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario, onDeleteUsuario }: CadastrosViewProps) {
   const [activeTab, setActiveTab] = useState<CadastroTab>('clientes_fornecedores');
   
@@ -121,12 +127,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     const deleted = (() => {
       try { return JSON.parse(localStorage.getItem('deleted_mock_ids') || '[]'); } catch { return []; }
     })();
-    const initialList = [
-      { id: 'cc-1', codigo: '01.100.001', nome: 'Matriz - Administrativo', tipo: 'Administrativo', responsavel: 'Diego Silveira', status: 'Ativo', descricao: 'Despesas gerais administrativas da sede' },
-      { id: 'cc-2', codigo: '02.100.001', nome: 'Fazenda Santa Rita - Recria', tipo: 'Produtivo', responsavel: 'José Carlos Albuquerque', status: 'Ativo', descricao: 'Manejo, nutrição e pastagem de recria' },
-      { id: 'cc-3', codigo: '02.200.001', nome: 'Fazenda Real MT - Confinamento', tipo: 'Produtivo', responsavel: 'Diego Silveira', status: 'Ativo', descricao: 'Operação de confinamento e engorda de machos' }
-    ];
-    return initialList.filter(item => !deleted.includes(item.id));
+    return DEFAULT_COST_CENTERS.filter(item => !deleted.includes(item.id));
   });
 
   useEffect(() => {
@@ -224,17 +225,43 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 2. Parceiros
       try {
         const { data, error } = await supabase.from('parceiros').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            nome: item.nome,
-            contato: item.contato,
-            telefone: item.telefone,
-            regiao: item.regiao,
-            tipo: item.tipo
-          }));
-          setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && CADASTRO_PARCEIROS.length > 0) {
+            const toUpsert = CADASTRO_PARCEIROS.map(item => ({
+              id: item.id,
+              nome: item.nome,
+              contato: item.contato,
+              telefone: item.telefone,
+              regiao: item.regiao,
+              tipo: item.tipo,
+              raw_data: item
+            }));
+            await supabase.from('parceiros').upsert(toUpsert);
+            const refetched = await supabase.from('parceiros').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                nome: item.nome,
+                contato: item.contato,
+                telefone: item.telefone,
+                regiao: item.regiao,
+                tipo: item.tipo
+              }));
+              setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              nome: item.nome,
+              contato: item.contato,
+              telefone: item.telefone,
+              regiao: item.regiao,
+              tipo: item.tipo
+            }));
+            setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load parceiros from Supabase:', err);
@@ -243,17 +270,43 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 3. Motoristas
       try {
         const { data, error } = await supabase.from('motoristas').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            nome: item.nome,
-            cnh: item.cnh,
-            placa: item.placa,
-            transportadora: item.transportadora,
-            status: item.status
-          }));
-          setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && CADASTRO_MOTORISTAS.length > 0) {
+            const toUpsert = CADASTRO_MOTORISTAS.map(item => ({
+              id: item.id,
+              nome: item.nome,
+              cnh: item.cnh,
+              placa: item.placa,
+              transportadora: item.transportadora,
+              status: item.status,
+              raw_data: item
+            }));
+            await supabase.from('motoristas').upsert(toUpsert);
+            const refetched = await supabase.from('motoristas').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                nome: item.nome,
+                cnh: item.cnh,
+                placa: item.placa,
+                transportadora: item.transportadora,
+                status: item.status
+              }));
+              setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              nome: item.nome,
+              cnh: item.cnh,
+              placa: item.placa,
+              transportadora: item.transportadora,
+              status: item.status
+            }));
+            setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load motoristas from Supabase:', err);
@@ -262,17 +315,43 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 4. Centros de Custo
       try {
         const { data, error } = await supabase.from('centros_custo').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            nome: item.nome,
-            codigo: item.codigo,
-            tipo: item.tipo,
-            status: item.status,
-            responsavel: item.responsavel
-          }));
-          setCentrosCusto(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && DEFAULT_COST_CENTERS.length > 0) {
+            const toUpsert = DEFAULT_COST_CENTERS.map(item => ({
+              id: item.id,
+              nome: item.nome,
+              codigo: item.codigo,
+              tipo: item.tipo,
+              status: item.status,
+              responsavel: item.responsavel,
+              raw_data: item
+            }));
+            await supabase.from('centros_custo').upsert(toUpsert);
+            const refetched = await supabase.from('centros_custo').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                nome: item.nome,
+                codigo: item.codigo,
+                tipo: item.tipo,
+                status: item.status,
+                responsavel: item.responsavel
+              }));
+              setCentrosCusto(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              nome: item.nome,
+              codigo: item.codigo,
+              tipo: item.tipo,
+              status: item.status,
+              responsavel: item.responsavel
+            }));
+            setCentrosCusto(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load centros_custo from Supabase:', err);
@@ -281,15 +360,37 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 5. Bancos
       try {
         const { data, error } = await supabase.from('bancos').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            code: item.codigo,
-            name: item.nome,
-            status: item.status
-          }));
-          setBancos(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && BRAZILIAN_BANKS.length > 0) {
+            const toUpsert = BRAZILIAN_BANKS.map(item => ({
+              id: item.id,
+              codigo: item.code,
+              nome: item.name,
+              status: (item as any).status || 'Ativo',
+              raw_data: item
+            }));
+            await supabase.from('bancos').upsert(toUpsert);
+            const refetched = await supabase.from('bancos').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                code: item.codigo,
+                name: item.nome,
+                status: item.status
+              }));
+              setBancos(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              code: item.codigo,
+              name: item.nome,
+              status: item.status
+            }));
+            setBancos(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load bancos from Supabase:', err);
@@ -298,16 +399,40 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 6. Tipos de Parceiro
       try {
         const { data, error } = await supabase.from('tipos_parceiro').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            code: item.codigo,
-            name: item.nome,
-            descricao: item.descricao,
-            status: item.status
-          }));
-          setTiposParceiro(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && DEFAULT_PARTNER_TYPES.length > 0) {
+            const toUpsert = DEFAULT_PARTNER_TYPES.map(item => ({
+              id: item.id,
+              codigo: item.code,
+              nome: item.name,
+              descricao: (item as any).descricao || '',
+              status: (item as any).status || 'Ativo',
+              raw_data: item
+            }));
+            await supabase.from('tipos_parceiro').upsert(toUpsert);
+            const refetched = await supabase.from('tipos_parceiro').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                code: item.codigo,
+                name: item.nome,
+                descricao: item.descricao,
+                status: item.status
+              }));
+              setTiposParceiro(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              code: item.codigo,
+              name: item.nome,
+              descricao: item.descricao,
+              status: item.status
+            }));
+            setTiposParceiro(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load tipos_parceiro from Supabase:', err);
@@ -316,16 +441,40 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 7. Categorias
       try {
         const { data, error } = await supabase.from('categorias').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(item => ({
-            ...(item.raw_data || {}),
-            id: item.id,
-            code: item.codigo,
-            name: item.nome,
-            descricao: item.descricao,
-            status: item.status
-          }));
-          setCategorias(mapped.filter(item => !deletedMockIds.includes(item.id)));
+        if (!error && data) {
+          if (data.length === 0 && DEFAULT_ANIMAL_CATEGORIES.length > 0) {
+            const toUpsert = DEFAULT_ANIMAL_CATEGORIES.map(item => ({
+              id: item.id,
+              codigo: item.code,
+              nome: item.name,
+              descricao: item.descricao,
+              status: item.status,
+              raw_data: item
+            }));
+            await supabase.from('categorias').upsert(toUpsert);
+            const refetched = await supabase.from('categorias').select('*');
+            if (refetched.data) {
+              const mapped = refetched.data.map(item => ({
+                ...(item.raw_data || {}),
+                id: item.id,
+                code: item.codigo,
+                name: item.nome,
+                descricao: item.descricao,
+                status: item.status
+              }));
+              setCategorias(mapped.filter(item => !deletedMockIds.includes(item.id)));
+            }
+          } else {
+            const mapped = data.map(item => ({
+              ...(item.raw_data || {}),
+              id: item.id,
+              code: item.codigo,
+              name: item.nome,
+              descricao: item.descricao,
+              status: item.status
+            }));
+            setCategorias(mapped.filter(item => !deletedMockIds.includes(item.id)));
+          }
         }
       } catch (err) {
         console.warn('Failed to load categorias from Supabase:', err);
@@ -602,6 +751,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `BK-${String(count).padStart(3, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newBank = {
+        ...formData,
         id: formData.id || ('bk-' + Math.random().toString(36).substr(2, 9)),
         codigo: codeVal,
         code: codeVal,
@@ -643,6 +793,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `T-${dateStr}${String(count).padStart(4, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newPT = {
+        ...formData,
         id: formData.id || ('pt-' + Math.random().toString(36).substr(2, 9)),
         codigo: codeVal,
         code: codeVal,
@@ -686,6 +837,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `K-${dateStr}${String(count).padStart(4, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCategory = {
+        ...formData,
         id: formData.id || ('cat-' + Math.random().toString(36).substr(2, 9)),
         code: codeVal,
         codigo: codeVal,
@@ -728,6 +880,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `CC-${String(count).padStart(3, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCC = {
+        ...formData,
         id: formData.id || ('cc-' + Math.random().toString(36).substr(2, 9)),
         codigo: codeVal,
         nome: formData.col1 || 'Sem Nome',
@@ -772,6 +925,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackMatricula = `A${baseMatricula + count - 1}`;
       const matriculaVal = formData.matricula || fallbackMatricula;
       const novoUsuario = {
+        ...formData,
         id: formData.id || ('us-' + Math.random().toString(36).substr(2, 9)),
         nome: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Sem Nome',
         email: formData.segurancaLogin || '',
@@ -791,12 +945,13 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const fallbackCode = `M-${dateStr}${String(count).padStart(4, '0')}`;
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newDriver = {
+        ...formData,
         id: formData.id || ('mo-' + Math.random().toString(36).substr(2, 9)),
         nome: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Sem Nome',
         cnh: formData.cnh || 'Não Informado',
         placa: formData.veiculoPlaca || 'Não Informada',
         transportadora: formData.unidade === 'FIL' ? 'Filial - MT' : 'TransGado Matogrosso',
-        status: 'Disponível',
+        status: formData.status || 'Disponível',
         codigo: codeVal
       };
       setMotoristas(prev => {
