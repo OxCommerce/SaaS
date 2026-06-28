@@ -86,6 +86,36 @@ const DEFAULT_COST_CENTERS = [
   { id: 'cc-3', codigo: '02.200.001', nome: 'Fazenda Real MT - Confinamento', tipo: 'Produtivo', responsavel: 'Diego Silveira', status: 'Ativo', descricao: 'Operação de confinamento e engorda de machos' }
 ];
 
+const sanitizeName = (val: string): string => {
+  if (!val) return '';
+  const connectives = ['de', 'di', 'do', 'da', 'dos', 'das', 'e', 'em'];
+  return val
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word, idx) => {
+      if (word.length === 0) return '';
+      if (idx === 0 || !connectives.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      return word;
+    })
+    .join(' ');
+};
+
+const sanitizeEmail = (val: string): string => {
+  if (!val) return '';
+  return val.trim().toLowerCase();
+};
+
+const sanitizeText = (val: string): string => {
+  if (!val) return '';
+  if (val === val.toUpperCase() && val !== val.toLowerCase()) {
+    return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+  }
+  return val;
+};
+
 export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario, onDeleteUsuario }: CadastrosViewProps) {
   const [activeTab, setActiveTab] = useState<CadastroTab>('clientes_fornecedores');
   
@@ -753,7 +783,34 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     setShowAddCliForModal(true);
   };
 
-  const handleCliForSave = (formData: any) => {
+  const handleCliForSave = (rawFormData: any) => {
+    const formData = { ...rawFormData };
+
+    const nameFields = [
+      'razaoSocial', 'nomeFantasia', 'apelido', 'nickname', 'contato',
+      'contatoNome', 'contatoSobrenome', 'firstName', 'lastName',
+      'responsavel', 'logradouro', 'bairro', 'cidade', 'col1'
+    ];
+    nameFields.forEach(field => {
+      if (typeof formData[field] === 'string') {
+        formData[field] = sanitizeName(formData[field]);
+      }
+    });
+
+    const emailFields = ['email', 'contatoEmail', 'segurancaLogin'];
+    emailFields.forEach(field => {
+      if (typeof formData[field] === 'string') {
+        formData[field] = sanitizeEmail(formData[field]);
+      }
+    });
+
+    const textFields = ['descricao', 'observacao'];
+    textFields.forEach(field => {
+      if (typeof formData[field] === 'string') {
+        formData[field] = sanitizeText(formData[field]);
+      }
+    });
+
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
