@@ -1175,8 +1175,8 @@ export default function CommercialView({
 
       {/* ==================== COMPRA MODAL ==================== */}
       {showAddCompraModal && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
               <h3 className="text-sm font-bold text-gray-800">
                 {isEditCompraMode ? 'Editar Compra de Bovinos (Entrada)' : 'Lançar Compra de Bovinos (Entrada)'}
@@ -1191,7 +1191,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
                   <input
@@ -1218,16 +1218,6 @@ export default function CommercialView({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC do Cliente</label>
-                  <input
-                    type="text"
-                    value={compraForm.codigoOrdemCompraCliente}
-                    onChange={(e) => setCompraForm({ ...compraForm, codigoOrdemCompraCliente: e.target.value })}
-                    placeholder="Opcional (preenchimento manual)"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
-                  />
-                </div>
-                <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Compra</label>
                   <input
                     type="text"
@@ -1238,21 +1228,6 @@ export default function CommercialView({
                       const formatted = formatData(e.target.value);
                       const iso = convertBrToIsoDate(formatted);
                       setCompraForm({ ...compraForm, dataEmissao: iso, dataEntrega: iso });
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Entrega</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="DD/MM/AAAA"
-                    value={convertIsoToBrDate(compraForm.dataEntrega)}
-                    onChange={(e) => {
-                      const formatted = formatData(e.target.value);
-                      const iso = convertBrToIsoDate(formatted);
-                      setCompraForm({ ...compraForm, dataEntrega: iso });
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
                   />
@@ -1765,8 +1740,8 @@ export default function CommercialView({
 
       {/* ==================== REGISTRAR ORDEM DE COMPRA CLIENTE (DEMANDA) ==================== */}
       {showAddVendaModal && (
-        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
               <h3 className="text-sm font-bold text-gray-800">Receber Ordem de Compra (Demanda)</h3>
               <button onClick={() => setShowAddVendaModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
