@@ -1764,7 +1764,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados do Sistema</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
                   <input
@@ -1798,6 +1798,7 @@ export default function CommercialView({
                     Pendente (Automático)
                   </div>
                 </div>
+                <div></div> {/* Espaço vazio para manter grid de 4 colunas */}
               </div>
 
               {/* Seção 2: Identificação do Cliente */}
@@ -1805,8 +1806,8 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">2. Identificação do Cliente</span>
               </div>
 
-              {/* Row 1: Cód. Cliente, Ordem de Compra do Cliente */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Row 1: Cód. Cliente, Ordem de Compra do Cliente (4 colunas) */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Cliente</label>
                   <input
@@ -1835,9 +1836,11 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
+                <div></div>
+                <div></div>
               </div>
 
-              {/* Row 2: Cliente, Destino, Categoria */}
+              {/* Row 2: Cliente, Destino, Categoria (3 colunas) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cliente</label>
@@ -1887,7 +1890,7 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Row 3: Endereço do Destino (País, Estado, Cidade) */}
+              {/* Row 3: Endereço do Destino (3 colunas) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {(() => {
                   const selectedUnit = clientes.find(c => c.nomeFantasia === vendaForm.frigorifico);
@@ -1945,8 +1948,9 @@ export default function CommercialView({
                       <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhamento da Ordem de Compra</span>
                     </div>
 
-                    {/* Row 1: Peso Total, Quantidade, Preço Unitário */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Grid Unificado de 4 colunas (sendo 2 linhas de 4 colunas cada) */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Linha 1: Editáveis */}
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Total (kg)</label>
                         <input
@@ -1991,10 +1995,22 @@ export default function CommercialView({
                           className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                         />
                       </div>
-                    </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Descontos / Retenções (%)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={vendaForm.comissao}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => setVendaForm({ ...vendaForm, comissao: e.target.value === '' ? '' : Number(e.target.value) })}
+                          onBlur={() => {
+                            if (vendaForm.comissao === '') setVendaForm({ ...vendaForm, comissao: 0 });
+                          }}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                        />
+                      </div>
 
-                    {/* Row 2: Peso Médio, Total Arrobas, Valor Total */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Linha 2: Calculados */}
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
                         <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Peso Total / Quantidade">
@@ -2012,24 +2028,6 @@ export default function CommercialView({
                         <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Total Arrobas x Preço Unitário">
                           {liveVendaValorBruto ? liveVendaValorBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Row 3: Descontos / Retenções (%), Resultado Líquido */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Descontos / Retenções (%)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          value={vendaForm.comissao}
-                          onFocus={(e) => e.target.select()}
-                          onChange={(e) => setVendaForm({ ...vendaForm, comissao: e.target.value === '' ? '' : Number(e.target.value) })}
-                          onBlur={() => {
-                            if (vendaForm.comissao === '') setVendaForm({ ...vendaForm, comissao: 0 });
-                          }}
-                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
-                        />
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Resultado Líquido (R$)</label>
