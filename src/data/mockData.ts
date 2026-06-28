@@ -399,39 +399,45 @@ export const CHANNELS_AUDITORIA = [
 ];
 
 export const CADASTRO_CLIENTES = [
-  { id: 'cl-1', codigo: 'C-1006260001', nome: 'Frigorífico JBS S/A', documento: '01.234.567/0001-89', telefone: '(66) 3411-9000', estado: 'MT', tipo: 'Cliente' },
-  { id: 'cl-2', codigo: 'C-1206260002', nome: 'Frigorífico Marfrig Global Foods', documento: '02.444.111/0001-22', telefone: '(67) 3541-1122', estado: 'MS', tipo: 'Cliente' },
-  { id: 'cl-3', codigo: 'C-1406260003', nome: 'Minerva Foods S/A', documento: '05.555.777/0003-44', telefone: '(17) 3321-1500', estado: 'SP', tipo: 'Cliente' },
-  { id: 'cf-joao-marcelo', codigo: 'C-2706260004', nome: 'João Marcelo Santos', documento: '987.654.321-00', telefone: '(91) 98888-2222', estado: 'PA', tipo: 'Cliente' },
-  { id: 'cf-norte-pegaso', codigo: 'C-2706260005', nome: 'Norte Pegaso Serviços LTDA', documento: '23.456.789/0001-55', telefone: '(91) 98888-3333', estado: 'PA', tipo: 'Ambos' },
-  { id: 'cf-maria-eduarda', codigo: 'C-2706260006', nome: 'Maria Eduarda Lima', documento: '456.789.123-44', telefone: '(91) 98888-4444', estado: 'PA', tipo: 'Cliente' },
-  { id: 'cf-carlos-henrique', codigo: 'C-2706260007', nome: 'Carlos Henrique Abreu', documento: '654.321.987-10', telefone: '(91) 98888-6666', estado: 'PA', tipo: 'Ambos' },
-  { id: 'cf-fernanda-rocha', codigo: 'C-2706260008', nome: 'Fernanda Rocha Martins', documento: '789.123.456-88', telefone: '(91) 98888-8888', estado: 'PA', tipo: 'Cliente' },
-  { id: 'cf-technorte-sistemas', codigo: 'C-2706260009', nome: 'TechNorte Sistemas LTDA', documento: '56.789.012/0001-33', telefone: '(91) 98888-9999', estado: 'PA', tipo: 'Ambos' },
-  { id: 'cf-rafael-augusto', codigo: 'C-2706260010', nome: 'Rafael Augusto Pereira', documento: '121.654.987-22', telefone: '(91) 98888-0000', estado: 'PA', tipo: 'Cliente' }
+  { id: 'cl-1', codigo: 'C-1006260001', nome: 'Frigorífico JBS S/A', documento: '01.234.567/0001-89', telefone: '(66) 3411-9000', estado: 'MT', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' },
+  { id: 'cl-2', codigo: 'C-1206260002', nome: 'Frigorífico Marfrig Global Foods', documento: '02.444.111/0001-22', telefone: '(67) 3541-1122', estado: 'MS', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' },
+  { id: 'cl-3', codigo: 'C-1406260003', nome: 'Minerva Foods S/A', documento: '05.555.777/0003-44', telefone: '(17) 3321-1500', estado: 'SP', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' },
+  { id: 'cl-4', codigo: 'C-1606260004', nome: 'Frigorífico Plena Alimentos S/A', documento: '07.888.999/0001-33', telefone: '(31) 3222-4400', estado: 'MG', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' },
+  { id: 'cl-5', codigo: 'C-1806260005', nome: 'Frigorífico JBS Unidade Barra do Garças', documento: '01.234.567/0005-00', telefone: '(66) 3401-2200', estado: 'MT', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' }
 ];
 
 export const CADASTRO_FORNECEDORES = [
-  { id: 'fo-1', codigo: 'F-1006260001', nome: 'José Carlos Albuquerque', documento: '003.444.921-22', fazenda: 'Fazenda Santa Rita', estado: 'MT', tipo: 'Fornecedor' },
-  { id: 'fo-2', codigo: 'F-1206260002', nome: 'Agropecuária Vale Verde S/A', documento: '10.987.654/0001-32', fazenda: 'Estância do Sol', estado: 'GO', tipo: 'Fornecedor' },
-  { id: 'fo-3', codigo: 'F-1406260003', nome: 'Marcos de Souza Neves', documento: '544.111.900-53', fazenda: 'Sítio Novo', estado: 'PA', tipo: 'Fornecedor' },
-  { id: 'cf-alfa-transportes', codigo: 'F-2706260004', nome: 'Alfa Transportes LTDA', documento: '12.345.678/0001-90', fazenda: 'Av. Presidente Vargas', estado: 'PA', tipo: 'Fornecedor' },
-  { id: 'cf-norte-pegaso', codigo: 'C-2706260005', nome: 'Norte Pegaso Serviços LTDA', documento: '23.456.789/0001-55', fazenda: 'Av. Brasil', estado: 'PA', tipo: 'Ambos' },
-  { id: 'cf-armazens-estacoes', codigo: 'F-2706260005', nome: 'Armazéns Estações & Comércio LTDA', documento: '34.567.890/0001-12', fazenda: 'Travessa Mauriti', estado: 'PA', tipo: 'Fornecedor' },
-  { id: 'cf-carlos-henrique', codigo: 'C-2706260007', nome: 'Carlos Henrique Abreu', documento: '654.321.987-10', fazenda: 'Av. Carajás', estado: 'PA', tipo: 'Ambos' },
-  { id: 'cf-expresso-para', codigo: 'F-2706260006', nome: 'Expresso Pará Logística LTDA', documento: '45.678.901/0001-77', fazenda: 'Rodovia BR-316', estado: 'PA', tipo: 'Fornecedor' },
-  { id: 'cf-technorte-sistemas', codigo: 'C-2706260009', nome: 'TechNorte Sistemas LTDA', documento: '56.789.012/0001-33', fazenda: 'Rua dos Pariquis', estado: 'PA', tipo: 'Ambos' }
+  { id: 'fo-1', codigo: 'F-1006260001', nome: 'José Carlos Albuquerque', documento: '003.444.921-22', fazenda: 'Fazenda Santa Rita', estado: 'MT', tipo: 'Fornecedor', relacionamento: 'FOR', clientType: 'PF' },
+  { id: 'fo-2', codigo: 'F-1206260002', nome: 'Agropecuária Vale Verde S/A', documento: '10.987.654/0001-32', fazenda: 'Estância do Sol', estado: 'GO', tipo: 'Fornecedor', relacionamento: 'FOR', clientType: 'PJ' },
+  { id: 'fo-3', codigo: 'F-1406260003', nome: 'Marcos de Souza Neves', documento: '544.111.900-53', fazenda: 'Sítio Novo', estado: 'PA', tipo: 'Fornecedor', relacionamento: 'FOR', clientType: 'PF' },
+  { id: 'fo-4', codigo: 'F-1606260004', nome: 'Sandra Regina de Paula', documento: '211.555.666-77', fazenda: 'Fazenda Primavera', estado: 'MG', tipo: 'Fornecedor', relacionamento: 'FOR', clientType: 'PF' },
+  { id: 'fo-5', codigo: 'F-1806260005', nome: 'Alberto Santos Dumont', documento: '322.666.777-88', fazenda: 'Fazenda Nelore Real', estado: 'MT', tipo: 'Fornecedor', relacionamento: 'FOR', clientType: 'PF' }
 ];
 
 export const CADASTRO_PARCEIROS = [
-  { id: 'pa-1', codigo: 'P-1006260001', nome: 'Boi Gordo Corretagem Ltda', contato: 'Nelso Corretor', telefone: '(66) 99882-9988', regiao: 'Vale do Araguaia', tipo: 'Parceiro/Corretor' },
-  { id: 'pa-2', codigo: 'P-1206260002', nome: 'Leilões Agro-Oeste', contato: 'Arnaldo Rezende', telefone: '(62) 3211-5050', regiao: 'Centro-Oeste', tipo: 'Leiloeira' }
+  { id: 'pa-1', codigo: 'P-1006260001', nome: 'Boi Gordo Corretagem Ltda', contato: 'Nelso Corretor', telefone: '(66) 99882-9988', regiao: 'Vale do Araguaia', tipo: 'Parceiro Comissionado', parceiroTipo: 'COM' },
+  { id: 'pa-2', codigo: 'P-1206260002', nome: 'Leilões Agro-Oeste', contato: 'Arnaldo Rezende', telefone: '(62) 3211-5050', regiao: 'Centro-Oeste', tipo: 'Parceiro Comissionado', parceiroTipo: 'COM' },
+  { id: 'pa-3', codigo: 'P-1406260003', nome: 'Souza & Silva Comissões', contato: 'Souza Santos', telefone: '(91) 98111-2222', regiao: 'Norte', tipo: 'Parceiro Comissionado', parceiroTipo: 'COM' },
+  { id: 'pa-4', codigo: 'P-1606260004', nome: 'Rondon Pecuária Comissões', contato: 'Rondon Silva', telefone: '(66) 99321-4567', regiao: 'Sul', tipo: 'Parceiro Comissionado', parceiroTipo: 'COM' },
+  { id: 'pa-5', codigo: 'P-1806260005', nome: 'AgroLeilão Pantanal', contato: 'Pantanal Rezende', telefone: '(67) 3222-8989', regiao: 'Centro-Oeste', tipo: 'Parceiro Comissionado', parceiroTipo: 'COM' },
+  { id: 'pa-6', codigo: 'P-2006260006', nome: 'Carlos Eduardo Corretora', contato: 'Carlos Eduardo', telefone: '(11) 99555-1234', regiao: 'Sudeste', tipo: 'Corretor', parceiroTipo: 'COR' },
+  { id: 'pa-7', codigo: 'P-2206260007', nome: 'Sandra Regina Corretores', contato: 'Sandra Regina', telefone: '(34) 99121-7890', regiao: 'Centro-Oeste', tipo: 'Corretor', parceiroTipo: 'COR' },
+  { id: 'pa-8', codigo: 'P-2406260008', nome: 'Alberto Santos Corretagem', contato: 'Alberto Santos', telefone: '(66) 99655-4321', regiao: 'Norte', tipo: 'Corretor', parceiroTipo: 'COR' },
+  { id: 'pa-9', codigo: 'P-2606260009', nome: 'Marília Pecuária', contato: 'Marília Mendes', telefone: '(81) 99777-6666', regiao: 'Nordeste', tipo: 'Corretor', parceiroTipo: 'COR' },
+  { id: 'pa-10', codigo: 'P-2806260010', nome: 'Vale do Guaporé Corretora', contato: 'Guaporé Rezende', telefone: '(69) 3421-9000', regiao: 'Vale do Guaporé', tipo: 'Corretor', parceiroTipo: 'COR' }
 ];
 
 export const CADASTRO_MOTORISTAS = [
-  { id: 'mo-1', codigo: 'M-1006260001', nome: 'Valdecir Rodrigues Alves', cnh: '023456789-22', placa: 'OQY-8E12', transportadora: 'TransGado Matogrosso', status: 'Em viagem' },
-  { id: 'mo-2', codigo: 'M-1206260002', nome: 'Ailton Senna de Souza', cnh: '098765432-11', placa: 'GVT-2A44', transportadora: 'Expresso Boiadeiro', status: 'Carregado' },
-  { id: 'mo-3', codigo: 'M-1406260003', nome: 'Roberto Carlos Santos', cnh: '045555666-88', placa: 'KAP-9988', transportadora: 'LogPesados Agronegócio', status: 'Disponível' }
+  { id: 'mo-1', codigo: 'M-1006260001', nome: 'Valdecir Rodrigues Alves', cnh: '023456789-22', placa: 'OQY-8E12', transportadora: 'Autônomo', status: 'Disponível', relacionamento: 'MOT' },
+  { id: 'mo-2', codigo: 'M-1206260002', nome: 'Ailton Senna de Souza', cnh: '098765432-11', placa: 'GVT-2A44', transportadora: 'Autônomo', status: 'Disponível', relacionamento: 'MOT' },
+  { id: 'mo-3', codigo: 'M-1406260003', nome: 'Roberto Carlos Santos', cnh: '045555666-88', placa: 'KAP-9988', transportadora: 'Autônomo', status: 'Disponível', relacionamento: 'MOT' },
+  { id: 'mo-4', codigo: 'M-1606260004', nome: 'Sebastião Rodrigues Silva', cnh: '034444555-99', placa: 'DEF-5678', transportadora: 'Autônomo', status: 'Disponível', relacionamento: 'MOT' },
+  { id: 'mo-5', codigo: 'M-1806260005', nome: 'Marcos de Paula Guedes', cnh: '056666777-11', placa: 'XYZ-9090', transportadora: 'Autônomo', status: 'Disponível', relacionamento: 'MOT' },
+  { id: 'mo-6', codigo: 'M-2006260006', nome: 'TransGado Matogrosso LTDA', cnh: 'Não Aplicável', placa: 'Não Aplicável', transportadora: 'Própria (Transportadora)', status: 'Disponível', relacionamento: 'TRA' },
+  { id: 'mo-7', codigo: 'M-2206260007', nome: 'Expresso Boiadeiro S/A', cnh: 'Não Aplicável', placa: 'Não Aplicável', transportadora: 'Própria (Transportadora)', status: 'Disponível', relacionamento: 'TRA' },
+  { id: 'mo-8', codigo: 'M-2406260008', nome: 'LogPesados Agronegócio LTDA', cnh: 'Não Aplicável', placa: 'Não Aplicável', transportadora: 'Própria (Transportadora)', status: 'Disponível', relacionamento: 'TRA' },
+  { id: 'mo-9', codigo: 'M-2606260009', nome: 'Transportadora Rápido Nelore', cnh: 'Não Aplicável', placa: 'Não Aplicável', transportadora: 'Própria (Transportadora)', status: 'Disponível', relacionamento: 'TRA' },
+  { id: 'mo-10', codigo: 'M-2806260010', nome: 'GadoFácil Logística S/A', cnh: 'Não Aplicável', placa: 'Não Aplicável', transportadora: 'Própria (Transportadora)', status: 'Disponível', relacionamento: 'TRA' }
 ];
 
 export const CADASTRO_FAZENDAS = [

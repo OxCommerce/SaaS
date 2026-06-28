@@ -69,7 +69,9 @@ const DEFAULT_PARTNER_TYPES = [
   { id: 'pt-log', code: 'LOG', name: 'Logístico' },
   { id: 'pt-fis', code: 'FIS', name: 'Fiscal / Tributário' },
   { id: 'pt-exp', code: 'EXP', name: 'Exportação / Trading' },
-  { id: 'pt-tec', code: 'TEC', name: 'Tecnologia / TI' }
+  { id: 'pt-tec', code: 'TEC', name: 'Tecnologia / TI' },
+  { id: 'pt-com', code: 'COM', name: 'Parceiro Comissionado' },
+  { id: 'pt-cor', code: 'COR', name: 'Corretor' }
 ];
 
 const DEFAULT_ANIMAL_CATEGORIES = [
@@ -77,7 +79,12 @@ const DEFAULT_ANIMAL_CATEGORIES = [
   { id: 'cat-vac', code: 'VAC', name: 'Vaca Gorda', status: 'Ativo', descricao: 'Bovino fêmea pronta para o abate' },
   { id: 'cat-gar', code: 'GAR', name: 'Garrote', status: 'Ativo', descricao: 'Macho jovem em fase de recria/engorda' },
   { id: 'cat-nov', code: 'NOV', name: 'Novilha', status: 'Ativo', descricao: 'Fêmea jovem que ainda não pariu' },
-  { id: 'cat-bez', code: 'BEZ', name: 'Bezerro(a)', status: 'Ativo', descricao: 'Bovino recém-desmamado' }
+  { id: 'cat-bez', code: 'BEZ', name: 'Bezerro(a)', status: 'Ativo', descricao: 'Bovino recém-desmamado' },
+  { id: 'cat-tou', code: 'TOU', name: 'Touro', status: 'Ativo', descricao: 'Macho inteiro destinado à reprodução' },
+  { id: 'cat-bzd', code: 'BZD', name: 'Bezerra Desmamada', status: 'Ativo', descricao: 'Fêmea jovem recém-desmamada' },
+  { id: 'cat-vcc', code: 'VCC', name: 'Vaca com Cria', status: 'Ativo', descricao: 'Fêmea acompanhada de bezerro ao pé' },
+  { id: 'cat-bom', code: 'BOM', name: 'Boi Magro', status: 'Ativo', descricao: 'Macho castrado magro para recria ou confinamento' },
+  { id: 'cat-nvp', code: 'NVP', name: 'Novilha Prenhe', status: 'Ativo', descricao: 'Fêmea jovem prenhe confirmada' }
 ];
 
 const DEFAULT_COST_CENTERS = [
