@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS public.bancos (
     codigo text UNIQUE NOT NULL, -- e.g., '001', '341'
     nome text NOT NULL, -- e.g., 'Banco do Brasil S.A.'
     status text DEFAULT 'Ativo', -- 'Ativo', 'Inativo'
+    raw_data jsonb,
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
 
@@ -118,6 +119,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_parceiro (
     nome text NOT NULL, -- e.g., 'Logístico', 'Fiscal / Tributário'
     descricao text,
     status text DEFAULT 'Ativo', -- 'Ativo', 'Inativo'
+    raw_data jsonb,
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
 
@@ -133,6 +135,7 @@ CREATE TABLE IF NOT EXISTS public.categorias (
     nome text NOT NULL, -- e.g., 'Boi Gordo', 'Vaca Gorda'
     descricao text,
     status text DEFAULT 'Ativo', -- 'Ativo', 'Inativo'
+    raw_data jsonb,
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
 
