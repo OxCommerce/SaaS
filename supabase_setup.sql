@@ -7,6 +7,9 @@ DROP TABLE IF EXISTS public.centros_custo CASCADE;
 DROP TABLE IF EXISTS public.bancos CASCADE;
 DROP TABLE IF EXISTS public.tipos_parceiro CASCADE;
 DROP TABLE IF EXISTS public.categorias CASCADE;
+DROP TABLE IF EXISTS public.compras CASCADE;
+DROP TABLE IF EXISTS public.vendas CASCADE;
+DROP TABLE IF EXISTS public.negociacoes CASCADE;
 
 -- 1. Table for Clientes & Fornecedores
 CREATE TABLE IF NOT EXISTS public.clientes_fornecedores (
@@ -144,5 +147,47 @@ DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.categorias;
 CREATE POLICY "Allow anonymous read/write" ON public.categorias
     FOR ALL TO anon USING (true) WITH CHECK (true);
 
--- 9. Reload schema cache to ensure PostgREST API detects new tables immediately
+-- 9. Table for Compras
+CREATE TABLE IF NOT EXISTS public.compras (
+    id text PRIMARY KEY,
+    numero_operacao text,
+    status text,
+    raw_data jsonb,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.compras ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.compras;
+CREATE POLICY "Allow anonymous read/write" ON public.compras
+    FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 10. Table for Vendas
+CREATE TABLE IF NOT EXISTS public.vendas (
+    id text PRIMARY KEY,
+    numero_oc text,
+    status text,
+    raw_data jsonb,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.vendas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.vendas;
+CREATE POLICY "Allow anonymous read/write" ON public.vendas
+    FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 11. Table for Negociacoes (CRM)
+CREATE TABLE IF NOT EXISTS public.negociacoes (
+    id text PRIMARY KEY,
+    titulo text,
+    fase text,
+    raw_data jsonb,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.negociacoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.negociacoes;
+CREATE POLICY "Allow anonymous read/write" ON public.negociacoes
+    FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 12. Reload schema cache to ensure PostgREST API detects new tables immediately
 NOTIFY pgrst, 'reload schema';

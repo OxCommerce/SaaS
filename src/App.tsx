@@ -163,6 +163,107 @@ export default function App() {
     loadUsuarios();
   }, []);
 
+  useEffect(() => {
+    async function loadCommercialData() {
+      try {
+        // 1. Compras
+        const { data: compData, error: compErr } = await supabase.from('compras').select('*');
+        if (!compErr && compData) {
+          if (compData.length > 0) {
+            const list = compData.map(d => ({
+              id: d.id,
+              ...d.raw_data
+            }));
+            setCompras(list);
+          } else {
+            const toInsert = INITIAL_COMPRAS.map(c => ({
+              id: c.id,
+              numero_operacao: c.numeroOperacao,
+              status: c.status,
+              raw_data: c
+            }));
+            await supabase.from('compras').upsert(toInsert);
+            setCompras(INITIAL_COMPRAS);
+          }
+        }
+
+        // 2. Vendas
+        const { data: vendData, error: vendErr } = await supabase.from('vendas').select('*');
+        if (!vendErr && vendData) {
+          if (vendData.length > 0) {
+            const list = vendData.map(d => ({
+              id: d.id,
+              ...d.raw_data
+            }));
+            setOrdensCompraCliente(list);
+          } else {
+            const toInsert = INITIAL_ORDENS_COMPRA_CLIENTE.map(v => ({
+              id: v.id,
+              numero_oc: v.numeroOC,
+              status: v.status,
+              raw_data: v
+            }));
+            await supabase.from('vendas').upsert(toInsert);
+            setOrdensCompraCliente(INITIAL_ORDENS_COMPRA_CLIENTE);
+          }
+        }
+
+        // 3. Negociacoes
+        const { data: negData, error: negErr } = await supabase.from('negociacoes').select('*');
+        if (!negErr && negData) {
+          if (negData.length > 0) {
+            const list = negData.map(d => ({
+              id: d.id,
+              ...d.raw_data
+            }));
+            setNegociacoes(list);
+          } else {
+            const toInsert = INITIAL_NEGOCIACOES.map(n => ({
+              id: n.id,
+              titulo: n.titulo,
+              fase: n.fase,
+              raw_data: n
+            }));
+            await supabase.from('negociacoes').upsert(toInsert);
+            setNegociacoes(INITIAL_NEGOCIACOES);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load commercial data from Supabase:', err);
+      }
+    }
+
+    loadCommercialData();
+
+    // Subscribe to Postgres realtime changes for all three tables
+    const compChannel = supabase
+      .channel('compras-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'compras' }, () => {
+        loadCommercialData();
+      })
+      .subscribe();
+
+    const vendChannel = supabase
+      .channel('vendas-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'vendas' }, () => {
+        loadCommercialData();
+      })
+      .subscribe();
+
+    const negChannel = supabase
+      .channel('negociacoes-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'negociacoes' }, () => {
+        loadCommercialData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(compChannel);
+      supabase.removeChannel(vendChannel);
+      supabase.removeChannel(negChannel);
+    };
+  }, []);
+
   // --- ACTIONS ---
 
   // 1. Simulates global sync database
@@ -198,6 +299,16 @@ export default function App() {
       return [novaCompra, ...prev];
     });
     
+    // Save to Supabase
+    supabase.from('compras').upsert([{
+      id: novaCompra.id,
+      numero_operacao: novaCompra.numeroOperacao,
+      status: novaCompra.status,
+      raw_data: novaCompra
+    }]).then(({ error }) => {
+      if (error) console.warn('Failed to save Compra to Supabase:', error);
+    });
+    
     // Resolve destinations dynamically if linked to a client purchase order
     let destinoFinal = 'Barretos - SP (Planta Frigorífico Minerva)';
     let destinoLogistica = 'Barretos - SP';
@@ -208,6 +319,16 @@ export default function App() {
         destinoLogistica = oc.frigorifico;
         // Auto update client order status to 'Faturada'
         setOrdensCompraCliente(prev => prev.map(o => o.id === oc.id ? { ...o, status: 'Faturada' } : o));
+        // Save status update to Supabase
+        const updatedOC = { ...oc, status: 'Faturada' as const };
+        supabase.from('vendas').upsert([{
+          id: oc.id,
+          numero_oc: oc.numeroOC,
+          status: 'Faturada',
+          raw_data: updatedOC
+        }]).then(({ error }) => {
+          if (error) console.warn('Failed to auto-update Client OC status to Supabase:', error);
+        });
       }
     }
 
@@ -262,11 +383,24 @@ export default function App() {
 
   const handleDeleteCompra = (id: string) => {
     setCompras(compras.filter((c) => c.id !== id));
+    supabase.from('compras').delete().eq('id', id).then(({ error }) => {
+      if (error) console.warn('Failed to delete Compra from Supabase:', error);
+    });
   };
 
   // 3. Add client Purchase Order (OrdemCompraCliente)
   const handleAddOrdemCompraCliente = (novaOC: OrdemCompraCliente) => {
     setOrdensCompraCliente([novaOC, ...ordensCompraCliente]);
+    // Save to Supabase
+    supabase.from('vendas').upsert([{
+      id: novaOC.id,
+      numero_oc: novaOC.numeroOC,
+      status: novaOC.status,
+      raw_data: novaOC
+    }]).then(({ error }) => {
+      if (error) console.warn('Failed to save Sales OC to Supabase:', error);
+    });
+
     // Generates a companion accounts receivable (Conta a Receber)
     const novaReceita: TransacaoFinanceira = {
       id: 't-' + Math.random().toString(36).substr(2, 5),
@@ -283,17 +417,42 @@ export default function App() {
 
   const handleDeleteOrdemCompraCliente = (id: string) => {
     setOrdensCompraCliente(ordensCompraCliente.filter((v) => v.id !== id));
+    supabase.from('vendas').delete().eq('id', id).then(({ error }) => {
+      if (error) console.warn('Failed to delete Sales OC from Supabase:', error);
+    });
   };
 
   // 4. Update Kanban deals phases
   const handleUpdateNegociacaoStage = (id: string, stage: Negociacao['fase']) => {
     setNegociacoes(
-      negociacoes.map((item) => (item.id === id ? { ...item, fase: stage, ultimaAtualizacao: 'Agora mesmo' } : item))
+      negociacoes.map((item) => {
+        if (item.id === id) {
+          const updated = { ...item, fase: stage, ultimaAtualizacao: 'Agora mesmo' };
+          supabase.from('negociacoes').upsert([{
+            id: item.id,
+            titulo: item.titulo,
+            fase: stage,
+            raw_data: updated
+          }]).then(({ error }) => {
+            if (error) console.warn('Failed to update Negociacao stage to Supabase:', error);
+          });
+          return updated;
+        }
+        return item;
+      })
     );
   };
 
   const handleAddNegociacao = (novaNeg: Negociacao) => {
     setNegociacoes([novaNeg, ...negociacoes]);
+    supabase.from('negociacoes').upsert([{
+      id: novaNeg.id,
+      titulo: novaNeg.titulo,
+      fase: novaNeg.fase,
+      raw_data: novaNeg
+    }]).then(({ error }) => {
+      if (error) console.warn('Failed to save Negociacao to Supabase:', error);
+    });
   };
 
   // 5. Create new cattle transport lot
