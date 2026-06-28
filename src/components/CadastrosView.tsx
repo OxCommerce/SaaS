@@ -15,6 +15,19 @@ const BRAZILIAN_BANKS = [
   { id: 'bk-341', code: '341', name: 'Itaú Unibanco S.A.' },
   { id: 'bk-748', code: '748', name: 'Banco Cooperativo Sicredi S.A.' },
   { id: 'bk-756', code: '756', name: 'Banco Cooperativo do Brasil S.A. - BANCOOB' },
+  { id: 'bk-077', code: '077', name: 'Banco Inter S.A.' },
+  { id: 'bk-260', code: '260', name: 'Nu Pagamentos S.A. (Nubank)' },
+  { id: 'bk-041', code: '041', name: 'Banco do Estado do Rio Grande do Sul S.A. (Banrisul)' },
+  { id: 'bk-004', code: '004', name: 'Banco do Nordeste do Brasil S.A.' },
+  { id: 'bk-212', code: '212', name: 'Banco Original S.A.' },
+  { id: 'bk-422', code: '422', name: 'Banco Safra S.A.' },
+  { id: 'bk-623', code: '623', name: 'Banco Pan S.A.' },
+  { id: 'bk-655', code: '655', name: 'Banco Votorantim S.A.' },
+  { id: 'bk-036', code: '036', name: 'Banco BMG S.A.' },
+  { id: 'bk-070', code: '070', name: 'Banco de Brasília S.A. (BRB)' },
+  { id: 'bk-021', code: '021', name: 'Banco do Estado do Espírito Santo S.A. (Banestes)' },
+  { id: 'bk-121', code: '121', name: 'Banco Agibank S.A.' },
+  { id: 'bk-389', code: '389', name: 'Banco Mercantil do Brasil S.A.' }
 ];
 import {
   Users,
@@ -361,7 +374,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('bancos').select('*');
         if (!error && data) {
-          if (data.length === 0 && BRAZILIAN_BANKS.length > 0) {
+          if (data.length < 15 && BRAZILIAN_BANKS.length > 0) {
             const toUpsert = BRAZILIAN_BANKS.map(item => ({
               id: item.id,
               codigo: item.code,
