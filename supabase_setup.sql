@@ -1,3 +1,13 @@
+-- 0. RESET DATABASE (OPTIONAL: Drop existing tables to perform a clean reset)
+DROP TABLE IF EXISTS public.clientes_fornecedores CASCADE;
+DROP TABLE IF EXISTS public.parceiros CASCADE;
+DROP TABLE IF EXISTS public.motoristas CASCADE;
+DROP TABLE IF EXISTS public.usuarios CASCADE;
+DROP TABLE IF EXISTS public.centros_custo CASCADE;
+DROP TABLE IF EXISTS public.bancos CASCADE;
+DROP TABLE IF EXISTS public.tipos_parceiro CASCADE;
+DROP TABLE IF EXISTS public.categorias CASCADE;
+
 -- 1. Table for Clientes & Fornecedores
 CREATE TABLE IF NOT EXISTS public.clientes_fornecedores (
     id text PRIMARY KEY,
