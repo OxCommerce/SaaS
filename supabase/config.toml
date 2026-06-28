@@ -1,0 +1,4 @@
+# Supabase Project Configuration
+
+[functions.hello]
+verify_jwt = false
