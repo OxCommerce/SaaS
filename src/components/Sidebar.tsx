@@ -24,6 +24,7 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronLeft,
+  LogOut,
 } from 'lucide-react';
 import { OxLogo } from './ui/Logo';
 
@@ -45,6 +46,7 @@ interface SidebarProps {
   logoUrl?: string;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  onLogout?: () => void;
 }
 
 // ── Style helpers ──
@@ -86,7 +88,8 @@ export default function Sidebar({
   primaryColor,
   logoUrl,
   collapsed,
-  onToggleCollapse
+  onToggleCollapse,
+  onLogout
 }: SidebarProps) {
   const [openComercial, setOpenComercial] = useState(true);
   const [openFiscal, setOpenFiscal] = useState(false);
@@ -374,6 +377,19 @@ export default function Sidebar({
             })}
           </div>
         )}
+
+        {/* Separator and Logout action */}
+        <div className="h-[1px] bg-slate-200/50 my-4 mx-2" />
+        <button
+          onClick={onLogout}
+          title="Sair do painel e voltar à tela de apresentação"
+          className="flex items-center justify-between w-full px-4 py-2.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50/60 hover:text-red-700 transition-all group mt-auto cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <LogOut className="h-4 w-4 flex-shrink-0 group-hover:scale-110 transition-transform" />
+            {!collapsed && <span>Sair para Apresentação</span>}
+          </div>
+        </button>
 
       </nav>
 
