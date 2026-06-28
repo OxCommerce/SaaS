@@ -83,7 +83,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
             className="text-center w-full"
           >
             <OxLogo variant="white" className="w-full h-auto mx-auto drop-shadow-2xl" />
-            <h1 className="text-white text-5xl font-black font-display mt-[-3.5rem] tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
+            <h1 className="text-white text-5xl font-black font-display mt-[-8.5rem] tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
               Ox Commerce
             </h1>
             <p className="text-blue-200 text-sm tracking-widest uppercase mt-1.5 font-medium opacity-80">
