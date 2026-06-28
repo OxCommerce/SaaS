@@ -332,3 +332,18 @@ body:has(.glass-panel-mode) {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 }
+
+/* High Contrast Input Fields and Labels */
+input:not([type="checkbox"]):not([type="radio"]):not([disabled]):not([readonly]),
+select:not([disabled]):not([readonly]),
+textarea:not([disabled]):not([readonly]) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+label,
+.label-title,
+.block.text-\[10px\]\.font-bold {
+  color: #000000 !important;
+}
+
