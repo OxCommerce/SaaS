@@ -59,7 +59,7 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
 
       {/* ── Left Panel (desktop only) ── */}
       <div
-        className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 relative flex-col justify-between px-[120px] py-12 overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #05113b 0%, #071757 60%, #182763 100%)' }}
       >
         {/* Background decoration */}
@@ -80,13 +80,13 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center"
+            className="text-center w-full"
           >
-            <OxLogo variant="white" className="h-[24rem] w-auto mx-auto drop-shadow-2xl" />
-            <h1 className="text-white text-5xl font-black font-display mt-8 tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
-              OxCommerce
+            <OxLogo variant="white" className="w-full h-auto mx-auto drop-shadow-2xl" />
+            <h1 className="text-white text-5xl font-black font-display mt-2 tracking-widest uppercase bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent drop-shadow-md">
+              Ox Commerce
             </h1>
-            <p className="text-blue-200 text-sm tracking-widest uppercase mt-2 font-medium opacity-80">
+            <p className="text-blue-200 text-sm tracking-widest uppercase mt-1.5 font-medium opacity-80">
               Agropecuária de Rastreabilidade Integrada
             </p>
           </motion.div>
