@@ -190,7 +190,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
           setDbError(`Falha ao conectar com o Supabase: "${error.message}". Verifique se a tabela 'clientes_fornecedores' foi criada no painel SQL Editor do Supabase.`);
         } else if (data) {
           setDbError(null);
-          if (data.length === 0) {
+          const hasNewData = data.some(item => item.id === 'cl-5');
+          if (data.length === 0 || !hasNewData) {
             // Seed database with mock data
             const initialList = [
               ...CADASTRO_CLIENTES.map(c => ({ ...c, relacionamento: 'CLI' })),
@@ -276,7 +277,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('parceiros').select('*');
         if (!error && data) {
-          if (data.length === 0 && CADASTRO_PARCEIROS.length > 0) {
+          const hasNewData = data.some(item => item.id === 'pa-10');
+          if ((data.length === 0 || !hasNewData) && CADASTRO_PARCEIROS.length > 0) {
             const toUpsert = CADASTRO_PARCEIROS.map(item => ({
               id: item.id,
               nome: item.nome,
@@ -321,7 +323,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('motoristas').select('*');
         if (!error && data) {
-          if (data.length === 0 && CADASTRO_MOTORISTAS.length > 0) {
+          const hasNewData = data.some(item => item.id === 'mo-10');
+          if ((data.length === 0 || !hasNewData) && CADASTRO_MOTORISTAS.length > 0) {
             const toUpsert = CADASTRO_MOTORISTAS.map(item => ({
               id: item.id,
               nome: item.nome,
@@ -451,7 +454,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('tipos_parceiro').select('*');
         if (!error && data) {
-          if (data.length === 0 && DEFAULT_PARTNER_TYPES.length > 0) {
+          const hasNewData = data.some(item => item.id === 'pt-cor');
+          if ((data.length === 0 || !hasNewData) && DEFAULT_PARTNER_TYPES.length > 0) {
             const toUpsert = DEFAULT_PARTNER_TYPES.map(item => ({
               id: item.id,
               codigo: item.code,
@@ -493,7 +497,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('categorias').select('*');
         if (!error && data) {
-          if (data.length === 0 && DEFAULT_ANIMAL_CATEGORIES.length > 0) {
+          const hasNewData = data.some(item => item.id === 'cat-nvp');
+          if ((data.length === 0 || !hasNewData) && DEFAULT_ANIMAL_CATEGORIES.length > 0) {
             const toUpsert = DEFAULT_ANIMAL_CATEGORIES.map(item => ({
               id: item.id,
               codigo: item.code,
