@@ -586,15 +586,16 @@ export default function CommercialView({
 
   const handleAddVendaSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validate required fields (omitting weight check)
-    if (!vendaForm.codigoCliente || !vendaForm.cliente || !vendaForm.frigorifico || !vendaForm.categoriaAnimal || !vendaForm.quantidade || !vendaForm.valorArroba) {
-      alert("Por favor, preencha todos os campos obrigatórios (Código do Cliente, Cliente, Destino, Categoria, Quantidade e Preço Unitário).");
+    // Validate required fields
+    if (!vendaForm.codigoCliente || !vendaForm.cliente || !vendaForm.frigorifico || !vendaForm.categoriaAnimal || !vendaForm.quantidade || !vendaForm.peso || !vendaForm.valorArroba) {
+      alert("Por favor, preencha todos os campos obrigatórios (Código do Cliente, Cliente, Destino, Categoria, Quantidade, Peso Total e Preço Unitário).");
       return;
     }
-    const valorBruto = Number(vendaForm.quantidade) * Number(vendaForm.valorArroba);
+    const pesoTotal = Number(vendaForm.peso);
+    const arrobas = pesoTotal / 30;
+    const valorBruto = arrobas * Number(vendaForm.valorArroba);
     const comissaoDedução = valorBruto * (Number(vendaForm.comissao || 0) / 100);
     const resultado = Math.round(valorBruto - comissaoDedução);
-    const calculatedWeight = Number(vendaForm.quantidade) * 15 * 30; // 15 @ per animal standard
 
     const novaVenda: OrdemCompraCliente = {
       id: 'v-' + Math.random().toString(36).substr(2, 9),
@@ -604,7 +605,7 @@ export default function CommercialView({
       frigorifico: vendaForm.frigorifico,
       categoriaAnimal: vendaForm.categoriaAnimal,
       quantidade: Number(vendaForm.quantidade),
-      peso: calculatedWeight,
+      peso: pesoTotal,
       valorArroba: Number(vendaForm.valorArroba),
       comissao: Number(vendaForm.comissao),
       resultadoOperacao: resultado,
@@ -1750,7 +1751,7 @@ export default function CommercialView({
       {/* ==================== REGISTRAR ORDEM DE COMPRA CLIENTE (DEMANDA) ==================== */}
       {showAddVendaModal && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
               <h3 className="text-sm font-bold text-gray-800">Receber Ordem de Compra (Demanda)</h3>
               <button onClick={() => setShowAddVendaModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
@@ -1758,27 +1759,21 @@ export default function CommercialView({
               </button>
             </div>
 
-            <form onSubmit={handleAddVendaSubmit} className="mt-4 space-y-4">
-              {/* Row 1: ID OC, Ordem de Compra do Cliente, Data de Emissão, Status */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form onSubmit={handleAddVendaSubmit} className="mt-4 space-y-4 overflow-y-auto pr-2 flex-1 scrollbar-thin">
+              {/* Seção 1: Dados do Sistema */}
+              <div className="border-b border-gray-200 pb-1.5">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados do Sistema</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
                   <input
                     type="text"
                     required
+                    readOnly
+                    disabled
                     value={vendaForm.numeroOC}
-                    onChange={(e) => setVendaForm({ ...vendaForm, numeroOC: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
-                  <input
-                    type="text"
-                    value={vendaForm.codigoOrdemCompraCliente}
-                    onChange={(e) => setVendaForm({ ...vendaForm, codigoOrdemCompraCliente: e.target.value })}
-                    placeholder="Opcional (preenchimento manual)"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-500 bg-gray-50"
                   />
                 </div>
                 <div>
@@ -1805,8 +1800,13 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Row 2: Cód. Cliente, Cliente, Destino, Categoria */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Seção 2: Identificação do Cliente */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">2. Identificação do Cliente</span>
+              </div>
+
+              {/* Row 1: Cód. Cliente, Ordem de Compra do Cliente */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Cliente</label>
                   <input
@@ -1825,6 +1825,20 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
+                  <input
+                    type="text"
+                    value={vendaForm.codigoOrdemCompraCliente}
+                    onChange={(e) => setVendaForm({ ...vendaForm, codigoOrdemCompraCliente: e.target.value })}
+                    placeholder="Opcional (preenchimento manual)"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
+              </div>
+
+              {/* Row 2: Cliente, Destino, Categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cliente</label>
                   <input
@@ -1916,42 +1930,117 @@ export default function CommercialView({
                 })()}
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
-                  <input
-                    type="number"
-                    value={vendaForm.quantidade}
-                    onChange={(e) => setVendaForm({ ...vendaForm, quantidade: Number(e.target.value) })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço Unitário</label>
-                  <input
-                    type="number"
-                    value={vendaForm.valorArroba}
-                    onChange={(e) => setVendaForm({ ...vendaForm, valorArroba: Number(e.target.value) })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Descontos / Retenções (%)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={vendaForm.comissao}
-                    onChange={(e) => setVendaForm({ ...vendaForm, comissao: Number(e.target.value) })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total</label>
-                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Quantidade x Preço Unitário">
-                    {((vendaForm.quantidade || 0) * (vendaForm.valorArroba || 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                  </div>
-                </div>
-              </div>
+              {/* Seção 3: Detalhamento da Ordem de Compra */}
+              {(() => {
+                const liveVendaPesoTotal = Number(vendaForm.peso) || 0;
+                const liveVendaPesoMedio = (liveVendaPesoTotal && Number(vendaForm.quantidade)) ? (liveVendaPesoTotal / Number(vendaForm.quantidade)) : 0;
+                const liveVendaArrobas = liveVendaPesoTotal / 30;
+                const liveVendaValorBruto = liveVendaArrobas * (Number(vendaForm.valorArroba) || 0);
+                const liveVendaComissao = liveVendaValorBruto * ((Number(vendaForm.comissao) || 0) / 100);
+                const liveVendaResultadoLiquido = Math.round(liveVendaValorBruto - liveVendaComissao);
+                
+                return (
+                  <>
+                    <div className="border-b border-gray-200 pb-1.5 pt-2">
+                      <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhamento da Ordem de Compra</span>
+                    </div>
+
+                    {/* Row 1: Peso Total, Quantidade, Preço Unitário */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Total (kg)</label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={vendaForm.peso}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => setVendaForm({ ...vendaForm, peso: e.target.value === '' ? '' : Number(e.target.value) })}
+                          onBlur={() => {
+                            if (vendaForm.peso === '') setVendaForm({ ...vendaForm, peso: 0 });
+                          }}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade (Cabeças)</label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={vendaForm.quantidade}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => setVendaForm({ ...vendaForm, quantidade: e.target.value === '' ? '' : Number(e.target.value) })}
+                          onBlur={() => {
+                            if (vendaForm.quantidade === '') setVendaForm({ ...vendaForm, quantidade: 0 });
+                          }}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço Unitário (por @)</label>
+                        <input
+                          type="number"
+                          required
+                          value={vendaForm.valorArroba}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => setVendaForm({ ...vendaForm, valorArroba: e.target.value === '' ? '' : Number(e.target.value) })}
+                          onBlur={() => {
+                            if (vendaForm.valorArroba === '') setVendaForm({ ...vendaForm, valorArroba: 0 });
+                          }}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 2: Peso Médio, Total Arrobas, Valor Total */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
+                        <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Peso Total / Quantidade">
+                          {liveVendaPesoMedio ? `${liveVendaPesoMedio.toFixed(2)} kg` : '-'}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Total Arrobas (@)</label>
+                        <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Peso Total / 30">
+                          {liveVendaArrobas ? `${liveVendaArrobas.toFixed(2)} @` : '-'}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total (R$)</label>
+                        <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Total Arrobas x Preço Unitário">
+                          {liveVendaValorBruto ? liveVendaValorBruto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Descontos / Retenções (%), Resultado Líquido */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Descontos / Retenções (%)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={vendaForm.comissao}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => setVendaForm({ ...vendaForm, comissao: e.target.value === '' ? '' : Number(e.target.value) })}
+                          onBlur={() => {
+                            if (vendaForm.comissao === '') setVendaForm({ ...vendaForm, comissao: 0 });
+                          }}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Resultado Líquido (R$)</label>
+                        <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-green-700 flex items-center h-[34px]" title="Valor Total menos descontos/comissões">
+                          {liveVendaResultadoLiquido ? liveVendaResultadoLiquido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
 
               <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
                 <button
