@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, Search, CheckCircle2, AlertTriangle, Clock, LogOut } from 'lucide-react';
 import { ActiveMenu } from '../types';
+import { supabase } from '../supabaseClient';
 
 interface HeaderProps {
   activeMenu: ActiveMenu;
@@ -25,6 +26,25 @@ export default function Header({
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileCard, setShowProfileCard] = useState(false);
+  const [dbConnected, setDbConnected] = useState<'online' | 'offline' | 'checking'>('checking');
+
+  useEffect(() => {
+    async function checkConnection() {
+      try {
+        const { error } = await supabase.from('clientes_fornecedores').select('id').limit(1);
+        if (error) {
+          setDbConnected('offline');
+        } else {
+          setDbConnected('online');
+        }
+      } catch {
+        setDbConnected('offline');
+      }
+    }
+    checkConnection();
+    const interval = setInterval(checkConnection, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const formatTitle = (menu: ActiveMenu) => {
     switch (menu) {
@@ -84,6 +104,36 @@ export default function Header({
             placeholder="Pesquisar gado, lote, nota, fornecedor..."
             className="w-full pl-9 pr-4 py-2 bg-[#F8F8FA] border border-[#DEE1E9] rounded-lg text-xs text-[#475569] outline-none focus:bg-white focus:border-[#D8B46A] focus:ring-2 focus:ring-[#D8B46A]/20 transition-all placeholder:text-[#CBD5E1] font-sans"
           />
+        </div>
+
+        {/* Supabase Database Connection Status */}
+        <div 
+          className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-full cursor-help hover:bg-slate-100/70 transition-all select-none"
+          title={
+            dbConnected === 'online' ? 'Banco de Dados Supabase Conectado com sucesso' : 
+            dbConnected === 'offline' ? 'Erro de conexão com o Supabase (Tabela ou permissão ausente)' : 
+            'Verificando conexão com o banco de dados...'
+          }
+        >
+          <div className="relative flex">
+            {dbConnected === 'online' && (
+              <>
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </>
+            )}
+            {dbConnected === 'offline' && (
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 animate-pulse" />
+            )}
+            {dbConnected === 'checking' && (
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400 animate-bounce" />
+            )}
+          </div>
+          <span className="text-[9px] font-bold text-slate-500 font-sans tracking-wide uppercase">
+            {dbConnected === 'online' ? 'Supabase' : 
+             dbConnected === 'offline' ? 'Supabase Off' : 
+             'Conectando...'}
+          </span>
         </div>
 
         {/* Notifications */}
