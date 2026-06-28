@@ -140,3 +140,6 @@ ALTER TABLE public.categorias ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.categorias;
 CREATE POLICY "Allow anonymous read/write" ON public.categorias
     FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 9. Reload schema cache to ensure PostgREST API detects new tables immediately
+NOTIFY pgrst, 'reload schema';
