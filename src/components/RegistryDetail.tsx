@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Select } from './Input';
 import { Button } from './Button';
+import { Upload, CheckCircle2 } from 'lucide-react';
 
 const formatCpfCnpj = (value: string) => {
   const nums = value.replace(/\D/g, '');
@@ -141,6 +142,20 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
   const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [isLoadingCnpj, setIsLoadingCnpj] = useState(false);
   const [mapSourceUri, setMapSourceUri] = useState<string | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'docCavalo' | 'docCarreta') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange({
+          ...data,
+          [`${field}Url`]: reader.result as string
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Sync parent data change down to internal states (e.g. on mount or edit load)
   useEffect(() => {
@@ -702,22 +717,129 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
              </div>
 
              <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4 mt-6">Dados do Veículo</h4>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <Input 
-                  label="Modelo Veículo" 
+                  label="Modelo do Veículo" 
                   placeholder="Ex: Scania R450" 
                   value={data.veiculoModelo || ''}
                   onChange={(e) => onChange({ ...data, veiculoModelo: e.target.value })}
                   fullWidth 
                 />
                 <Input 
-                  label="Placa" 
+                  label="Placa do Cavalo" 
                   placeholder="ABC-1234" 
                   className="uppercase font-mono" 
                   value={data.veiculoPlaca || ''}
                   onChange={(e) => onChange({ ...data, veiculoPlaca: formatPlaca(e.target.value) })}
                   fullWidth 
                 />
+                <Input 
+                  label="Placa da Carreta" 
+                  placeholder="DEF-5678" 
+                  className="uppercase font-mono" 
+                  value={data.placaCarreta || ''}
+                  onChange={(e) => onChange({ ...data, placaCarreta: formatPlaca(e.target.value) })}
+                  fullWidth 
+                />
+             </div>
+
+             <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4 mt-6">Documentação do Veículo</h4>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Documento do Cavalo Upload */}
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
+                  <span className="text-xs font-bold text-slate-600 uppercase">Documento do Cavalo (Cavalinho)</span>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-lg hover:bg-brand-700 transition-all cursor-pointer shadow-sm">
+                      <Upload size={14} />
+                      Carregar Documento
+                      <input 
+                        type="file" 
+                        accept="image/*,application/pdf" 
+                        className="hidden" 
+                        onChange={(e) => handleFileUpload(e, 'docCavalo')} 
+                      />
+                    </label>
+                    {data.docCavaloUrl && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                          <CheckCircle2 size={14} className="text-emerald-500" /> Carregado
+                        </span>
+                        <button 
+                          type="button" 
+                          onClick={() => onChange({ ...data, docCavaloUrl: undefined })}
+                          className="text-xs text-red-500 hover:text-red-700 font-bold"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {data.docCavaloUrl && (
+                    <div className="mt-2 flex flex-col gap-2">
+                      {data.docCavaloUrl.startsWith('data:image/') ? (
+                        <a href={data.docCavaloUrl} target="_blank" rel="noopener noreferrer" className="block max-w-max">
+                          <img 
+                            src={data.docCavaloUrl} 
+                            alt="Preview do Documento do Cavalo" 
+                            className="h-16 w-auto object-cover rounded border border-slate-300 shadow-sm hover:opacity-90 transition-opacity" 
+                          />
+                        </a>
+                      ) : (
+                        <div className="text-[10px] text-slate-500 font-mono truncate max-w-full">
+                          <a href={data.docCavaloUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline font-bold">Ver Documento Carregado</a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Documento da Carreta Upload */}
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
+                  <span className="text-xs font-bold text-slate-600 uppercase">Documento da Carreta</span>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-lg hover:bg-brand-700 transition-all cursor-pointer shadow-sm">
+                      <Upload size={14} />
+                      Carregar Documento
+                      <input 
+                        type="file" 
+                        accept="image/*,application/pdf" 
+                        className="hidden" 
+                        onChange={(e) => handleFileUpload(e, 'docCarreta')} 
+                      />
+                    </label>
+                    {data.docCarretaUrl && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                          <CheckCircle2 size={14} className="text-emerald-500" /> Carregado
+                        </span>
+                        <button 
+                          type="button" 
+                          onClick={() => onChange({ ...data, docCarretaUrl: undefined })}
+                          className="text-xs text-red-500 hover:text-red-700 font-bold"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  {data.docCarretaUrl && (
+                    <div className="mt-2 flex flex-col gap-2">
+                      {data.docCarretaUrl.startsWith('data:image/') ? (
+                        <a href={data.docCarretaUrl} target="_blank" rel="noopener noreferrer" className="block max-w-max">
+                          <img 
+                            src={data.docCarretaUrl} 
+                            alt="Preview do Documento da Carreta" 
+                            className="h-16 w-auto object-cover rounded border border-slate-300 shadow-sm hover:opacity-90 transition-opacity" 
+                          />
+                        </a>
+                      ) : (
+                        <div className="text-[10px] text-slate-500 font-mono truncate max-w-full">
+                          <a href={data.docCarretaUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline font-bold">Ver Documento Carregado</a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
              </div>
           </>
         );
