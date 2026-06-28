@@ -461,13 +461,6 @@ export default function App() {
         logoUrl={config.logoUrl}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        onLogout={() => {
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('ox_current_route');
-            localStorage.removeItem('ox_active_menu');
-          }
-          setCurrentRoute('home');
-        }}
       />
 
       {/* Main Content Layout area */}
@@ -480,6 +473,13 @@ export default function App() {
           setSearchQuery={setSearchQuery}
           currentUser={currentUser}
           collapsed={sidebarCollapsed}
+          onLogout={() => {
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('ox_current_route');
+              localStorage.removeItem('ox_active_menu');
+            }
+            setCurrentRoute('home');
+          }}
         />
 
         {/* 3. DYNAMIC PAGES VIEW */}

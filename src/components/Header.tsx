@@ -1,10 +1,5 @@
-/**
- * Header — OxCommerce
- * Design System: AgroTech B2B | Verde Institucional
- */
-
 import React, { useState } from 'react';
-import { Bell, Search, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { Bell, Search, CheckCircle2, AlertTriangle, Clock, LogOut } from 'lucide-react';
 import { ActiveMenu } from '../types';
 
 interface HeaderProps {
@@ -13,6 +8,7 @@ interface HeaderProps {
   setSearchQuery: (query: string) => void;
   currentUser: string;
   collapsed?: boolean;
+  onLogout?: () => void;
 }
 
 export default function Header({
@@ -20,9 +16,11 @@ export default function Header({
   searchQuery,
   setSearchQuery,
   currentUser,
-  collapsed = false
+  collapsed = false,
+  onLogout
 }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(false);
 
   const formatTitle = (menu: ActiveMenu) => {
     switch (menu) {
@@ -40,7 +38,7 @@ export default function Header({
 
   const alerts = [
     { id: 1, type: 'fiscal',    icon: <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />, msg: 'GTA interestadual homologado com sucesso (#351403)' },
-    { id: 2, type: 'financeiro', icon: <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />, msg: 'Contas a pagar: Fatura Vale Verde vence in 8 dias' },
+    { id: 2, type: 'financeiro', icon: <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />, msg: 'Contas a pagar: Fatura Vale Verde vence em 8 dias' },
     { id: 3, type: 'logistica', icon: <Clock className="h-3.5 w-3.5 text-blue-500" />, msg: 'Bitrem OQY-8E12 em trânsito com 120 cabeças de gado' },
   ];
 
@@ -119,14 +117,64 @@ export default function Header({
         <div className="h-7 w-px bg-[#E2E8F0]" />
 
         {/* User Profile */}
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-[#071757] text-[#D8B46A] flex items-center justify-center font-bold text-xs ring-2 ring-[#D8B46A]/30">
-            {initials}
-          </div>
-          <div className="hidden sm:block text-left leading-none">
-            <p className="text-xs font-bold text-[#0F172A]">{currentUser}</p>
-            <p className="text-[10px] text-[#94A3B8] font-medium">Fazenda Real MT</p>
-          </div>
+        <div className="relative">
+          <button
+            onClick={() => setShowProfileCard(!showProfileCard)}
+            className="flex items-center gap-2.5 p-1.5 hover:bg-slate-50 rounded-lg transition-all text-left cursor-pointer"
+          >
+            <div className="h-8 w-8 rounded-full bg-[#071757] text-[#D8B46A] flex items-center justify-center font-bold text-xs ring-2 ring-[#D8B46A]/30 flex-shrink-0">
+              {initials}
+            </div>
+            <div className="hidden sm:block text-left leading-none pr-1">
+              <p className="text-xs font-bold text-[#0F172A]">{currentUser}</p>
+              <p className="text-[10px] text-[#94A3B8] font-medium">Fazenda Real MT</p>
+            </div>
+          </button>
+
+          {showProfileCard && (
+            <div className="absolute right-0 mt-2 w-72 bg-white border border-[#E2E8F0] rounded-xl shadow-lg p-4 z-50 animate-fade-in text-slate-700">
+              <div className="flex items-center gap-3 pb-3 border-b border-[#E2E8F0]">
+                <div className="h-12 w-12 rounded-full bg-[#071757] text-[#D8B46A] flex items-center justify-center font-bold text-lg ring-2 ring-[#D8B46A]/30">
+                  {initials}
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800 leading-tight">{currentUser}</h4>
+                  <p className="text-[10px] text-[#D8B46A] uppercase font-bold tracking-wide mt-0.5">
+                    {currentUser.includes('Admin') ? 'Administrador' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="py-3 space-y-2.5 text-xs border-b border-[#E2E8F0]">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-medium">Departamento</span>
+                  <span className="font-semibold text-slate-800">
+                    {currentUser.includes('Admin') ? 'Tecnologia' : currentUser.includes('Wagner') ? 'Diretoria' : 'Comercial'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-medium">Matrícula</span>
+                  <span className="font-mono text-slate-800">
+                    {currentUser.includes('Admin') ? 'OX-00001' : currentUser.includes('Wagner') ? 'OX-15648' : 'OX-38519'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-medium">Unidade</span>
+                  <span className="font-semibold text-slate-800">Planta MT</span>
+                </div>
+              </div>
+
+              <div className="pt-3">
+                <button
+                  onClick={onLogout}
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-red-50 hover:bg-red-100/70 text-red-600 rounded-lg text-xs font-bold transition-all uppercase tracking-wider cursor-pointer"
+                >
+                  <LogOut size={14} />
+                  Logoff
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
