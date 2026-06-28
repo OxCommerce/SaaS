@@ -80,6 +80,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
   });
 
   const [clientesFornecedores, setClientesFornecedores] = useState<any[]>([]);
+  const [dbError, setDbError] = useState<string | null>(null);
 
   const [parceiros, setParceiros] = useState(() => {
     const deleted = (() => {
@@ -133,7 +134,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       // 1. Clientes / Fornecedores
       try {
         const { data, error } = await supabase.from('clientes_fornecedores').select('*');
-        if (!error && data) {
+        if (error) {
+          console.warn('Failed to load clientes_fornecedores from Supabase:', error.message);
+          setDbError(`Falha ao conectar com o Supabase: "${error.message}". Verifique se a tabela 'clientes_fornecedores' foi criada no painel SQL Editor do Supabase.`);
+        } else if (data) {
+          setDbError(null);
           if (data.length === 0) {
             // Seed database with mock data
             const initialList = [
@@ -916,9 +921,13 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             fazenda: newCliFor.fazenda,
             raw_data: { ...formData, codigo: newCliFor.codigo }
           }]);
-          if (error) console.warn('Failed to save clientes_fornecedores to Supabase:', error.message);
-        } catch (err) {
+          if (error) {
+            console.warn('Failed to save clientes_fornecedores to Supabase:', error.message);
+            alert(`Erro ao salvar no Supabase: ${error.message}\n\nO cadastro foi salvo temporariamente apenas na memória local do navegador.`);
+          }
+        } catch (err: any) {
           console.warn('Failed to save clientes_fornecedores to Supabase:', err);
+          alert(`Erro ao salvar no Supabase: ${err.message || err}`);
         }
       })();
     }
@@ -1180,6 +1189,15 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
 
   return (
     <div id="cadastros-module" className="space-y-6">
+      {dbError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex flex-col space-y-1 text-xs shadow-xs">
+          <div className="flex items-center space-x-2 font-bold">
+            <span className="material-symbols-outlined text-red-600 text-sm">warning</span>
+            <span>Atenção: Instabilidade ou Falha na Conexão com o Supabase</span>
+          </div>
+          <p>{dbError}</p>
+        </div>
+      )}
       
       {/* Sub tabs list */}
       <div className="flex border-b border-gray-255 bg-white p-2 rounded-xl shadow-xs space-x-1 overflow-x-auto">
