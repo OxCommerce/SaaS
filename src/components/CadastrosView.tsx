@@ -1709,7 +1709,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                   <th className="p-3">Contato / Corretor Responsável</th>
                   <th className="p-3">Telefone Direto</th>
                   <th className="p-3">Giro / Região de Atuação</th>
-                  <th className="p-3">Categoria</th>
+                  <th className="p-3">Tipo de Parceiro</th>
                   <th className="p-3 text-right">Ações</th>
                 </tr>
               </thead>
