@@ -70,6 +70,42 @@ const formatCep = (value: string) => {
   return nums.replace(/(\d{5})(\d)/, '$1-$2').substring(0, 9);
 };
 
+const formatData = (value: string) => {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const parts = value.substring(0, 10).split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  const nums = value.replace(/\D/g, '');
+  if (nums.length <= 2) {
+    return nums;
+  }
+  if (nums.length <= 4) {
+    return `${nums.substring(0, 2)}/${nums.substring(2)}`;
+  }
+  return `${nums.substring(0, 2)}/${nums.substring(2, 4)}/${nums.substring(4, 8)}`;
+};
+
+const convertBrToIsoDate = (value: string) => {
+  const clean = value.replace(/\D/g, '');
+  if (clean.length === 8) {
+    const day = clean.substring(0, 2);
+    const month = clean.substring(2, 4);
+    const year = clean.substring(4, 8);
+    return `${year}-${month}-${day}`;
+  }
+  return value;
+};
+
+const convertIsoToBrDate = (value: string) => {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const parts = value.split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return value;
+};
+
 interface RegistryDetailProps {
   type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'VEHICLE' | 'BROKER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY';
   data: any;
@@ -459,9 +495,14 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
             />
             <Input 
               label="Data Nascimento" 
-              type="date" 
-              value={data.birthDate || ''}
-              onChange={(e) => onChange({ ...data, birthDate: e.target.value })}
+              type="text" 
+              placeholder="DD/MM/AAAA"
+              value={convertIsoToBrDate(data.birthDate || '')}
+              onChange={(e) => {
+                const formatted = formatData(e.target.value);
+                const iso = convertBrToIsoDate(formatted);
+                onChange({ ...data, birthDate: iso });
+              }}
               fullWidth 
             />
         </div>
@@ -648,9 +689,14 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 />
                 <Input 
                   label="Validade CNH" 
-                  type="date" 
-                  value={data.cnhValidade || ''}
-                  onChange={(e) => onChange({ ...data, cnhValidade: e.target.value })}
+                  type="text" 
+                  placeholder="DD/MM/AAAA"
+                  value={convertIsoToBrDate(data.cnhValidade || '')}
+                  onChange={(e) => {
+                    const formatted = formatData(e.target.value);
+                    const iso = convertBrToIsoDate(formatted);
+                    onChange({ ...data, cnhValidade: iso });
+                  }}
                   fullWidth 
                 />
              </div>

@@ -19,6 +19,43 @@ const MOCK_CLIENT_UNITS = [
   { id: 'cl-3-2', nomeFantasia: 'Minerva - Barretos', razaoSocial: 'Minerva Foods S/A', cidade: 'Barretos', uf: 'SP' },
   { id: 'cl-3-3', nomeFantasia: 'Minerva - Araguaína', razaoSocial: 'Minerva Foods S/A', cidade: 'Araguaína', uf: 'TO' }
 ];
+
+const formatData = (value: string) => {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const parts = value.substring(0, 10).split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  const nums = value.replace(/\D/g, '');
+  if (nums.length <= 2) {
+    return nums;
+  }
+  if (nums.length <= 4) {
+    return `${nums.substring(0, 2)}/${nums.substring(2)}`;
+  }
+  return `${nums.substring(0, 2)}/${nums.substring(2, 4)}/${nums.substring(4, 8)}`;
+};
+
+const convertBrToIsoDate = (value: string) => {
+  const clean = value.replace(/\D/g, '');
+  if (clean.length === 8) {
+    const day = clean.substring(0, 2);
+    const month = clean.substring(2, 4);
+    const year = clean.substring(4, 8);
+    return `${year}-${month}-${day}`;
+  }
+  return value;
+};
+
+const convertIsoToBrDate = (value: string) => {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    const parts = value.split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return value;
+};
+
 import {
   Search,
   Plus,
@@ -1177,12 +1214,14 @@ export default function CommercialView({
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Compra</label>
                   <input
-                    type="date"
+                    type="text"
                     required
-                    value={compraForm.dataEmissao}
+                    placeholder="DD/MM/AAAA"
+                    value={convertIsoToBrDate(compraForm.dataEmissao)}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, dataEmissao: val, dataEntrega: val });
+                      const formatted = formatData(e.target.value);
+                      const iso = convertBrToIsoDate(formatted);
+                      setCompraForm({ ...compraForm, dataEmissao: iso, dataEntrega: iso });
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
                   />
@@ -1190,10 +1229,15 @@ export default function CommercialView({
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Data da Entrega</label>
                   <input
-                    type="date"
+                    type="text"
                     required
-                    value={compraForm.dataEntrega}
-                    onChange={(e) => setCompraForm({ ...compraForm, dataEntrega: e.target.value })}
+                    placeholder="DD/MM/AAAA"
+                    value={convertIsoToBrDate(compraForm.dataEntrega)}
+                    onChange={(e) => {
+                      const formatted = formatData(e.target.value);
+                      const iso = convertBrToIsoDate(formatted);
+                      setCompraForm({ ...compraForm, dataEntrega: iso });
+                    }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
                   />
                 </div>
@@ -1740,10 +1784,15 @@ export default function CommercialView({
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Data de Emissão</label>
                   <input
-                    type="date"
+                    type="text"
                     required
-                    value={vendaForm.dataEmissao}
-                    onChange={(e) => setVendaForm({ ...vendaForm, dataEmissao: e.target.value })}
+                    placeholder="DD/MM/AAAA"
+                    value={convertIsoToBrDate(vendaForm.dataEmissao)}
+                    onChange={(e) => {
+                      const formatted = formatData(e.target.value);
+                      const iso = convertBrToIsoDate(formatted);
+                      setVendaForm({ ...vendaForm, dataEmissao: iso });
+                    }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                   />
                 </div>
