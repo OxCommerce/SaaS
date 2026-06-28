@@ -994,40 +994,45 @@ export default function SettingsView({
             {/* Status & Sync widgets moved from Header */}
             <div className="flex items-center space-x-3 self-stretch sm:self-auto justify-end">
               {/* Supabase Database Connection Status */}
-              <div 
-                className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#F8F8FA] border border-[#DEE1E9] rounded-full cursor-help hover:bg-slate-100/50 transition-all select-none"
-                title={
-                  dbConnected === 'online' ? 'Banco de Dados Supabase Conectado com sucesso' : 
-                  dbConnected === 'online_schema_error' ? 'Conexão ativa com o Supabase, mas a tabela "clientes_fornecedores" não foi encontrada. Por favor, execute o script SQL "supabase_setup.sql".' :
-                  dbConnected === 'offline' ? 'Erro de conexão física/rede com o Supabase (Verifique suas chaves de ambiente no arquivo .env)' : 
-                  'Verificando conexão com o banco de dados...'
-                }
-              >
-                <div className="relative flex">
-                  {dbConnected === 'online' && (
-                    <>
-                      <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                    </>
-                  )}
-                  {dbConnected === 'online_schema_error' && (
-                    <>
-                      <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
-                    </>
-                  )}
-                  {dbConnected === 'offline' && (
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 animate-pulse" />
-                  )}
-                  {dbConnected === 'checking' && (
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 animate-bounce" />
-                  )}
+              <div className="flex flex-col items-end gap-1 select-none">
+                <div 
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#F8F8FA] border border-[#DEE1E9] rounded-full cursor-help hover:bg-slate-100/50 transition-all"
+                  title={
+                    dbConnected === 'online' ? 'Banco de Dados Supabase Conectado com sucesso' : 
+                    dbConnected === 'online_schema_error' ? 'Conexão ativa com o Supabase, mas a tabela "clientes_fornecedores" não foi encontrada. Por favor, execute o script SQL "supabase_setup.sql".' :
+                    dbConnected === 'offline' ? 'Erro de conexão física/rede com o Supabase (Verifique suas chaves de ambiente no arquivo .env ou no painel do Vercel)' : 
+                    'Verificando conexão com o banco de dados...'
+                  }
+                >
+                  <div className="relative flex">
+                    {dbConnected === 'online' && (
+                      <>
+                        <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                      </>
+                    )}
+                    {dbConnected === 'online_schema_error' && (
+                      <>
+                        <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                      </>
+                    )}
+                    {dbConnected === 'offline' && (
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 animate-pulse" />
+                    )}
+                    {dbConnected === 'checking' && (
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 animate-bounce" />
+                    )}
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-[#071757]">
+                    {dbConnected === 'online' ? 'SUPABASE ONLINE' : 
+                     dbConnected === 'online_schema_error' ? 'SUPABASE SEM TABELA' : 
+                     dbConnected === 'offline' ? 'SUPABASE OFFLINE' : 
+                     'SUPABASE CONECTANDO...'}
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-[#071757]">
-                  {dbConnected === 'online' ? 'SUPABASE ONLINE' : 
-                   dbConnected === 'online_schema_error' ? 'SUPABASE SEM TABELA' : 
-                   dbConnected === 'offline' ? 'SUPABASE OFFLINE' : 
-                   'SUPABASE CONECTANDO...'}
+                <span className="text-[8px] font-mono text-gray-400 pr-1 truncate max-w-[220px]" title={import.meta.env.VITE_SUPABASE_URL}>
+                  URL: {import.meta.env.VITE_SUPABASE_URL || 'Não configurado'}
                 </span>
               </div>
 
