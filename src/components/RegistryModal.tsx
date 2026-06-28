@@ -82,8 +82,8 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
   }, [isOpen, initialData]);
 
   const validateForm = (data: any) => {
-    // 1. CPF Validation for personal registrations (TEAM, DRIVER, BROKER, PARTNER)
-    if (type === 'TEAM' || type === 'DRIVER' || type === 'BROKER' || type === 'PARTNER') {
+    // 1. CPF Validation for personal registrations (TEAM, BROKER, PARTNER)
+    if (type === 'TEAM' || type === 'BROKER' || type === 'PARTNER') {
       if (data.cpf && data.cpf.trim() !== '') {
         if (!isValidCPF(data.cpf)) {
           alert("O CPF informado é inválido. Por favor, verifique a digitação ou informe um CPF válido.");
@@ -92,8 +92,8 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
       }
     }
 
-    // 2. Client registration validation
-    if (type === 'CLIENT') {
+    // 2. Client and Driver registration validation
+    if (type === 'CLIENT' || type === 'DRIVER') {
       // Geral fields validation
       if (!data.cnpjCpf || !data.cnpjCpf.trim()) {
         alert("Por favor, preencha o campo CNPJ / CPF na aba Geral.");

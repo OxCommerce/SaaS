@@ -1018,10 +1018,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const newDriver = {
         ...formData,
         id: formData.id || ('mo-' + Math.random().toString(36).substr(2, 9)),
-        nome: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Sem Nome',
+        nome: formData.col1 || formData.razaoSocial || `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Sem Nome',
         cnh: formData.cnh || 'Não Informado',
         placa: formData.veiculoPlaca || 'Não Informada',
-        transportadora: formData.unidade === 'FIL' ? 'Filial - MT' : 'TransGado Matogrosso',
+        transportadora: formData.relacionamento === 'TRA' ? 'Própria (Transportadora)' : (formData.transportadora || (formData.unidade === 'FIL' ? 'Filial - MT' : 'TransGado Matogrosso')),
         status: formData.status || 'Disponível',
         codigo: codeVal
       };
@@ -1456,7 +1456,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
           }`}
         >
           <Truck className="h-4 w-4" />
-          <span>Motoristas & Rodas</span>
+          <span>Motoristas & Transportadoras</span>
         </button>
         <button
           id="cad-tab-usuarios"
@@ -1608,7 +1608,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               className="flex items-center space-x-1 bg-[#071757] hover:bg-[#182763] px-3.5 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-all uppercase cursor-pointer"
             >
               <Plus className="h-4 w-4" />
-              <span>Motorista</span>
+              <span>Novo Cadastro</span>
             </button>
           </div>
 

@@ -685,7 +685,92 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
       case 'DRIVER':
         return (
           <>
-             {renderStandardPersonalFields()}
+             <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Identificação Legal e Cadastral</h4>
+             
+             {/* Row 0: Custom Code */}
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <Input 
+                    label="Código do Motorista / Transportadora"
+                    placeholder="Ex: M-2406260001"
+                    value={data.codigo || data.code || ''}
+                    readOnly
+                    className="bg-slate-50 text-slate-800 font-mono cursor-not-allowed"
+                    fullWidth 
+                />
+             </div>
+
+             {/* Row 1: CNPJ/CPF, Razão Social, Nome Fantasia, Relacionamento */}
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                  <div className="relative">
+                    <Input 
+                        label="CNPJ / CPF *" 
+                        fullWidth 
+                        placeholder="Digite apenas números..."
+                        onChange={handleIdentityChange}
+                        value={data.cnpjCpf || ''}
+                    />
+                    {isLoadingCnpj && (
+                        <div className="absolute right-2 top-8">
+                            <span className="material-symbols-outlined text-brand-600 animate-spin text-sm">progress_activity</span>
+                        </div>
+                    )}
+                  </div>
+                 <Input 
+                     label="Razão Social / Nome Completo *" 
+                     value={data.col1 || ''} 
+                     onChange={(e) => {
+                       const val = e.target.value;
+                       const updateObj: any = { ...data, col1: val };
+                       if (clientType === 'PJ') {
+                         updateObj.contatoNome = val;
+                         updateObj.contatoNomeContato = val;
+                       }
+                       onChange(updateObj);
+                     }}
+                     fullWidth 
+                 />
+                 <Input 
+                     label="Nome Fantasia / Apelido *" 
+                     value={data.nomeFantasia || ''} 
+                     onChange={(e) => onChange({ ...data, nomeFantasia: e.target.value })} 
+                     fullWidth 
+                 />
+                 <Select 
+                     label="Relacionamento" 
+                     value={data.relacionamento || 'MOT'} 
+                     options={[
+                         {value: 'MOT', label: 'Motorista Autônomo'}, 
+                         {value: 'TRA', label: 'Transportadora'}, 
+                         {value: 'AMB', label: 'Ambos'}
+                     ]} 
+                     onChange={(e) => onChange({ ...data, relacionamento: e.target.value })}
+                     fullWidth 
+                 />
+              </div>
+
+              {/* Row 2: Inscrição Estadual, Inscrição Municipal, Tipo Pessoa (Auto) */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                 <Input 
+                     label="Inscrição Estadual" 
+                     value={data.inscricaoEstadual || ''} 
+                     onChange={(e) => onChange({ ...data, inscricaoEstadual: formatIE(e.target.value) })} 
+                     fullWidth 
+                 />
+                 <Input 
+                     label="Inscrição Municipal" 
+                     value={data.inscricaoMunicipal || ''} 
+                     onChange={(e) => onChange({ ...data, inscricaoMunicipal: e.target.value })} 
+                     fullWidth 
+                 />
+                 <Select 
+                     label="Tipo Pessoa (Auto)" 
+                     value={clientType}
+                     options={[{value: 'PJ', label: 'Jurídica'}, {value: 'PF', label: 'Física'}]} 
+                     disabled 
+                     fullWidth 
+                     className="bg-slate-50 font-medium"
+                 />
+              </div>
              
              <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4 mt-6">Certificação do Motorista</h4>
              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -1136,7 +1221,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
     // Standardized Contact Tab for ALL Modules
     // Fields Nome, Sobrenome and Nome de Contato are removed for DRIVER, VEHICLE, BROKER and PARTNER
     // as requested, because they are already in the General tab.
-    const showNameFields = type === 'TEAM' || type === 'CLIENT';
+    const showNameFields = type === 'TEAM' || type === 'CLIENT' || type === 'DRIVER';
 
     return (
         <div className="space-y-6">
