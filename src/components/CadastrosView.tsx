@@ -374,7 +374,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('bancos').select('*');
         if (!error && data) {
-          if (data.length < 15 && BRAZILIAN_BANKS.length > 0) {
+          const hasNewBanks = data.some(item => item.id === 'bk-260');
+          if ((data.length === 0 || !hasNewBanks) && BRAZILIAN_BANKS.length > 0) {
             const toUpsert = BRAZILIAN_BANKS.map(item => ({
               id: item.id,
               codigo: item.code,
