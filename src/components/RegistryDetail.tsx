@@ -703,7 +703,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
             <>
                 {renderStandardPersonalFields()}
                 <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4 mt-6">Perfil da Parceria</h4>
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <Select 
                       label="Tipo de Parceiro" 
                       value={data.parceiroTipo || ''}
