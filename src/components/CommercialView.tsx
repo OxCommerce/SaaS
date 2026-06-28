@@ -232,6 +232,7 @@ export default function CommercialView({
     categoriaAnimal: '' as any,
     quantidade: '' as any,
     pesoMedio: '' as any,
+    pesoTotal: '' as any,
     valorArroba: '' as any,
     comissao: '' as any,
     frete: '' as any,
@@ -288,7 +289,8 @@ export default function CommercialView({
   });
 
   // Live calculations for Add Compra Modal
-  const livePesoTotal = (Number(compraForm.quantidade) || 0) * (Number(compraForm.pesoMedio) || 0);
+  const livePesoTotal = Number(compraForm.pesoTotal) || 0;
+  const livePesoMedio = (livePesoTotal && Number(compraForm.quantidade)) ? (livePesoTotal / Number(compraForm.quantidade)) : 0;
   const liveArrobas = livePesoTotal / 30;
   const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
@@ -500,11 +502,12 @@ export default function CommercialView({
   const handleAddCompraSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Validate required fields to prevent saving empty forms
-    if (!compraForm.codigoFornecedor || !compraForm.fornecedor || !compraForm.fazendaOrigem || !compraForm.categoriaAnimal || !compraForm.quantidade || !compraForm.pesoMedio || !compraForm.valorArroba) {
-      alert("Por favor, preencha todos os campos obrigatórios (Código do Fornecedor, Fornecedor, Fazenda, Categoria, Quantidade, Peso Médio e Valor da Arroba).");
+    if (!compraForm.codigoFornecedor || !compraForm.fornecedor || !compraForm.fazendaOrigem || !compraForm.categoriaAnimal || !compraForm.quantidade || !compraForm.pesoTotal || !compraForm.valorArroba) {
+      alert("Por favor, preencha todos os campos obrigatórios (Código do Fornecedor, Fornecedor, Fazenda, Categoria, Quantidade, Peso Total e Valor da Arroba).");
       return;
     }
-    const pesoTotal = Number(compraForm.quantidade) * Number(compraForm.pesoMedio);
+    const pesoTotal = Number(compraForm.pesoTotal);
+    const pesoMedio = pesoTotal / Number(compraForm.quantidade);
     const arrobas = pesoTotal / 30;
     const valorGado = arrobas * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
@@ -522,7 +525,7 @@ export default function CommercialView({
       estado: compraForm.estado,
       categoriaAnimal: compraForm.categoriaAnimal,
       quantidade: Number(compraForm.quantidade),
-      pesoMedio: Number(compraForm.pesoMedio),
+      pesoMedio: pesoMedio,
       pesoTotal: pesoTotal,
       valorArroba: Number(compraForm.valorArroba),
       comissao: Number(compraForm.comissao),
@@ -561,6 +564,7 @@ export default function CommercialView({
       categoriaAnimal: '' as any,
       quantidade: '' as any,
       pesoMedio: '' as any,
+      pesoTotal: '' as any,
       valorArroba: '' as any,
       comissao: '' as any,
       frete: '' as any,
@@ -773,6 +777,7 @@ export default function CommercialView({
                   categoriaAnimal: '' as any,
                   quantidade: '' as any,
                   pesoMedio: '' as any,
+                  pesoTotal: '' as any,
                   valorArroba: '' as any,
                   comissao: '' as any,
                   frete: '' as any,
@@ -879,6 +884,7 @@ export default function CommercialView({
                             categoriaAnimal: c.categoriaAnimal,
                             quantidade: c.quantidade as any,
                             pesoMedio: c.pesoMedio as any,
+                            pesoTotal: c.pesoTotal || (c.quantidade * c.pesoMedio) || '',
                             valorArroba: c.valorArroba as any,
                             comissao: c.comissao as any,
                             frete: c.frete as any,
@@ -1171,11 +1177,11 @@ export default function CommercialView({
             </div>
 
             <form onSubmit={handleAddCompraSubmit} className="mt-4 space-y-4 overflow-y-auto pr-2 flex-1 scrollbar-thin">
-              {/* Seção 1: Dados da Ordem */}
+              {/* Seção 1: Dados do Sistema */}
               <div className="border-b border-gray-200 pb-1.5">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados do Sistema</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
                   <input
@@ -1184,31 +1190,6 @@ export default function CommercialView({
                     disabled
                     value={compraForm.numeroOperacao}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-50 font-mono text-gray-500 font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
-                  <select
-                    value={compraForm.ordemCompraClienteId}
-                    onChange={(e) => setCompraForm({ ...compraForm, ordemCompraClienteId: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono text-gray-855 font-bold bg-[#D8B46A]/5"
-                  >
-                    <option value="">-- Sem vínculo --</option>
-                    {reconciledVendas.filter(o => o.status !== 'Entregue').map(oc => (
-                      <option key={oc.id} value={oc.id}>
-                        {oc.numeroOC}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC do Cliente</label>
-                  <input
-                    type="text"
-                    value={compraForm.codigoOrdemCompraCliente}
-                    onChange={(e) => setCompraForm({ ...compraForm, codigoOrdemCompraCliente: e.target.value })}
-                    placeholder="Opcional (preenchimento manual)"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
                 <div>
@@ -1250,15 +1231,12 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Seção 2: Origem / Destino */}
+              {/* Seção 2: Identificação do Parceiro / Cliente / Fornecedor */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider font-mono">2. Origem / Destino</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">2. Identificação do Parceiro / Cliente / Fornecedor</span>
               </div>
-              
-              {/* ORIGEM SUBSECTION */}
-              <div className="mt-1">
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">A. Procedência (Origem)</span>
-              </div>
+
+              {/* Row 1: Cód. Fornecedor, ID OC do Cliente, ID OC */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Fornecedor</label>
@@ -1279,6 +1257,35 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC do Cliente</label>
+                  <input
+                    type="text"
+                    value={compraForm.codigoOrdemCompraCliente}
+                    onChange={(e) => setCompraForm({ ...compraForm, codigoOrdemCompraCliente: e.target.value })}
+                    placeholder="Opcional (preenchimento manual)"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC (Vínculo)</label>
+                  <select
+                    value={compraForm.ordemCompraClienteId}
+                    onChange={(e) => setCompraForm({ ...compraForm, ordemCompraClienteId: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono text-gray-800 font-bold bg-[#D8B46A]/5"
+                  >
+                    <option value="">-- Sem vínculo --</option>
+                    {reconciledVendas.filter(o => o.status !== 'Entregue').map(oc => (
+                      <option key={oc.id} value={oc.id}>
+                        {oc.numeroOC}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Fornecedor, Destino, Categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Fornecedor</label>
                   <input
                     type="text"
@@ -1297,6 +1304,53 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
+                  <input
+                    type="text"
+                    required
+                    list="destino-list"
+                    value={compraForm.destinoFrigorifico}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm(prev => {
+                        const updated = { ...prev, destinoFrigorifico: val };
+                        const found = clientes.find(c => c.nomeFantasia === val);
+                        if (found) {
+                          updated.destinoCidade = found.cidade;
+                          updated.destinoEstado = found.uf;
+                          updated.destinoPais = 'Brasil';
+                        }
+                        return updated;
+                      });
+                    }}
+                    placeholder="Nome da unidade compradora"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
+                  <select
+                    value={compraForm.categoriaAnimal}
+                    onChange={(e) => setCompraForm({ ...compraForm, categoriaAnimal: e.target.value as any })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    required
+                  >
+                    <option value="">-- Selecione --</option>
+                    {categorias.map((cat) => (
+                      <option key={cat.code} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Procedência (Origem) */}
+              <div className="mt-1">
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">A. Procedência (Origem)</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Origem (Fazenda)</label>
                   <input
                     type="text"
@@ -1307,9 +1361,6 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Origem)</label>
                   <input
@@ -1348,37 +1399,10 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* DESTINO SUBSECTION */}
+              {/* Destinação (Destino) */}
               <div className="mt-2 border-t border-gray-100 pt-1.5">
                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">B. Destinação (Destino)</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
-                  <input
-                    type="text"
-                    required
-                    list="destino-list"
-                    value={compraForm.destinoFrigorifico}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => {
-                        const updated = { ...prev, destinoFrigorifico: val };
-                        const found = clientes.find(c => c.nomeFantasia === val);
-                        if (found) {
-                          updated.destinoCidade = found.cidade;
-                          updated.destinoEstado = found.uf;
-                          updated.destinoPais = 'Brasil';
-                        }
-                        return updated;
-                      });
-                    }}
-                    placeholder="Nome da unidade compradora"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Destino)</label>
@@ -1418,29 +1442,35 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Seção 3: Detalhes da Compra */}
+              {/* Seção 3: Detalhamento da Ordem de Compra */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhes da Compra</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhamento da Ordem de Compra</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+              {/* Row 1: Peso Total, Quantidade, Preço Unitário */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
-                  <select
-                    value={compraForm.categoriaAnimal}
-                    onChange={(e) => setCompraForm({ ...compraForm, categoriaAnimal: e.target.value as any })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Total (kg)</label>
+                  <input
+                    type="number"
                     required
-                  >
-                    <option value="">-- Selecione --</option>
-                    {categorias.map((cat) => (
-                      <option key={cat.code} value={cat.name}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                    min={1}
+                    value={compraForm.pesoTotal}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, pesoTotal: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.pesoTotal === '') {
+                        setCompraForm({ ...compraForm, pesoTotal: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade (Cabeças)</label>
                   <input
                     type="number"
                     required
@@ -1460,26 +1490,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
-                  <input
-                    type="number"
-                    required
-                    value={compraForm.pesoMedio}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, pesoMedio: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.pesoMedio === '') {
-                        setCompraForm({ ...compraForm, pesoMedio: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Arroba (BRL)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço Unitário (por @)</label>
                   <input
                     type="number"
                     required
@@ -1496,6 +1507,28 @@ export default function CommercialView({
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
+                </div>
+              </div>
+
+              {/* Row 2: Peso Médio (Calculado), Total Arrobas (Calculado), Valor Total (Calculado) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Peso Total / Quantidade">
+                    {livePesoMedio ? `${livePesoMedio.toFixed(2)} kg` : '-'}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Total Arrobas (@)</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Peso Total / 30">
+                    {liveArrobas ? `${liveArrobas.toFixed(2)} @` : '-'}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total (BRL)</label>
+                  <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-mono font-bold text-slate-800 flex items-center h-[34px]" title="Calculado automaticamente: Total Arrobas x Preço Unitário">
+                    {liveValorGado ? liveValorGado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}
+                  </div>
                 </div>
               </div>
 
