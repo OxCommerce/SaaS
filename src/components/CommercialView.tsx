@@ -56,6 +56,19 @@ const convertIsoToBrDate = (value: string) => {
   return value;
 };
 
+const formatWeightBR = (value: number | string | null | undefined): string => {
+  if (value === null || value === undefined || value === '') return '';
+  const num = typeof value === 'number' ? value : Number(value);
+  if (isNaN(num) || num === 0) return '';
+  return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+const parseWeightBR = (val: string): number => {
+  const cleaned = val.replace(/\D/g, '');
+  if (!cleaned) return 0;
+  return Number(cleaned) / 100;
+};
+
 import {
   Search,
   Plus,
@@ -1007,7 +1020,8 @@ export default function CommercialView({
                       </td>
                       <td className="p-3 text-right font-mono font-semibold">{v.quantidade}</td>
                       <td className="p-3 text-right font-mono">
-                        {Math.round(v.peso / 30).toLocaleString('pt-BR')} @
+                        <div>{v.peso.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} kg</div>
+                        <div className="text-[10px] text-gray-400">{(v.peso / 30).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} @</div>
                       </td>
                       <td className="p-3 text-right text-[#D8B46A] font-mono font-semibold">
                         {v.valorArroba.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
@@ -1954,14 +1968,13 @@ export default function CommercialView({
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Total (kg)</label>
                         <input
-                          type="number"
+                          type="text"
                           required
-                          min={1}
-                          value={vendaForm.peso}
+                          value={formatWeightBR(vendaForm.peso)}
                           onFocus={(e) => e.target.select()}
-                          onChange={(e) => setVendaForm({ ...vendaForm, peso: e.target.value === '' ? '' : Number(e.target.value) })}
-                          onBlur={() => {
-                            if (vendaForm.peso === '') setVendaForm({ ...vendaForm, peso: 0 });
+                          onChange={(e) => {
+                            const parsed = parseWeightBR(e.target.value);
+                            setVendaForm({ ...vendaForm, peso: parsed });
                           }}
                           className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                         />
