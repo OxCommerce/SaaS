@@ -170,10 +170,13 @@ export default function App() {
         const { data: compData, error: compErr } = await supabase.from('compras').select('*');
         if (!compErr && compData) {
           if (compData.length > 0) {
-            const list = compData.map(d => ({
-              id: d.id,
-              ...d.raw_data
-            }));
+            const list = compData.map(d => {
+              if (!d.raw_data) return null;
+              return {
+                id: d.id,
+                ...d.raw_data
+              };
+            }).filter(Boolean) as Compra[];
             setCompras(list);
           } else {
             const toInsert = INITIAL_COMPRAS.map(c => ({
@@ -191,10 +194,13 @@ export default function App() {
         const { data: vendData, error: vendErr } = await supabase.from('vendas').select('*');
         if (!vendErr && vendData) {
           if (vendData.length > 0) {
-            const list = vendData.map(d => ({
-              id: d.id,
-              ...d.raw_data
-            }));
+            const list = vendData.map(d => {
+              if (!d.raw_data) return null;
+              return {
+                id: d.id,
+                ...d.raw_data
+              };
+            }).filter(Boolean) as OrdemCompraCliente[];
             setOrdensCompraCliente(list);
           } else {
             const toInsert = INITIAL_ORDENS_COMPRA_CLIENTE.map(v => ({
@@ -212,10 +218,13 @@ export default function App() {
         const { data: negData, error: negErr } = await supabase.from('negociacoes').select('*');
         if (!negErr && negData) {
           if (negData.length > 0) {
-            const list = negData.map(d => ({
-              id: d.id,
-              ...d.raw_data
-            }));
+            const list = negData.map(d => {
+              if (!d.raw_data) return null;
+              return {
+                id: d.id,
+                ...d.raw_data
+              };
+            }).filter(Boolean) as Negociacao[];
             setNegociacoes(list);
           } else {
             const toInsert = INITIAL_NEGOCIACOES.map(n => ({

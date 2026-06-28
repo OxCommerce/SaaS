@@ -959,6 +959,7 @@ export default function CommercialView({
               onClick={() => {
                 setVendaForm({
                   numeroOC: 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
+                  codigoCliente: '',
                   cliente: '',
                   frigorifico: '',
                   categoriaAnimal: '' as any,
