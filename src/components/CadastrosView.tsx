@@ -1239,10 +1239,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Nome / Razão Social</th>
                   <th className="p-3">CNPJ / CPF</th>
@@ -1323,10 +1323,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Nome do Motorista</th>
                   <th className="p-3">Num. CNH</th>
@@ -1399,10 +1399,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Parceiro Comercial</th>
                   <th className="p-3">Contato / Corretor Responsável</th>
@@ -1469,10 +1469,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Matrícula</th>
                   <th className="p-3">Nome do Funcionário</th>
                   <th className="p-3">E-mail Corporativo</th>
@@ -1548,10 +1548,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Nome / Identificador</th>
                   <th className="p-3">Tipo de Centro</th>
@@ -1626,10 +1626,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código do Banco</th>
                   <th className="p-3">Nome da Instituição</th>
                   <th className="p-3 text-center">Status</th>
@@ -1699,10 +1699,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Nome / Segmento</th>
                   <th className="p-3">Descrição</th>
@@ -1774,10 +1774,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-xs">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-auto shadow-xs max-h-[calc(100vh-310px)] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono">
+                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">Nome da Categoria</th>
                   <th className="p-3">Descrição</th>
