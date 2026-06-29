@@ -1605,7 +1605,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredClientesFornecedores.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{item.codigo || '-'}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('CLIENT', item)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                        {item.codigo || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{item.nome}</td>
                     <td className="p-3 font-mono text-gray-500">{item.documento}</td>
                     <td className="p-3 font-mono text-gray-500">
@@ -1688,7 +1692,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredMotoristas.map((mo) => (
                   <tr key={mo.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{mo.codigo || '-'}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('DRIVER', mo)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                        {mo.codigo || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{mo.nome}</td>
                     <td className="p-3 font-mono text-gray-500">{mo.cnh}</td>
                     <td className="p-3">
@@ -1764,7 +1772,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredParceiros.map((pa) => (
                   <tr key={pa.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{pa.codigo || '-'}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('PARTNER', pa)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                        {pa.codigo || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{pa.nome}</td>
                     <td className="p-3 font-semibold text-slate-800">{pa.contato}</td>
                     <td className="p-3 font-mono text-gray-500">{pa.telefone}</td>
@@ -1833,7 +1845,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filterBySearch(usuarios, ['matricula', 'nome', 'email', 'papel']).map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{u.matricula || '-'}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('TEAM', u)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                        {u.matricula || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 pl-4 font-bold text-gray-800 flex items-center space-x-2">
                       <div className="h-7 w-7 rounded-full bg-[#182763] text-[#D8B46A] flex items-center justify-center font-bold font-mono text-[10px]">
                         {u.nome.split(' ').map((n: string) => n[0]).join('')}
@@ -1912,7 +1928,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredCentrosCusto.map((cc) => (
                   <tr key={cc.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{cc.codigo}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('COST_CENTER', cc)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                        {cc.codigo || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{cc.nome}</td>
                     <td className="p-3">
                       <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
@@ -1988,7 +2008,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredBancos.map((b) => (
                   <tr key={b.id || b.code} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{b.code}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('BANK', b)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                        {b.code || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{b.name}</td>
                     <td className="p-3 text-center">
                       <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
@@ -2062,7 +2086,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredTiposParceiro.map((tp) => (
                   <tr key={tp.id || tp.code} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{tp.code}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('PARTNER_TYPE', tp)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                        {tp.code || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{tp.name}</td>
                     <td className="p-3 text-gray-600">{tp.descricao || 'Nenhuma descrição informada'}</td>
                     <td className="p-3 text-center">
@@ -2137,7 +2165,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredCategorias.map((cat) => (
                   <tr key={cat.id || cat.code} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-[#071757]">{cat.code}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button onClick={() => handleEditRegistry('CATEGORY', cat)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                        {cat.code || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-bold text-gray-800">{cat.name}</td>
                     <td className="p-3 text-gray-600">{cat.descricao || 'Nenhuma descrição informada'}</td>
                     <td className="p-3 text-center">

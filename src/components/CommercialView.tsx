@@ -1266,7 +1266,17 @@ export default function CommercialView({
                   
                   return (
                     <tr key={v.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-3 pl-4 font-mono font-bold text-gray-800">{v.numeroOC}</td>
+                      <td className="p-3 pl-4 font-mono font-bold">
+                        <button
+                          onClick={() => {
+                            setVendaForm(v);
+                            setShowAddVendaModal(true);
+                          }}
+                          className="text-[#071757] hover:text-[#182763] hover:underline focus:outline-none text-left cursor-pointer"
+                        >
+                          {v.numeroOC}
+                        </button>
+                      </td>
                       <td className="p-3 font-semibold text-gray-800">{v.cliente}</td>
                       <td className="p-3 text-gray-500">{v.frigorifico}</td>
                       <td className="p-3 text-gray-500">{pais}</td>
@@ -1354,7 +1364,15 @@ export default function CommercialView({
                       >
                         <div>
                           <div className="flex justify-between items-start mb-1.5">
-                            <span className="text-[10px] font-mono text-gray-400">ID: {card.id.toUpperCase()}</span>
+                            <button
+                              onClick={() => {
+                                setNegociacaoForm(card);
+                                setShowAddNegModal(true);
+                              }}
+                              className="text-[10px] font-mono text-[#071757] hover:text-[#182763] hover:underline font-bold cursor-pointer"
+                            >
+                              ID: {card.id.toUpperCase()}
+                            </button>
                             <span className="text-[9px] bg-slate-100 px-1 py-0.2 rounded font-mono font-semibold">
                               {card.cabecas} cab
                             </span>
@@ -2030,7 +2048,7 @@ export default function CommercialView({
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
-              <h3 className="text-sm font-bold text-gray-800">Receber Ordem de Compra (Demanda)</h3>
+              <h3 className="text-sm font-bold text-gray-800">{vendaForm.id ? 'Editar Ordem de Compra (Demanda)' : 'Receber Ordem de Compra (Demanda)'}</h3>
               <button onClick={() => setShowAddVendaModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                 <X className="h-4 w-4 text-gray-500" />
               </button>

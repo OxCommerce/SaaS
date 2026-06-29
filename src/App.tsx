@@ -441,7 +441,13 @@ export default function App() {
 
   // 3. Add client Purchase Order (OrdemCompraCliente)
   const handleAddOrdemCompraCliente = (novaOC: OrdemCompraCliente) => {
-    setOrdensCompraCliente([novaOC, ...ordensCompraCliente]);
+    setOrdensCompraCliente(prev => {
+      const exists = prev.some(oc => oc.id === novaOC.id);
+      if (exists) {
+        return prev.map(oc => oc.id === novaOC.id ? novaOC : oc);
+      }
+      return [novaOC, ...prev];
+    });
     // Save to Supabase
     supabase.from('vendas').upsert([{
       id: novaOC.id,
@@ -495,7 +501,13 @@ export default function App() {
   };
 
   const handleAddNegociacao = (novaNeg: Negociacao) => {
-    setNegociacoes([novaNeg, ...negociacoes]);
+    setNegociacoes(prev => {
+      const exists = prev.some(n => n.id === novaNeg.id);
+      if (exists) {
+        return prev.map(n => n.id === novaNeg.id ? novaNeg : n);
+      }
+      return [novaNeg, ...prev];
+    });
     supabase.from('negociacoes').upsert([{
       id: novaNeg.id,
       titulo: novaNeg.titulo,
