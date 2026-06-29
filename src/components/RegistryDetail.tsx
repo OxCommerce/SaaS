@@ -288,9 +288,17 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
         setClientType('PF');
     }
     const updateObj: any = { ...data, cnpjCpf: formatted, clientType: isPJ ? 'PJ' : 'PF' };
-    if (isPJ && data.col1) {
-      updateObj.contatoNome = data.col1;
-      updateObj.contatoNomeContato = data.col1;
+    if (data.col1) {
+      if (isPJ) {
+        updateObj.contatoNome = data.col1;
+        updateObj.contatoSobrenome = '';
+        updateObj.contatoNomeContato = data.col1;
+      } else {
+        const parts = data.col1.split(' ');
+        updateObj.contatoNome = parts[0] || '';
+        updateObj.contatoSobrenome = parts.slice(1).join(' ') || '';
+        updateObj.contatoNomeContato = data.col1;
+      }
     }
     onChange(updateObj);
 
@@ -466,13 +474,29 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
             <Input 
               label="Nome" 
               value={data.firstName || ''} 
-              onChange={(e) => onChange({ ...data, firstName: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange({ 
+                  ...data, 
+                  firstName: val,
+                  contatoNome: val,
+                  contatoNomeContato: `${val} ${data.lastName || ''}`.trim()
+                });
+              }}
               fullWidth 
             />
             <Input 
               label="Sobrenome" 
               value={data.lastName || ''} 
-              onChange={(e) => onChange({ ...data, lastName: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange({ 
+                  ...data, 
+                  lastName: val,
+                  contatoSobrenome: val,
+                  contatoNomeContato: `${data.firstName || ''} ${val}`.trim()
+                });
+              }}
               fullWidth 
             />
             <Input 
@@ -748,6 +772,16 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                        const updateObj: any = { ...data, col1: val };
                        if (clientType === 'PJ') {
                          updateObj.contatoNome = val;
+                         updateObj.contatoNomeContato = val;
+                       } else if (clientType === 'PF') {
+                         const parts = val.split(' ');
+                         updateObj.contatoNome = parts[0] || '';
+                         updateObj.contatoSobrenome = parts.slice(1).join(' ') || '';
+                         updateObj.contatoNomeContato = val;
+                       } else if (clientType === 'PF') {
+                         const parts = val.split(' ');
+                         updateObj.contatoNome = parts[0] || '';
+                         updateObj.contatoSobrenome = parts.slice(1).join(' ') || '';
                          updateObj.contatoNomeContato = val;
                        }
                        onChange(updateObj);
