@@ -572,7 +572,24 @@ export default function App() {
 
   // 14. Toggle employee active credentials
   const handleToggleUserStatus = async (id: string) => {
-    const updated = usuariosList.map((u) => (u.id === id ? { ...u, status: u.status === 'Ativo' ? 'Inativo' : 'Ativo' } : u));
+    const updated = usuariosList.map((u) => {
+      if (u.id === id) {
+        const nextStatus = u.status === 'Ativo' ? 'Inativo' : 'Ativo';
+        const nextSecStatus = nextStatus === 'Ativo' ? 'A' : 'I';
+        const raw = u.raw_data || u;
+        const updatedRaw = {
+          ...raw,
+          status: nextStatus,
+          segurancaStatus: nextSecStatus
+        };
+        return {
+          ...u,
+          status: nextStatus,
+          raw_data: updatedRaw
+        };
+      }
+      return u;
+    });
     setUsuariosList(updated);
     const targetUser = updated.find(u => u.id === id);
     if (targetUser) {
@@ -584,7 +601,7 @@ export default function App() {
           papel: targetUser.papel,
           status: targetUser.status,
           matricula: targetUser.matricula,
-          raw_data: targetUser.raw_data || null
+          raw_data: targetUser.raw_data
         };
         const { error } = await supabase.from('usuarios').upsert([toUpsert]);
         if (error) {
@@ -779,12 +796,16 @@ export default function App() {
               searchQuery={searchQuery}
               usuarios={usuariosList}
               onAddUsuario={async (novoUsuario) => {
+                const localUser = {
+                  ...novoUsuario,
+                  raw_data: novoUsuario.raw_data || novoUsuario
+                };
                 setUsuariosList(prev => {
                   const exists = prev.some(u => u.id === novoUsuario.id);
                   if (exists) {
-                    return prev.map(u => u.id === novoUsuario.id ? novoUsuario : u);
+                    return prev.map(u => u.id === novoUsuario.id ? localUser : u);
                   }
-                  return [novoUsuario, ...prev];
+                  return [localUser, ...prev];
                 });
                 try {
                   const toUpsert = {
@@ -794,7 +815,7 @@ export default function App() {
                     papel: novoUsuario.papel,
                     status: novoUsuario.status,
                     matricula: novoUsuario.matricula,
-                    raw_data: novoUsuario
+                    raw_data: localUser.raw_data
                   };
                   const { error } = await supabase.from('usuarios').upsert([toUpsert]);
                   if (error) {

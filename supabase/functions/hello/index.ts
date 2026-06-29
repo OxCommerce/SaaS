@@ -1,7 +1,8 @@
+// @ts-ignore: Deno module resolved at runtime
 import { withSupabase } from "@supabase/server"
 
 export default {
-  fetch: withSupabase({ auth: "user" }, async (_req, ctx) => {
+  fetch: withSupabase({ auth: "user" }, async (_req: Request, ctx: any) => {
     // ctx.supabase has RLS enabled scoped to the logged-in user
     const { data, error } = await ctx.supabase.from("clientes_fornecedores").select("*").limit(5)
     

@@ -298,7 +298,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 contato: item.contato,
                 telefone: item.telefone,
                 regiao: item.regiao,
-                tipo: item.tipo
+                tipo: item.tipo,
+                raw_data: item.raw_data || {}
               }));
               setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
             }
@@ -310,7 +311,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               contato: item.contato,
               telefone: item.telefone,
               regiao: item.regiao,
-              tipo: item.tipo
+              tipo: item.tipo,
+              raw_data: item.raw_data || {}
             }));
             setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
           }
@@ -344,7 +346,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 cnh: item.cnh,
                 placa: item.placa,
                 transportadora: item.transportadora,
-                status: item.status
+                status: item.status,
+                raw_data: item.raw_data || {}
               }));
               setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
             }
@@ -356,7 +359,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               cnh: item.cnh,
               placa: item.placa,
               transportadora: item.transportadora,
-              status: item.status
+              status: item.status,
+              raw_data: item.raw_data || {}
             }));
             setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
           }
@@ -1039,7 +1043,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         email: formData.segurancaLogin || '',
         papel: formData.segurancaPapel || 'Analista Fiscal',
         status: formData.segurancaStatus === 'A' || formData.segurancaStatus === 'Ativo' ? 'Ativo' : 'Inativo',
-        matricula: matriculaVal
+        matricula: matriculaVal,
+        raw_data: {
+          ...formData,
+          matricula: matriculaVal
+        }
       };
       if (onAddUsuario) {
         onAddUsuario(novoUsuario);
@@ -1059,7 +1067,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         placa: formData.veiculoPlaca || 'Não Informada',
         transportadora: formData.relacionamento === 'TRA' ? 'Própria (Transportadora)' : (formData.transportadora || (formData.unidade === 'FIL' ? 'Filial - MT' : 'TransGado Matogrosso')),
         status: formData.status || 'Disponível',
-        codigo: codeVal
+        codigo: codeVal,
+        raw_data: {
+          ...formData,
+          codigo: codeVal
+        }
       };
       setMotoristas(prev => {
         const exists = prev.some(m => m.id === newDriver.id);
@@ -1232,27 +1244,28 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       const fallbackMatricula = getNextMatricula((usuarios || []).map(u => u.matricula || ''));
+      const raw = item.raw_data || {};
 
       setCliForForm({
-        ...(item.raw_data || {}),
+        ...raw,
         id: item.id,
-        firstName,
-        lastName,
-        nickname: item.nickname || '',
-        cpf: item.cpf || '',
-        rg: item.rg || '',
-        gender: item.gender || 'M',
-        birthDate: item.birthDate || '',
-        cargo: item.papel || '',
-        departamento: item.departamento || 'COM',
-        unidade: item.unidade || 'MT',
-        gestor: item.gestor || '',
-        centroCusto: item.centroCusto || '',
-        segurancaPerfil: item.segurancaPerfil || 'ADM',
-        segurancaPapel: item.papel || 'ADM',
-        segurancaStatus: item.status === 'Ativo' ? 'A' : 'I',
-        segurancaLogin: item.email || '',
-        matricula: item.matricula || fallbackMatricula
+        firstName: raw.firstName || firstName,
+        lastName: raw.lastName || lastName,
+        nickname: raw.nickname || item.nickname || '',
+        cpf: raw.cpf || item.cpf || '',
+        rg: raw.rg || item.rg || '',
+        gender: raw.gender || item.gender || 'M',
+        birthDate: raw.birthDate || item.birthDate || '',
+        cargo: raw.cargo || item.cargo || '',
+        departamento: raw.departamento || item.departamento || 'COM',
+        unidade: raw.unidade || item.unidade || 'MT',
+        gestor: raw.gestor || item.gestor || '',
+        centroCusto: raw.centroCusto || item.centroCusto || '',
+        segurancaPerfil: raw.segurancaPerfil || item.segurancaPerfil || 'ADM',
+        segurancaPapel: raw.segurancaPapel || item.papel || 'ADM',
+        segurancaStatus: raw.segurancaStatus || (item.status === 'Ativo' ? 'A' : 'I'),
+        segurancaLogin: raw.segurancaLogin || item.email || '',
+        matricula: item.matricula || raw.matricula || fallbackMatricula
       });
     } else if (type === 'DRIVER') {
       setModalTitle('Editar Motorista');
@@ -1260,32 +1273,33 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       const fallbackCode = getNextAutoCode(`M-${dateStr}`, motoristas.map(m => m.codigo || m.code || ''), 4);
+      const raw = item.raw_data || {};
 
       setCliForForm({
-        ...(item.raw_data || {}),
+        ...raw,
         id: item.id,
-        firstName,
-        lastName,
-        nickname: item.nickname || '',
-        cpf: item.cpf || '',
-        rg: item.rg || '',
-        gender: item.gender || 'M',
-        birthDate: item.birthDate || '',
-        cnh: item.cnh || '',
-        cnhCategoria: item.cnhCategoria || 'AE',
-        cnhValidade: item.cnhValidade || '',
-        veiculoModelo: item.veiculoModelo || '',
-        veiculoPlaca: item.placa || '',
+        firstName: raw.firstName || firstName,
+        lastName: raw.lastName || lastName,
+        nickname: raw.nickname || item.nickname || '',
+        cpf: raw.cpf || item.cpf || '',
+        rg: raw.rg || item.rg || '',
+        gender: raw.gender || item.gender || 'M',
+        birthDate: raw.birthDate || item.birthDate || '',
+        cnh: raw.cnh || item.cnh || '',
+        cnhCategoria: raw.cnhCategoria || item.cnhCategoria || 'AE',
+        cnhValidade: raw.cnhValidade || item.cnhValidade || '',
+        veiculoModelo: raw.veiculoModelo || item.veiculoModelo || '',
+        veiculoPlaca: raw.veiculoPlaca || item.placa || '',
         cargo: 'Motorista',
         departamento: 'LOG',
-        unidade: item.unidade || 'MT',
-        gestor: item.gestor || '',
-        centroCusto: item.centroCusto || '',
+        unidade: raw.unidade || item.unidade || 'MT',
+        gestor: raw.gestor || item.gestor || '',
+        centroCusto: raw.centroCusto || item.centroCusto || '',
         segurancaPerfil: 'VIEW',
         segurancaPapel: 'LOG',
         segurancaStatus: 'A',
-        segurancaLogin: item.email || '',
-        codigo: item.codigo || item.code || fallbackCode
+        segurancaLogin: raw.segurancaLogin || item.email || '',
+        codigo: item.codigo || item.code || raw.codigo || fallbackCode
       });
     } else if (type === 'PARTNER') {
       setModalTitle('Editar Parceiro / Corretor');
@@ -1293,30 +1307,31 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       const fallbackCode = getNextAutoCode(`P-${dateStr}`, parceiros.map(p => p.codigo || p.code || ''), 4);
+      const raw = item.raw_data || {};
 
       setCliForForm({
-        ...(item.raw_data || {}),
+        ...raw,
         id: item.id,
-        firstName,
-        lastName,
-        nickname: item.contato || '',
-        cpf: item.cpf || '',
-        rg: item.rg || '',
-        gender: item.gender || 'M',
-        birthDate: item.birthDate || '',
-        parceiroTipo: item.parceiroTipo || 'LOG',
+        firstName: raw.firstName || firstName,
+        lastName: raw.lastName || lastName,
+        nickname: raw.nickname || item.contato || '',
+        cpf: raw.cpf || item.cpf || '',
+        rg: raw.rg || item.rg || '',
+        gender: raw.gender || item.gender || 'M',
+        birthDate: raw.birthDate || item.birthDate || '',
+        parceiroTipo: raw.parceiroTipo || item.parceiroTipo || 'LOG',
         cargo: 'Parceiro',
         departamento: 'COM',
-        unidade: item.unidade || 'MT',
-        gestor: item.gestor || '',
-        centroCusto: item.centroCusto || '',
+        unidade: raw.unidade || item.unidade || 'MT',
+        gestor: raw.gestor || item.gestor || '',
+        centroCusto: raw.centroCusto || item.centroCusto || '',
         segurancaPerfil: 'VIEW',
         segurancaPapel: 'SUP',
         segurancaStatus: 'A',
-        segurancaLogin: item.email || '',
-        codigo: item.codigo || item.code || fallbackCode,
-        contatoTelefone: item.telefone || '',
-        cidade: item.regiao || ''
+        segurancaLogin: raw.segurancaLogin || item.email || '',
+        codigo: item.codigo || item.code || raw.codigo || fallbackCode,
+        contatoTelefone: raw.contatoTelefone || item.telefone || '',
+        cidade: raw.cidade || item.regiao || ''
       });
     } else if (type === 'COST_CENTER') {
       setModalTitle('Editar Centro de Custo');
