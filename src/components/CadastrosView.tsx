@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { RegistryModal } from './RegistryModal';
 import RegistryDetailsViewModal from './RegistryDetailsViewModal';
 import { supabase } from '../supabaseClient';
@@ -127,6 +128,37 @@ const sanitizeText = (val: string): string => {
 export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario, onDeleteUsuario }: CadastrosViewProps) {
   const [activeTab, setActiveTab] = useState<CadastroTab>('clientes_fornecedores');
   
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const view = searchParams.get('view');
+    const id = searchParams.get('id');
+    if (view && id) {
+      let found: any = null;
+      if (view === 'CLIENT') {
+        found = clientesFornecedores.find(c => c.codigo === id || c.id === id);
+      } else if (view === 'PARTNER') {
+        found = parceiros.find(p => p.codigo === id || p.id === id);
+      } else if (view === 'DRIVER') {
+        found = motoristas.find(m => m.codigo === id || m.id === id);
+      } else if (view === 'TEAM') {
+        found = usuarios.find(u => u.matricula === id || u.id === id);
+      } else if (view === 'COST_CENTER') {
+        found = centrosCusto.find(cc => cc.codigo === id || cc.id === id);
+      } else if (view === 'BANK') {
+        found = bancos.find(b => b.codigo === id || b.id === id);
+      } else if (view === 'PARTNER_TYPE') {
+        found = tiposParceiro.find(tp => tp.codigo === id || tp.id === id);
+      } else if (view === 'CATEGORY') {
+        found = categorias.find(cat => cat.codigo === id || cat.id === id);
+      }
+      
+      if (found) {
+        handleViewDetails(view, found);
+      }
+    }
+  }, [searchParams, clientesFornecedores, parceiros, motoristas, usuarios, centrosCusto, bancos, tiposParceiro, categorias]);
+
   // State for read-only details modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');

@@ -30,7 +30,7 @@ import { OxLogo } from './ui/Logo';
 
 interface SidebarProps {
   activeMenu: ActiveMenu;
-  setActiveMenu: (menu: ActiveMenu) => void;
+  setActiveMenu: (menu: ActiveMenu, submenu?: string) => void;
   subMenuComercial: SubMenuComercial;
   setSubMenuComercial: (sub: SubMenuComercial) => void;
   subMenuFiscal: SubMenuFiscal;
@@ -157,15 +157,15 @@ export default function Sidebar({
           </button>
           {openComercial && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-vendas" onClick={() => { setActiveMenu('comercial'); setSubMenuComercial('vendas'); }}
+              <button id="submenu-vendas" onClick={() => setActiveMenu('comercial', 'vendas')}
                 className={subItem(activeMenu === 'comercial' && subMenuComercial === 'vendas')}>
                 Ordens de Compra
               </button>
-              <button id="submenu-compras" onClick={() => { setActiveMenu('comercial'); setSubMenuComercial('compras'); }}
+              <button id="submenu-compras" onClick={() => setActiveMenu('comercial', 'compras')}
                 className={subItem(activeMenu === 'comercial' && subMenuComercial === 'compras')}>
                 Negociações
               </button>
-              <button id="submenu-negociacoes" onClick={() => { setActiveMenu('comercial'); setSubMenuComercial('negociacoes'); }}
+              <button id="submenu-negociacoes" onClick={() => setActiveMenu('comercial', 'negociacoes')}
                 className={subItem(activeMenu === 'comercial' && subMenuComercial === 'negociacoes')}>
                 CRM / Follow-up
               </button>
@@ -197,15 +197,15 @@ export default function Sidebar({
           </button>
           {openFiscal && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-gta" onClick={() => { setActiveMenu('fiscal'); setSubMenuFiscal('gta'); }}
+              <button id="submenu-gta" onClick={() => setActiveMenu('fiscal', 'gta')}
                 className={subItem(activeMenu === 'fiscal' && subMenuFiscal === 'gta')}>
                 Guia de Trânsito (GTA)
               </button>
-              <button id="submenu-cte" onClick={() => { setActiveMenu('fiscal'); setSubMenuFiscal('cte'); }}
+              <button id="submenu-cte" onClick={() => setActiveMenu('fiscal', 'cte')}
                 className={subItem(activeMenu === 'fiscal' && subMenuFiscal === 'cte')}>
                 Conhecimento (CT-e)
               </button>
-              <button id="submenu-nfe" onClick={() => { setActiveMenu('fiscal'); setSubMenuFiscal('nfe'); }}
+              <button id="submenu-nfe" onClick={() => setActiveMenu('fiscal', 'nfe')}
                 className={subItem(activeMenu === 'fiscal' && subMenuFiscal === 'nfe')}>
                 Nota Fiscal (NF-e)
               </button>
@@ -237,19 +237,19 @@ export default function Sidebar({
           </button>
           {openFinanceiro && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-receber" onClick={() => { setActiveMenu('financeiro'); setSubMenuFinanceiro('receber'); }}
+              <button id="submenu-receber" onClick={() => setActiveMenu('financeiro', 'receber')}
                 className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'receber')}>
                 Contas a Receber
               </button>
-              <button id="submenu-pagar" onClick={() => { setActiveMenu('financeiro'); setSubMenuFinanceiro('pagar'); }}
+              <button id="submenu-pagar" onClick={() => setActiveMenu('financeiro', 'pagar')}
                 className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'pagar')}>
                 Contas a Pagar
               </button>
-              <button id="submenu-fluxo" onClick={() => { setActiveMenu('financeiro'); setSubMenuFinanceiro('fluxo'); }}
+              <button id="submenu-fluxo" onClick={() => setActiveMenu('financeiro', 'fluxo')}
                 className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'fluxo')}>
                 Fluxo de Caixa
               </button>
-              <button id="submenu-conciliacao" onClick={() => { setActiveMenu('financeiro'); setSubMenuFinanceiro('conciliacao'); }}
+              <button id="submenu-conciliacao" onClick={() => setActiveMenu('financeiro', 'conciliacao')}
                 className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'conciliacao')}>
                 Conciliação Bancária
               </button>
@@ -281,19 +281,19 @@ export default function Sidebar({
           </button>
           {openLogistica && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-transporte" onClick={() => { setActiveMenu('logistica'); setSubMenuLogistica('transporte'); }}
+              <button id="submenu-transporte" onClick={() => setActiveMenu('logistica', 'transporte')}
                 className={subItem(activeMenu === 'logistica' && subMenuLogistica === 'transporte')}>
                 Gestão de Transportes
               </button>
-              <button id="submenu-viagens" onClick={() => { setActiveMenu('logistica'); setSubMenuLogistica('viagens'); }}
+              <button id="submenu-viagens" onClick={() => setActiveMenu('logistica', 'viagens')}
                 className={subItem(activeMenu === 'logistica' && subMenuLogistica === 'viagens')}>
                 Planejamento de Viagens
               </button>
-              <button id="submenu-rastreamento" onClick={() => { setActiveMenu('logistica'); setSubMenuLogistica('rastreamento'); }}
+              <button id="submenu-rastreamento" onClick={() => setActiveMenu('logistica', 'rastreamento')}
                 className={subItem(activeMenu === 'logistica' && subMenuLogistica === 'rastreamento')}>
                 Rastreamento GPS
               </button>
-              <button id="submenu-fretes" onClick={() => { setActiveMenu('logistica'); setSubMenuLogistica('fretes'); }}
+              <button id="submenu-fretes" onClick={() => setActiveMenu('logistica', 'fretes')}
                 className={subItem(activeMenu === 'logistica' && subMenuLogistica === 'fretes')}>
                 Controle de Fretes
               </button>
@@ -366,7 +366,7 @@ export default function Sidebar({
                 <button
                   key={sub}
                   id={`submenu-config-${sub}`}
-                  onClick={() => { setActiveMenu('configuracoes'); setSubMenuConfiguracoes(sub); }}
+                  onClick={() => setActiveMenu('configuracoes', sub)}
                   className={subItem(activeMenu === 'configuracoes' && subMenuConfiguracoes === sub)}
                 >
                   {labels[sub]}

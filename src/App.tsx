@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -58,6 +59,55 @@ import {
 } from './data/mockData';
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Sync URL Path -> React States
+  useEffect(() => {
+    const path = location.pathname;
+    
+    // Auth Check
+    const storedUser = typeof window !== 'undefined' ? localStorage.getItem('ox_current_user') : null;
+    const user = storedUser || currentUser;
+
+    if (path.startsWith('/app')) {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      if (currentRoute !== 'app') {
+        setCurrentRoute('app');
+      }
+      
+      const parts = path.split('/').filter(Boolean); // ['app', 'comercial', 'vendas']
+      const menu = parts[1] as ActiveMenu;
+      const submenu = parts[2];
+      
+      if (menu && menu !== activeMenu) {
+        setActiveMenu(menu);
+      }
+      
+      if (submenu) {
+        if (menu === 'comercial' && submenu !== subMenuComercial) setSubMenuComercial(submenu as SubMenuComercial);
+        if (menu === 'fiscal' && submenu !== subMenuFiscal) setSubMenuFiscal(submenu as SubMenuFiscal);
+        if (menu === 'financeiro' && submenu !== subMenuFinanceiro) setSubMenuFinanceiro(submenu as SubMenuFinanceiro);
+        if (menu === 'logistica' && submenu !== subMenuLogistica) setSubMenuLogistica(submenu as SubMenuLogistica);
+        if (menu === 'configuracoes' && submenu !== subMenuConfiguracoes) setSubMenuConfiguracoes(submenu as SubMenuConfiguracoes);
+      }
+    } else if (path === '/login') {
+      if (user) {
+        navigate('/app/dashboard');
+      } else {
+        if (currentRoute !== 'login') setCurrentRoute('login');
+      }
+    } else if (path === '/' || path === '/home') {
+      if (currentRoute !== 'home') setCurrentRoute('home');
+    } else {
+      // Catch-all redirect
+      navigate('/');
+    }
+  }, [location.pathname]);
   // Global Active Navigation state
   // Global Active Navigation state
   const [activeMenu, setActiveMenu] = useState<ActiveMenu>(() => {
@@ -665,14 +715,18 @@ export default function App() {
 
   // Navigate utility helper for widgets
   const handleNavigateTo = (menu: string, submenu?: string) => {
-    setActiveMenu(menu as ActiveMenu);
+    let targetPath = `/app/${menu}`;
     if (submenu) {
-      if (menu === 'comercial') setSubMenuComercial(submenu as SubMenuComercial);
-      if (menu === 'fiscal') setSubMenuFiscal(submenu as SubMenuFiscal);
-      if (menu === 'financeiro') setSubMenuFinanceiro(submenu as SubMenuFinanceiro);
-      if (menu === 'logistica') setSubMenuLogistica(submenu as SubMenuLogistica);
-      if (menu === 'configuracoes') setSubMenuConfiguracoes(submenu as SubMenuConfiguracoes);
+      targetPath += `/${submenu}`;
+    } else {
+      // Get submenus default
+      if (menu === 'comercial') targetPath += `/${subMenuComercial}`;
+      if (menu === 'fiscal') targetPath += `/${subMenuFiscal}`;
+      if (menu === 'financeiro') targetPath += `/${subMenuFinanceiro}`;
+      if (menu === 'logistica') targetPath += `/${subMenuLogistica}`;
+      if (menu === 'configuracoes') targetPath += `/${subMenuConfiguracoes}`;
     }
+    navigate(targetPath);
   };
 
   if (currentRoute === 'home') {
@@ -684,7 +738,10 @@ export default function App() {
       <LoginView 
         onLoginSuccess={(username) => {
           setCurrentUser(username);
-          setCurrentRoute('app');
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('ox_current_user', username);
+          }
+          navigate('/app/dashboard');
         }} 
         onNavigateBack={() => setCurrentRoute('home')}
         logoUrl={config.logoUrl}
@@ -703,7 +760,7 @@ export default function App() {
       {/* 1. FIXED LEFT SIDEBAR */}
       <Sidebar
         activeMenu={activeMenu}
-        setActiveMenu={(m) => handleNavigateTo(m)}
+        setActiveMenu={(m, sub) => handleNavigateTo(m, sub)}
         // Submenu state
         subMenuComercial={subMenuComercial}
         setSubMenuComercial={setSubMenuComercial}
@@ -743,8 +800,10 @@ export default function App() {
                 if (typeof window !== 'undefined') {
                   localStorage.removeItem('ox_current_route');
                   localStorage.removeItem('ox_active_menu');
+                  localStorage.removeItem('ox_current_user');
                 }
-                setCurrentRoute('home');
+                setCurrentUser('');
+                navigate('/home');
               }}
             />
           );

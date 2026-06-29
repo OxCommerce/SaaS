@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Compra, OrdemCompraCliente, Negociacao, Lote, SubMenuComercial } from '../types';
 import { CADASTRO_CLIENTES, CADASTRO_FORNECEDORES, CADASTRO_PARCEIROS, CADASTRO_MOTORISTAS } from '../data/mockData';
 import { supabase } from '../supabaseClient';
@@ -123,6 +124,31 @@ export default function CommercialView({
   // Clientes and Fornecedores states loaded from Supabase
   const [clientes, setClientes] = useState<any[]>(MOCK_CLIENT_UNITS);
   
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const view = searchParams.get('view');
+    const id = searchParams.get('id');
+    if (view && id) {
+      if (view === 'PURCHASE_ORDER') {
+        const found = compras.find(c => c.numeroOperacao === id || c.id === id);
+        if (found) handleViewDetails('PURCHASE_ORDER', found);
+      } else if (view === 'SALES_ORDER') {
+        const found = ordensCompraCliente.find(v => v.numeroOC === id || v.id === id);
+        if (found) handleViewDetails('SALES_ORDER', found);
+      } else if (view === 'NEGOTIATION') {
+        const found = negociacoes.find(n => n.id === id);
+        if (found) handleViewDetails('NEGOTIATION', found);
+      } else if (view === 'SUPPLIER') {
+        const found = [...clientes, ...fornecedores].find(f => f.codigo === id || f.id === id);
+        if (found) handleViewDetails('SUPPLIER', found);
+      } else if (view === 'CLIENT') {
+        const found = [...clientes, ...fornecedores].find(c => c.codigo === id || c.id === id);
+        if (found) handleViewDetails('CLIENT', found);
+      }
+    }
+  }, [searchParams, compras, ordensCompraCliente, negociacoes, clientes, fornecedores]);
+
   // State for read-only details modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');
