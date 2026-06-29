@@ -1477,16 +1477,44 @@ export default function CommercialView({
                     value={compraForm.codigoFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm({ ...compraForm, codigoFornecedor: val });
-                      triggerFornecedorCodigoLookup(val);
+                      setCompraForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = fornecedores.find(f => 
+                          (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            codigoFornecedor: val,
+                            fornecedor: foundDb.nomeFantasia || foundDb.nome || '',
+                            fazendaOrigem: foundDb.fazenda || '',
+                            estado: foundDb.uf || '',
+                            pais: 'Brasil',
+                            municipio: foundDb.cidade || ''
+                          };
+                        }
+                        const found = CADASTRO_FORNECEDORES.find(f => 
+                          (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (found) {
+                          return {
+                            ...prev,
+                            codigoFornecedor: val,
+                            fornecedor: found.nome || '',
+                            fazendaOrigem: found.fazenda || '',
+                            estado: found.estado || '',
+                            pais: 'Brasil',
+                            municipio: getSupplierCity(found.nome) || ''
+                          };
+                        }
+                        return {
+                          ...prev,
+                          codigoFornecedor: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerFornecedorCodigoLookup(compraForm.codigoFornecedor);
-                      }
-                    }}
-                    onBlur={() => triggerFornecedorCodigoLookup(compraForm.codigoFornecedor)}
                     placeholder="Ex: F-2706260004"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
@@ -1500,16 +1528,44 @@ export default function CommercialView({
                     value={compraForm.fornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm({ ...compraForm, fornecedor: val });
-                      triggerFornecedorNameLookup(val);
+                      setCompraForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = fornecedores.find(f => 
+                          (f.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (f.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            fornecedor: val,
+                            codigoFornecedor: foundDb.codigo || foundDb.id || '',
+                            fazendaOrigem: foundDb.fazenda || '',
+                            estado: foundDb.uf || '',
+                            pais: 'Brasil',
+                            municipio: foundDb.cidade || ''
+                          };
+                        }
+                        const found = CADASTRO_FORNECEDORES.find(f => 
+                          (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (found) {
+                          return {
+                            ...prev,
+                            fornecedor: val,
+                            codigoFornecedor: found.codigo || '',
+                            fazendaOrigem: found.fazenda || '',
+                            estado: found.estado || '',
+                            pais: 'Brasil',
+                            municipio: getSupplierCity(found.nome) || ''
+                          };
+                        }
+                        return {
+                          ...prev,
+                          fornecedor: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerFornecedorNameLookup(compraForm.fornecedor);
-                      }
-                    }}
-                    onBlur={() => triggerFornecedorNameLookup(compraForm.fornecedor)}
                     placeholder="Nome do produtor rural"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -1580,16 +1636,44 @@ export default function CommercialView({
                     value={compraForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm({ ...compraForm, destinoCodigo: val });
-                      triggerDestinoCodigoLookup(val);
+                      setCompraForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = clientes.find(c => 
+                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            destinoCodigo: val,
+                            destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
+                            destinoFazenda: foundDb.fazenda || '',
+                            destinoEstado: foundDb.uf || '',
+                            destinoPais: 'Brasil',
+                            destinoCidade: foundDb.cidade || ''
+                          };
+                        }
+                        const foundMock = CADASTRO_CLIENTES.find(c => 
+                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundMock) {
+                          return {
+                            ...prev,
+                            destinoCodigo: val,
+                            destinoFrigorifico: foundMock.nome || '',
+                            destinoFazenda: '',
+                            destinoEstado: foundMock.estado || '',
+                            destinoPais: 'Brasil',
+                            destinoCidade: getClientCity(foundMock.nome) || ''
+                          };
+                        }
+                        return {
+                          ...prev,
+                          destinoCodigo: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerDestinoCodigoLookup(compraForm.destinoCodigo);
-                      }
-                    }}
-                    onBlur={() => triggerDestinoCodigoLookup(compraForm.destinoCodigo)}
                     placeholder="Ex: C-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
@@ -1603,16 +1687,43 @@ export default function CommercialView({
                     value={compraForm.destinoFrigorifico}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm({ ...compraForm, destinoFrigorifico: val });
-                      triggerDestinoNameLookup(val);
+                      setCompraForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = clientes.find(c => 
+                          (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            destinoFrigorifico: val,
+                            destinoCodigo: foundDb.codigo || foundDb.id || '',
+                            destinoFazenda: foundDb.fazenda || '',
+                            destinoEstado: foundDb.uf || '',
+                            destinoPais: 'Brasil',
+                            destinoCidade: foundDb.cidade || ''
+                          };
+                        }
+                        const foundMock = CADASTRO_CLIENTES.find(c => 
+                          (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundMock) {
+                          return {
+                            ...prev,
+                            destinoFrigorifico: val,
+                            destinoCodigo: foundMock.codigo || '',
+                            destinoFazenda: '',
+                            destinoEstado: foundMock.estado || '',
+                            destinoPais: 'Brasil',
+                            destinoCidade: getClientCity(foundMock.nome) || ''
+                          };
+                        }
+                        return {
+                          ...prev,
+                          destinoFrigorifico: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerDestinoNameLookup(compraForm.destinoFrigorifico);
-                      }
-                    }}
-                    onBlur={() => triggerDestinoNameLookup(compraForm.destinoFrigorifico)}
                     placeholder="Nome da unidade compradora"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -2361,16 +2472,46 @@ export default function CommercialView({
                     value={negForm.codigoClienteFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm({ ...negForm, codigoClienteFornecedor: val });
-                      triggerClienteFornecedorCodigoLookup(val);
+                      setNegForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = [...clientes, ...fornecedores].find(x => 
+                          (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            codigoClienteFornecedor: val,
+                            clienteFornecedor: foundDb.nomeFantasia || foundDb.nome || '',
+                            fazenda: foundDb.fazenda || '',
+                            estado: foundDb.uf || foundDb.estado || '',
+                            cidade: foundDb.cidade || '',
+                            contatoTelefone: foundDb.telefone || '',
+                            pais: 'Brasil'
+                          };
+                        }
+                        const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+                          (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (found) {
+                          return {
+                            ...prev,
+                            codigoClienteFornecedor: val,
+                            clienteFornecedor: found.nome || '',
+                            fazenda: 'fazenda' in found ? (found as any).fazenda : '',
+                            estado: found.estado || '',
+                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
+                            contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
+                            pais: 'Brasil'
+                          };
+                        }
+                        return {
+                          ...prev,
+                          codigoClienteFornecedor: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerClienteFornecedorCodigoLookup(negForm.codigoClienteFornecedor);
-                      }
-                    }}
-                    onBlur={() => triggerClienteFornecedorCodigoLookup(negForm.codigoClienteFornecedor)}
                     placeholder="Ex: F-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
@@ -2384,16 +2525,46 @@ export default function CommercialView({
                     value={negForm.clienteFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm({ ...negForm, clienteFornecedor: val });
-                      triggerClienteFornecedorNameLookup(val);
+                      setNegForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = [...clientes, ...fornecedores].find(x => 
+                          (x.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (x.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            clienteFornecedor: val,
+                            codigoClienteFornecedor: foundDb.codigo || foundDb.id || '',
+                            fazenda: foundDb.fazenda || '',
+                            estado: foundDb.uf || foundDb.estado || '',
+                            cidade: foundDb.cidade || '',
+                            contatoTelefone: foundDb.telefone || '',
+                            pais: 'Brasil'
+                          };
+                        }
+                        const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+                          (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (found) {
+                          return {
+                            ...prev,
+                            clienteFornecedor: val,
+                            codigoClienteFornecedor: found.codigo || '',
+                            fazenda: 'fazenda' in found ? (found as any).fazenda : '',
+                            estado: found.estado || '',
+                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
+                            contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
+                            pais: 'Brasil'
+                          };
+                        }
+                        return {
+                          ...prev,
+                          clienteFornecedor: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerClienteFornecedorNameLookup(negForm.clienteFornecedor);
-                      }
-                    }}
-                    onBlur={() => triggerClienteFornecedorNameLookup(negForm.clienteFornecedor)}
                     placeholder="Nome"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -2484,16 +2655,44 @@ export default function CommercialView({
                     value={negForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm({ ...negForm, destinoCodigo: val });
-                      triggerNegDestinoCodigoLookup(val);
+                      setNegForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = clientes.find(c => 
+                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            destinoCodigo: val,
+                            destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
+                            destinoFazenda: foundDb.fazenda || '',
+                            destinoEstado: foundDb.uf || '',
+                            destinoCidade: foundDb.cidade || '',
+                            destinoPais: 'Brasil'
+                          };
+                        }
+                        const foundMock = CADASTRO_CLIENTES.find(c => 
+                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundMock) {
+                          return {
+                            ...prev,
+                            destinoCodigo: val,
+                            destinoFrigorifico: foundMock.nome || '',
+                            destinoFazenda: '',
+                            destinoEstado: foundMock.estado || '',
+                            destinoCidade: getClientCity(foundMock.nome) || '',
+                            destinoPais: 'Brasil'
+                          };
+                        }
+                        return {
+                          ...prev,
+                          destinoCodigo: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerNegDestinoCodigoLookup(negForm.destinoCodigo);
-                      }
-                    }}
-                    onBlur={() => triggerNegDestinoCodigoLookup(negForm.destinoCodigo)}
                     placeholder="Ex: C-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
@@ -2506,16 +2705,43 @@ export default function CommercialView({
                     value={negForm.destinoFrigorifico}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm({ ...negForm, destinoFrigorifico: val });
-                      triggerNegDestinoNameLookup(val);
+                      setNegForm(prev => {
+                        const cleanVal = val.trim();
+                        const foundDb = clientes.find(c => 
+                          (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+                          (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundDb) {
+                          return {
+                            ...prev,
+                            destinoFrigorifico: val,
+                            destinoCodigo: foundDb.codigo || foundDb.id || '',
+                            destinoFazenda: foundDb.fazenda || '',
+                            destinoEstado: foundDb.uf || '',
+                            destinoCidade: foundDb.cidade || '',
+                            destinoPais: 'Brasil'
+                          };
+                        }
+                        const foundMock = CADASTRO_CLIENTES.find(c => 
+                          (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+                        );
+                        if (foundMock) {
+                          return {
+                            ...prev,
+                            destinoFrigorifico: val,
+                            destinoCodigo: foundMock.codigo || '',
+                            destinoFazenda: '',
+                            destinoEstado: foundMock.estado || '',
+                            destinoCidade: getClientCity(foundMock.nome) || '',
+                            destinoPais: 'Brasil'
+                          };
+                        }
+                        return {
+                          ...prev,
+                          destinoFrigorifico: val
+                        };
+                      });
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerNegDestinoNameLookup(negForm.destinoFrigorifico);
-                      }
-                    }}
-                    onBlur={() => triggerNegDestinoNameLookup(negForm.destinoFrigorifico)}
                     placeholder="Nome da unidade"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
