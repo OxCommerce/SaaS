@@ -1408,7 +1408,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
                   <input
@@ -1432,19 +1432,6 @@ export default function CommercialView({
                         {oc.numeroOC}
                       </option>
                     ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Tipo de Compra</label>
-                  <select
-                    value={compraForm.tipoCompra}
-                    onChange={(e) => setCompraForm({ ...compraForm, tipoCompra: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold text-[#071757]"
-                  >
-                    <option value="Compra Direta">Compra Direta</option>
-                    <option value="Compra Futura">Compra Futura</option>
-                    <option value="Compra por Comissão">Compra por Comissão</option>
-                    <option value="Parceria / Outro">Parceria / Outro</option>
                   </select>
                 </div>
                 <div>
