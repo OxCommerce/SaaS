@@ -1678,7 +1678,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('CLIENT', item)}
+                          onClick={() => handleEditRegistry('CLIENT', item)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1759,7 +1759,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('DRIVER', mo)}
+                          onClick={() => handleEditRegistry('DRIVER', mo)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1833,7 +1833,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('PARTNER', pa)}
+                          onClick={() => handleEditRegistry('PARTNER', pa)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1916,7 +1916,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('TEAM', u)}
+                          onClick={() => handleEditRegistry('TEAM', u)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1998,7 +1998,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('COST_CENTER', cc)}
+                          onClick={() => handleEditRegistry('COST_CENTER', cc)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2068,7 +2068,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('BANK', b)}
+                          onClick={() => handleEditRegistry('BANK', b)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2147,7 +2147,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('PARTNER_TYPE', tp)}
+                          onClick={() => handleEditRegistry('PARTNER_TYPE', tp)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2226,7 +2226,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleViewDetails('CATEGORY', cat)}
+                          onClick={() => handleEditRegistry('CATEGORY', cat)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
