@@ -431,9 +431,9 @@ export default function CommercialView({
     }
 
     // 1. Local state check
-    const foundDb = fornecedores.find(f => 
-      (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    const foundDb = [...clientes, ...fornecedores].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
@@ -449,19 +449,19 @@ export default function CommercialView({
     }
 
     // 2. Mock check
-    const found = CADASTRO_FORNECEDORES.find(f => 
-      (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (found) {
       setCompraForm(prev => ({
         ...prev,
         codigoFornecedor: code,
         fornecedor: found.nome || '',
-        fazendaOrigem: found.fazenda || '',
+        fazendaOrigem: 'fazenda' in found ? (found as any).fazenda : '',
         estado: found.estado || '',
         pais: 'Brasil',
-        municipio: getSupplierCity(found.nome) || ''
+        municipio: 'fazenda' in found ? getSupplierCity(found.nome) : getClientCity(found.nome)
       }));
       return;
     }
@@ -512,9 +512,9 @@ export default function CommercialView({
     }
 
     // 1. Local state check
-    const foundDb = clientes.find(c => 
-      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    const foundDb = [...clientes, ...fornecedores].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
@@ -530,19 +530,19 @@ export default function CommercialView({
     }
 
     // 2. Mock check
-    const foundMock = CADASTRO_CLIENTES.find(c => 
-      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    const foundMock = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundMock) {
       setCompraForm(prev => ({
         ...prev,
         destinoCodigo: code,
         destinoFrigorifico: foundMock.nome || '',
-        destinoFazenda: '',
+        destinoFazenda: 'fazenda' in foundMock ? (foundMock as any).fazenda : '',
         destinoEstado: foundMock.estado || '',
         destinoPais: 'Brasil',
-        destinoCidade: getClientCity(foundMock.nome) || ''
+        destinoCidade: 'fazenda' in foundMock ? getSupplierCity(foundMock.nome) : getClientCity(foundMock.nome)
       }));
       return;
     }
