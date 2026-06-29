@@ -72,7 +72,7 @@ export interface OrdemCompraCliente {
   comissao: number; // percentage
   resultadoOperacao: number; // total calculated profit/loss
   status: 'Pendente' | 'Programada' | 'Em Transito' | 'Faturada' | 'Entregue';
-  dataEmissao: string;
+  dataCriacao: string;
   codigoCliente?: string;
   codigoOrdemCompraCliente?: string;
 }
