@@ -58,7 +58,7 @@ import {
 
 interface CadastrosViewProps {
   searchQuery: string;
-  usuarios?: Array<{ id: string; nome: string; email: string; papel: string; status: string; matricula?: string }>;
+  usuarios?: Array<{ id: string; nome: string; email: string; papel: string; status: string; matricula?: string; raw_data?: any }>;
   onAddUsuario?: (usuario: any) => void;
   onDeleteUsuario?: (userId: string) => void;
 }
