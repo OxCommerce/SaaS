@@ -380,6 +380,7 @@ export default function CommercialView({
     if (foundMock) {
       setVendaForm(prev => ({
         ...prev,
+        codigoCliente: foundMock.codigo,
         cliente: foundMock.nome,
         frigorifico: foundMock.nome
       }));
@@ -388,8 +389,9 @@ export default function CommercialView({
       if (foundDb) {
         setVendaForm(prev => ({
           ...prev,
-          cliente: foundDb.nomeFantasia,
-          frigorifico: foundDb.nomeFantasia
+          codigoCliente: foundDb.codigo || foundDb.id,
+          cliente: foundDb.razaoSocial || foundDb.nome || foundDb.nomeFantasia,
+          frigorifico: foundDb.nomeFantasia || foundDb.nome
         }));
       }
     }
@@ -401,15 +403,17 @@ export default function CommercialView({
       setVendaForm(prev => ({
         ...prev,
         codigoCliente: foundMock.codigo,
+        cliente: foundMock.nome,
         frigorifico: foundMock.nome
       }));
     } else {
-      const foundDb = clientes.find(c => c.nomeFantasia === name);
+      const foundDb = clientes.find(c => c.nomeFantasia === name || c.razaoSocial === name || c.nome === name);
       if (foundDb) {
         setVendaForm(prev => ({
           ...prev,
-          codigoCliente: foundDb.id,
-          frigorifico: foundDb.nomeFantasia
+          codigoCliente: foundDb.codigo || foundDb.id,
+          cliente: foundDb.razaoSocial || foundDb.nome || foundDb.nomeFantasia,
+          frigorifico: foundDb.nomeFantasia || foundDb.nome
         }));
       }
     }
