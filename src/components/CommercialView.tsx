@@ -1342,8 +1342,13 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
+                    list="fornecedores-codigo-list"
                     value={compraForm.codigoFornecedor}
-                    onChange={(e) => setCompraForm({ ...compraForm, codigoFornecedor: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, codigoFornecedor: val });
+                      triggerFornecedorCodigoLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -1360,8 +1365,13 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
+                    list="fornecedores-list"
                     value={compraForm.fornecedor}
-                    onChange={(e) => setCompraForm({ ...compraForm, fornecedor: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, fornecedor: val });
+                      triggerFornecedorNameLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -1435,8 +1445,13 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
+                    list="clientes-codigo-list"
                     value={compraForm.destinoCodigo}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoCodigo: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, destinoCodigo: val });
+                      triggerDestinoCodigoLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -1455,7 +1470,11 @@ export default function CommercialView({
                     required
                     list="destino-list"
                     value={compraForm.destinoFrigorifico}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoFrigorifico: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, destinoFrigorifico: val });
+                      triggerDestinoNameLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -2356,8 +2375,11 @@ export default function CommercialView({
 
 
       <datalist id="fornecedores-list">
+        {fornecedores.map(f => (
+          <option key={`live-for-${f.id}`} value={f.nomeFantasia || f.nome} />
+        ))}
         {CADASTRO_FORNECEDORES.map(f => (
-          <option key={f.id} value={f.nome} />
+          <option key={`mock-for-${f.id}`} value={f.nome} />
         ))}
       </datalist>
 
@@ -2375,19 +2397,28 @@ export default function CommercialView({
 
       <datalist id="destino-list">
         {clientes.map(c => (
-          <option key={c.id} value={c.nomeFantasia} />
+          <option key={`live-cli-${c.id}`} value={c.nomeFantasia || c.nome} />
+        ))}
+        {CADASTRO_CLIENTES.map(c => (
+          <option key={`mock-cli-${c.id}`} value={c.nome} />
         ))}
       </datalist>
 
       <datalist id="fornecedores-codigo-list">
+        {fornecedores.map(f => (
+          <option key={`live-for-cod-${f.id}`} value={f.codigo} />
+        ))}
         {CADASTRO_FORNECEDORES.map(f => (
-          <option key={f.id} value={f.codigo} />
+          <option key={`mock-for-cod-${f.id}`} value={f.codigo} />
         ))}
       </datalist>
 
       <datalist id="clientes-codigo-list">
+        {clientes.map(c => (
+          <option key={`live-cli-cod-${c.id}`} value={c.codigo} />
+        ))}
         {CADASTRO_CLIENTES.map(c => (
-          <option key={c.id} value={c.codigo} />
+          <option key={`mock-cli-cod-${c.id}`} value={c.codigo} />
         ))}
       </datalist>
 
