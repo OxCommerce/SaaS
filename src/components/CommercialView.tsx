@@ -1453,7 +1453,7 @@ export default function CommercialView({
                           <div className="flex items-center space-x-1">
                             <button
                               onClick={() => {
-                                setNegociacaoForm(card);
+                                setNegForm(card);
                                 setShowAddNegModal(true);
                               }}
                               className="p-1 hover:bg-slate-100 rounded text-gray-400 hover:text-[#071757] transition-colors cursor-pointer mr-0.5"
@@ -2782,7 +2782,6 @@ export default function CommercialView({
           data={detailsModalData}
           clientes={clientes}
           fornecedores={fornecedores}
-          usuarios={usuarios}
           ordensCompraCliente={ordensCompraCliente}
         />
       )}
