@@ -266,7 +266,8 @@ export default function CommercialView({
     destinoPais: '',
     destinoCodigo: '',
     destinoFazenda: '',
-    codigoOrdemCompraCliente: ''
+    codigoOrdemCompraCliente: '',
+    tipoCompra: 'Compra Direta'
   });
 
   // Form State for OrdemCompraCliente
@@ -299,7 +300,14 @@ export default function CommercialView({
     processoId: '',
     pais: 'Brasil',
     estado: '',
-    cidade: ''
+    cidade: '',
+    destinoCodigo: '',
+    destinoFrigorifico: '',
+    destinoFazenda: '',
+    destinoCidade: '',
+    destinoEstado: '',
+    destinoPais: 'Brasil',
+    tipoCompra: 'Compra Direta'
   });
 
   // Live calculations for Add Compra Modal
@@ -548,53 +556,148 @@ export default function CommercialView({
   };
 
   const triggerClienteFornecedorCodigoLookup = (code: string) => {
-    const foundDb = [...clientes, ...fornecedores].find(x => x.codigo === code || x.id === code);
+    if (!code) return;
+    const cleanVal = code.trim();
+    const foundDb = [...clientes, ...fornecedores].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
     if (foundDb) {
       setNegForm(prev => ({
         ...prev,
-        clienteFornecedor: foundDb.nomeFantasia || foundDb.nome,
+        codigoClienteFornecedor: code,
+        clienteFornecedor: foundDb.nomeFantasia || foundDb.nome || '',
         fazenda: foundDb.fazenda || '',
         estado: foundDb.uf || foundDb.estado || '',
         cidade: foundDb.cidade || '',
-        contatoTelefone: foundDb.telefone || ''
+        contatoTelefone: foundDb.telefone || '',
+        pais: 'Brasil'
       }));
       return;
     }
-    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.codigo === code || x.id === code);
+    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
     if (found) {
       setNegForm(prev => ({
         ...prev,
-        clienteFornecedor: found.nome,
-        fazenda: 'fazenda' in found ? found.fazenda : '',
-        estado: found.estado,
+        codigoClienteFornecedor: code,
+        clienteFornecedor: found.nome || '',
+        fazenda: 'fazenda' in found ? (found as any).fazenda : '',
+        estado: found.estado || '',
         cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
-        contatoTelefone: 'telefone' in found ? found.telefone : ''
+        contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
+        pais: 'Brasil'
       }));
     }
   };
 
   const triggerClienteFornecedorNameLookup = (name: string) => {
-    const foundDb = [...clientes, ...fornecedores].find(x => x.nomeFantasia === name || x.razaoSocial === name || x.nome === name);
+    if (!name) return;
+    const cleanVal = name.trim();
+    const foundDb = [...clientes, ...fornecedores].find(x => 
+      (x.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
     if (foundDb) {
       setNegForm(prev => ({
         ...prev,
-        codigoClienteFornecedor: foundDb.codigo || foundDb.id,
+        clienteFornecedor: name,
+        codigoClienteFornecedor: foundDb.codigo || foundDb.id || '',
         fazenda: foundDb.fazenda || '',
         estado: foundDb.uf || foundDb.estado || '',
         cidade: foundDb.cidade || '',
-        contatoTelefone: foundDb.telefone || ''
+        contatoTelefone: foundDb.telefone || '',
+        pais: 'Brasil'
       }));
       return;
     }
-    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => x.nome === name);
+    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
+      (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
     if (found) {
       setNegForm(prev => ({
         ...prev,
-        codigoClienteFornecedor: found.codigo,
-        fazenda: 'fazenda' in found ? found.fazenda : '',
-        estado: found.estado,
+        clienteFornecedor: name,
+        codigoClienteFornecedor: found.codigo || '',
+        fazenda: 'fazenda' in found ? (found as any).fazenda : '',
+        estado: found.estado || '',
         cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
-        contatoTelefone: 'telefone' in found ? found.telefone : ''
+        contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
+        pais: 'Brasil'
+      }));
+    }
+  };
+
+  const triggerNegDestinoCodigoLookup = (code: string) => {
+    if (!code) return;
+    const cleanVal = code.trim();
+    const foundDb = clientes.find(c => 
+      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+    if (foundDb) {
+      setNegForm(prev => ({
+        ...prev,
+        destinoCodigo: code,
+        destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
+        destinoFazenda: foundDb.fazenda || '',
+        destinoEstado: foundDb.uf || '',
+        destinoCidade: foundDb.cidade || '',
+        destinoPais: 'Brasil'
+      }));
+      return;
+    }
+    const foundMock = CADASTRO_CLIENTES.find(c => 
+      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+    if (foundMock) {
+      setNegForm(prev => ({
+        ...prev,
+        destinoCodigo: code,
+        destinoFrigorifico: foundMock.nome || '',
+        destinoFazenda: '',
+        destinoEstado: foundMock.estado || '',
+        destinoCidade: getClientCity(foundMock.nome) || '',
+        destinoPais: 'Brasil'
+      }));
+    }
+  };
+
+  const triggerNegDestinoNameLookup = (name: string) => {
+    if (!name) return;
+    const cleanVal = name.trim();
+    const foundDb = clientes.find(c => 
+      (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+    if (foundDb) {
+      setNegForm(prev => ({
+        ...prev,
+        destinoFrigorifico: name,
+        destinoCodigo: foundDb.codigo || foundDb.id || '',
+        destinoFazenda: foundDb.fazenda || '',
+        destinoEstado: foundDb.uf || '',
+        destinoCidade: foundDb.cidade || '',
+        destinoPais: 'Brasil'
+      }));
+      return;
+    }
+    const foundMock = CADASTRO_CLIENTES.find(c => 
+      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+    if (foundMock) {
+      setNegForm(prev => ({
+        ...prev,
+        destinoFrigorifico: name,
+        destinoCodigo: foundMock.codigo || '',
+        destinoFazenda: '',
+        destinoEstado: foundMock.estado || '',
+        destinoCidade: getClientCity(foundMock.nome) || '',
+        destinoPais: 'Brasil'
       }));
     }
   };
@@ -648,7 +751,8 @@ export default function CommercialView({
       destinoState: compraForm.destinoEstado,
       destinoPais: compraForm.destinoPais,
       destinoCodigo: compraForm.destinoCodigo || '',
-      destinoFazenda: compraForm.destinoFazenda || ''
+      destinoFazenda: compraForm.destinoFazenda || '',
+      tipoCompra: compraForm.tipoCompra
     } as any;
 
     onAddCompra(novaCompra);
@@ -687,7 +791,8 @@ export default function CommercialView({
       destinoPais: '',
       destinoCodigo: '',
       destinoFazenda: '',
-      codigoOrdemCompraCliente: ''
+      codigoOrdemCompraCliente: '',
+      tipoCompra: 'Compra Direta'
     });
   };
 
@@ -761,7 +866,14 @@ export default function CommercialView({
       processoId: negForm.processoId || undefined,
       pais: negForm.pais,
       estado: negForm.estado,
-      cidade: negForm.cidade
+      cidade: negForm.cidade,
+      destinoCodigo: negForm.destinoCodigo,
+      destinoFrigorifico: negForm.destinoFrigorifico,
+      destinoFazenda: negForm.destinoFazenda,
+      destinoCidade: negForm.destinoCidade,
+      destinoEstado: negForm.destinoEstado,
+      destinoPais: negForm.destinoPais,
+      tipoCompra: negForm.tipoCompra
     };
     onAddNegociacao(novaNeg);
     setShowAddNegModal(false);
@@ -778,7 +890,14 @@ export default function CommercialView({
       processoId: '',
       pais: 'Brasil',
       estado: '',
-      cidade: ''
+      cidade: '',
+      destinoCodigo: '',
+      destinoFrigorifico: '',
+      destinoFazenda: '',
+      destinoCidade: '',
+      destinoEstado: '',
+      destinoPais: 'Brasil',
+      tipoCompra: 'Compra Direta'
     });
   };
 
@@ -1289,7 +1408,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">1. Dados da Ordem</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID Op.</label>
                   <input
@@ -1313,6 +1432,19 @@ export default function CommercialView({
                         {oc.numeroOC}
                       </option>
                     ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Tipo de Compra</label>
+                  <select
+                    value={compraForm.tipoCompra}
+                    onChange={(e) => setCompraForm({ ...compraForm, tipoCompra: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold text-[#071757]"
+                  >
+                    <option value="Compra Direta">Compra Direta</option>
+                    <option value="Compra Futura">Compra Futura</option>
+                    <option value="Compra por Comissão">Compra por Comissão</option>
+                    <option value="Parceria / Outro">Parceria / Outro</option>
                   </select>
                 </div>
                 <div>
@@ -2193,7 +2325,7 @@ export default function CommercialView({
       {/* ==================== NEGOCIAÇÃO MODAL ==================== */}
       {showAddNegModal && (
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 overflow-y-auto max-h-[90vh]">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
               <h3 className="text-sm font-bold text-gray-800">Planejar Negociação de Bovinos</h3>
               <button onClick={() => setShowAddNegModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
@@ -2202,16 +2334,35 @@ export default function CommercialView({
             </div>
 
             <form onSubmit={handleAddNegSubmit} className="mt-4 space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold text-gray-500 uppercase">Título da Oportunidade</label>
-                <input
-                  type="text"
-                  required
-                  value={negForm.titulo}
-                  onChange={(e) => setNegForm({ ...negForm, titulo: e.target.value })}
-                  placeholder="Ex: Lote Boi Nelore Pecuária Real"
-                  className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Título da Oportunidade</label>
+                  <input
+                    type="text"
+                    required
+                    value={negForm.titulo}
+                    onChange={(e) => setNegForm({ ...negForm, titulo: e.target.value })}
+                    placeholder="Ex: Lote Boi Nelore Pecuária Real"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Tipo de Compra</label>
+                  <select
+                    value={negForm.tipoCompra}
+                    onChange={(e) => setNegForm({ ...negForm, tipoCompra: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold text-[#071757]"
+                  >
+                    <option value="Compra Direta">Compra Direta</option>
+                    <option value="Compra Futura">Compra Futura</option>
+                    <option value="Compra por Comissão">Compra por Comissão</option>
+                    <option value="Parceria / Outro">Parceria / Outro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="border-b border-gray-150 pt-1 pb-1">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">Procedência (Origem)</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -2219,8 +2370,13 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
+                    list="parceiros-codigo-list"
                     value={negForm.codigoClienteFornecedor}
-                    onChange={(e) => setNegForm({ ...negForm, codigoClienteFornecedor: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNegForm({ ...negForm, codigoClienteFornecedor: val });
+                      triggerClienteFornecedorCodigoLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -2228,7 +2384,7 @@ export default function CommercialView({
                       }
                     }}
                     onBlur={() => triggerClienteFornecedorCodigoLookup(negForm.codigoClienteFornecedor)}
-                    placeholder="Ex: C-2706260005"
+                    placeholder="Ex: F-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
@@ -2237,8 +2393,13 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
+                    list="parceiros-list"
                     value={negForm.clienteFornecedor}
-                    onChange={(e) => setNegForm({ ...negForm, clienteFornecedor: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNegForm({ ...negForm, clienteFornecedor: val });
+                      triggerClienteFornecedorNameLookup(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -2251,7 +2412,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Origem/Destino</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Origem</label>
                   <input
                     type="text"
                     required
@@ -2284,10 +2445,10 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Localização da Negociação */}
+              {/* Localização da Origem */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Origem)</label>
                   <input
                     type="text"
                     value={negForm.pais}
@@ -2296,7 +2457,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Origem)</label>
                   <input
                     type="text"
                     value={negForm.cidade}
@@ -2305,7 +2466,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (UF)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Origem - UF)</label>
                   <select
                     value={negForm.estado}
                     onChange={(e) => setNegForm({ ...negForm, estado: e.target.value })}
@@ -2322,6 +2483,106 @@ export default function CommercialView({
                   </select>
                 </div>
               </div>
+
+              {/* DESTINAÇÃO SUBSECTION */}
+              <div className="mt-2 border-t border-gray-150 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">Destinação (Destino)</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Destino</label>
+                  <input
+                    type="text"
+                    list="clientes-codigo-list"
+                    value={negForm.destinoCodigo}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNegForm({ ...negForm, destinoCodigo: val });
+                      triggerNegDestinoCodigoLookup(val);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        triggerNegDestinoCodigoLookup(negForm.destinoCodigo);
+                      }
+                    }}
+                    onBlur={() => triggerNegDestinoCodigoLookup(negForm.destinoCodigo)}
+                    placeholder="Ex: C-2706260005"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Unidade)</label>
+                  <input
+                    type="text"
+                    list="destino-list"
+                    value={negForm.destinoFrigorifico}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNegForm({ ...negForm, destinoFrigorifico: val });
+                      triggerNegDestinoNameLookup(val);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        triggerNegDestinoNameLookup(negForm.destinoFrigorifico);
+                      }
+                    }}
+                    onBlur={() => triggerNegDestinoNameLookup(negForm.destinoFrigorifico)}
+                    placeholder="Nome da unidade"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Destino</label>
+                  <input
+                    type="text"
+                    value={negForm.destinoFazenda}
+                    onChange={(e) => setNegForm({ ...negForm, destinoFazenda: e.target.value })}
+                    placeholder="Filial / Destino"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Destino)</label>
+                  <input
+                    type="text"
+                    value={negForm.destinoPais}
+                    onChange={(e) => setNegForm({ ...negForm, destinoPais: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Destino)</label>
+                  <input
+                    type="text"
+                    value={negForm.destinoCidade}
+                    onChange={(e) => setNegForm({ ...negForm, destinoCidade: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Destino - UF)</label>
+                  <select
+                    value={negForm.destinoEstado}
+                    onChange={(e) => setNegForm({ ...negForm, destinoEstado: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                  >
+                    <option value="">-- UF --</option>
+                    <option value="MT">MT</option>
+                    <option value="GO">GO</option>
+                    <option value="MS">MS</option>
+                    <option value="PA">PA</option>
+                    <option value="MG">MG</option>
+                    <option value="SP">SP</option>
+                    <option value="TO">TO</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-[10px] font-bold text-gray-500 uppercase">Telefone de Contato</label>
                 <input

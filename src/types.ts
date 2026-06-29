@@ -53,8 +53,11 @@ export interface Compra {
   destinoCidade?: string;
   destinoEstado?: string;
   destinoPais?: string;
+  destinoCodigo?: string;
+  destinoFazenda?: string;
   codigoFornecedor?: string;
   codigoOrdemCompraCliente?: string;
+  tipoCompra?: string;
 }
 
 export interface OrdemCompraCliente {
@@ -68,8 +71,8 @@ export interface OrdemCompraCliente {
   valorArroba: number; // BRL per @
   comissao: number; // percentage
   resultadoOperacao: number; // total calculated profit/loss
-  status: 'Pendente' | 'Faturada' | 'Entregue';
-  dataCriacao: string;
+  status: 'Pendente' | 'Programada' | 'Em Transito' | 'Faturada' | 'Entregue';
+  dataEmissao: string;
   codigoCliente?: string;
   codigoOrdemCompraCliente?: string;
 }
@@ -90,6 +93,13 @@ export interface Negociacao {
   estado?: string;
   cidade?: string;
   codigoClienteFornecedor?: string;
+  destinoCodigo?: string;
+  destinoFrigorifico?: string;
+  destinoFazenda?: string;
+  destinoCidade?: string;
+  destinoEstado?: string;
+  destinoPais?: string;
+  tipoCompra?: string;
 }
 
 export interface Lote {
