@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS public.usuarios (
 );
 
 ALTER TABLE public.usuarios ADD COLUMN IF NOT EXISTS matricula text;
+ALTER TABLE public.usuarios ADD COLUMN IF NOT EXISTS raw_data jsonb;
 
 ALTER TABLE public.usuarios ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow anonymous read/write" ON public.usuarios;

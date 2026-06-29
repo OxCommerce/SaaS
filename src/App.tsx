@@ -154,7 +154,20 @@ export default function App() {
       try {
         const { data, error } = await supabase.from('usuarios').select('*');
         if (!error && data && data.length > 0) {
-          setUsuariosList(data);
+          const mapped = data.map(u => {
+            const raw = u.raw_data || {};
+            return {
+              ...raw,
+              id: u.id,
+              nome: u.nome,
+              email: u.email,
+              papel: u.papel,
+              status: u.status,
+              matricula: u.matricula,
+              raw_data: raw
+            };
+          });
+          setUsuariosList(mapped);
         }
       } catch (err) {
         console.warn('Failed to load usuarios from Supabase, using mock data:', err);
@@ -564,7 +577,28 @@ export default function App() {
     const targetUser = updated.find(u => u.id === id);
     if (targetUser) {
       try {
-        await supabase.from('usuarios').upsert([targetUser]);
+        const toUpsert = {
+          id: targetUser.id,
+          nome: targetUser.nome,
+          email: targetUser.email,
+          papel: targetUser.papel,
+          status: targetUser.status,
+          matricula: targetUser.matricula,
+          raw_data: targetUser.raw_data || null
+        };
+        const { error } = await supabase.from('usuarios').upsert([toUpsert]);
+        if (error) {
+          console.warn('Upsert with raw_data failed in toggle, trying standard columns only:', error.message);
+          const standardOnly = {
+            id: targetUser.id,
+            nome: targetUser.nome,
+            email: targetUser.email,
+            papel: targetUser.papel,
+            status: targetUser.status,
+            matricula: targetUser.matricula
+          };
+          await supabase.from('usuarios').upsert([standardOnly]);
+        }
       } catch (err) {
         console.warn('Failed to update user status in Supabase:', err);
       }
@@ -753,7 +787,28 @@ export default function App() {
                   return [novoUsuario, ...prev];
                 });
                 try {
-                  await supabase.from('usuarios').upsert([novoUsuario]);
+                  const toUpsert = {
+                    id: novoUsuario.id,
+                    nome: novoUsuario.nome,
+                    email: novoUsuario.email,
+                    papel: novoUsuario.papel,
+                    status: novoUsuario.status,
+                    matricula: novoUsuario.matricula,
+                    raw_data: novoUsuario
+                  };
+                  const { error } = await supabase.from('usuarios').upsert([toUpsert]);
+                  if (error) {
+                    console.warn('Upsert with raw_data failed, trying standard columns only:', error.message);
+                    const standardOnly = {
+                      id: novoUsuario.id,
+                      nome: novoUsuario.nome,
+                      email: novoUsuario.email,
+                      papel: novoUsuario.papel,
+                      status: novoUsuario.status,
+                      matricula: novoUsuario.matricula
+                    };
+                    await supabase.from('usuarios').upsert([standardOnly]);
+                  }
                 } catch (err) {
                   console.warn('Failed to save usuario to Supabase:', err);
                 }
