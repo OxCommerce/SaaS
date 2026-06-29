@@ -1473,7 +1473,6 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="fornecedores-codigo-list"
                     value={compraForm.codigoFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -1526,6 +1525,11 @@ export default function CommercialView({
                         };
                       });
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
                     placeholder="Ex: F-2706260004"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
@@ -1535,11 +1539,15 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="fornecedores-list"
                     value={compraForm.fornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
                       setCompraForm(prev => ({ ...prev, fornecedor: val }));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
                     }}
                     placeholder="Nome do produtor rural"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
@@ -1607,7 +1615,6 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="clientes-codigo-list"
                     value={compraForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -1660,6 +1667,11 @@ export default function CommercialView({
                         };
                       });
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
                     placeholder="Ex: C-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
@@ -1669,11 +1681,15 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="destino-list"
                     value={compraForm.destinoFrigorifico}
                     onChange={(e) => {
                       const val = e.target.value;
                       setCompraForm(prev => ({ ...prev, destinoFrigorifico: val }));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
                     }}
                     placeholder="Nome da unidade compradora"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
@@ -2419,7 +2435,6 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="parceiros-codigo-list"
                     value={negForm.codigoClienteFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -2489,7 +2504,6 @@ export default function CommercialView({
                   <input
                     type="text"
                     required
-                    list="parceiros-list"
                     value={negForm.clienteFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -2586,7 +2600,6 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Destino</label>
                   <input
                     type="text"
-                    list="clientes-codigo-list"
                     value={negForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -2652,7 +2665,6 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Unidade)</label>
                   <input
                     type="text"
-                    list="destino-list"
                     value={negForm.destinoFrigorifico}
                     onChange={(e) => {
                       const val = e.target.value;
