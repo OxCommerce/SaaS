@@ -264,6 +264,8 @@ export default function CommercialView({
     destinoCidade: '',
     destinoEstado: '',
     destinoPais: '',
+    destinoCodigo: '',
+    destinoFazenda: '',
     codigoOrdemCompraCliente: ''
   });
 
@@ -406,7 +408,11 @@ export default function CommercialView({
   };
 
   const triggerFornecedorCodigoLookup = (code: string) => {
-    const foundDb = fornecedores.find(f => f.codigo === code || f.id === code);
+    if (!code) return;
+    const foundDb = fornecedores.find(f => 
+      (f.codigo || '').toLowerCase() === code.toLowerCase() || 
+      (f.id || '').toLowerCase() === code.toLowerCase()
+    );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
@@ -418,7 +424,10 @@ export default function CommercialView({
       }));
       return;
     }
-    const found = CADASTRO_FORNECEDORES.find(f => f.codigo === code || f.id === code);
+    const found = CADASTRO_FORNECEDORES.find(f => 
+      (f.codigo || '').toLowerCase() === code.toLowerCase() || 
+      (f.id || '').toLowerCase() === code.toLowerCase()
+    );
     if (found) {
       setCompraForm(prev => ({
         ...prev,
@@ -432,7 +441,12 @@ export default function CommercialView({
   };
 
   const triggerFornecedorNameLookup = (name: string) => {
-    const foundDb = fornecedores.find(f => f.nomeFantasia === name || f.razaoSocial === name || f.nome === name);
+    if (!name) return;
+    const foundDb = fornecedores.find(f => 
+      (f.nomeFantasia || '').toLowerCase() === name.toLowerCase() || 
+      (f.razaoSocial || '').toLowerCase() === name.toLowerCase() || 
+      (f.nome || '').toLowerCase() === name.toLowerCase()
+    );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
@@ -444,7 +458,9 @@ export default function CommercialView({
       }));
       return;
     }
-    const found = CADASTRO_FORNECEDORES.find(f => f.nome === name);
+    const found = CADASTRO_FORNECEDORES.find(f => 
+      (f.nome || '').toLowerCase() === name.toLowerCase()
+    );
     if (found) {
       setCompraForm(prev => ({
         ...prev,
@@ -453,6 +469,68 @@ export default function CommercialView({
         estado: found.estado,
         pais: 'Brasil',
         municipio: getSupplierCity(found.nome)
+      }));
+    }
+  };
+
+  const triggerDestinoCodigoLookup = (code: string) => {
+    if (!code) return;
+    const foundDb = clientes.find(c => 
+      (c.codigo || '').toLowerCase() === code.toLowerCase() || 
+      (c.id || '').toLowerCase() === code.toLowerCase() ||
+      (c.cnpj || '').toLowerCase() === code.toLowerCase()
+    );
+    if (foundDb) {
+      setCompraForm(prev => ({
+        ...prev,
+        destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome,
+        destinoEstado: foundDb.uf,
+        destinoPais: foundDb.pais || 'Brasil',
+        destinoCidade: foundDb.cidade
+      }));
+      return;
+    }
+    const foundMock = CADASTRO_CLIENTES.find(c => 
+      (c.codigo || '').toLowerCase() === code.toLowerCase() || 
+      (c.id || '').toLowerCase() === code.toLowerCase()
+    );
+    if (foundMock) {
+      setCompraForm(prev => ({
+        ...prev,
+        destinoFrigorifico: foundMock.nome,
+        destinoEstado: foundMock.estado,
+        destinoPais: 'Brasil',
+        destinoCidade: getClientCity(foundMock.nome)
+      }));
+    }
+  };
+
+  const triggerDestinoNameLookup = (name: string) => {
+    if (!name) return;
+    const foundDb = clientes.find(c => 
+      (c.nomeFantasia || '').toLowerCase() === name.toLowerCase() || 
+      (c.nome || '').toLowerCase() === name.toLowerCase()
+    );
+    if (foundDb) {
+      setCompraForm(prev => ({
+        ...prev,
+        destinoCodigo: foundDb.codigo || foundDb.id,
+        destinoEstado: foundDb.uf,
+        destinoPais: foundDb.pais || 'Brasil',
+        destinoCidade: foundDb.cidade
+      }));
+      return;
+    }
+    const foundMock = CADASTRO_CLIENTES.find(c => 
+      (c.nome || '').toLowerCase() === name.toLowerCase()
+    );
+    if (foundMock) {
+      setCompraForm(prev => ({
+        ...prev,
+        destinoCodigo: foundMock.codigo,
+        destinoEstado: foundMock.estado,
+        destinoPais: 'Brasil',
+        destinoCidade: getClientCity(foundMock.nome)
       }));
     }
   };
@@ -556,7 +634,9 @@ export default function CommercialView({
       destinoFrigorifico: compraForm.destinoFrigorifico,
       destinoCidade: compraForm.destinoCidade,
       destinoState: compraForm.destinoEstado,
-      destinoPais: compraForm.destinoPais
+      destinoPais: compraForm.destinoPais,
+      destinoCodigo: compraForm.destinoCodigo || '',
+      destinoFazenda: compraForm.destinoFazenda || ''
     } as any;
 
     onAddCompra(novaCompra);
@@ -593,6 +673,8 @@ export default function CommercialView({
       destinoCidade: '',
       destinoEstado: '',
       destinoPais: '',
+      destinoCodigo: '',
+      destinoFazenda: '',
       codigoOrdemCompraCliente: ''
     });
   };
@@ -806,6 +888,8 @@ export default function CommercialView({
                   destinoCidade: '',
                   destinoEstado: '',
                   destinoPais: '',
+                  destinoCodigo: '',
+                  destinoFazenda: '',
                   codigoOrdemCompraCliente: ''
                 });
                 setShowAddCompraModal(true);
@@ -911,7 +995,9 @@ export default function CommercialView({
                             destinoFrigorifico: c.destinoFrigorifico || '',
                             destinoCidade: c.destinoCidade || '',
                             destinoEstado: c.destinoEstado || '',
-                            destinoPais: c.destinoPais || ''
+                            destinoPais: c.destinoPais || '',
+                            destinoCodigo: c.destinoCodigo || '',
+                            destinoFazenda: c.destinoFazenda || ''
                           });
                           setIsEditCompraMode(true);
                           setEditCompraId(c.id);
@@ -1343,7 +1429,25 @@ export default function CommercialView({
               <div className="mt-2 border-t border-gray-100 pt-1.5">
                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">B. Destinação (Destino)</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Destino</label>
+                  <input
+                    type="text"
+                    required
+                    value={compraForm.destinoCodigo}
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoCodigo: e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        triggerDestinoCodigoLookup(compraForm.destinoCodigo);
+                      }
+                    }}
+                    onBlur={() => triggerDestinoCodigoLookup(compraForm.destinoCodigo)}
+                    placeholder="Ex: C-2706260005"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                  />
+                </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
                   <input
@@ -1351,20 +1455,26 @@ export default function CommercialView({
                     required
                     list="destino-list"
                     value={compraForm.destinoFrigorifico}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => {
-                        const updated = { ...prev, destinoFrigorifico: val };
-                        const found = clientes.find(c => c.nomeFantasia === val);
-                        if (found) {
-                          updated.destinoCidade = found.cidade;
-                          updated.destinoEstado = found.uf;
-                          updated.destinoPais = 'Brasil';
-                        }
-                        return updated;
-                      });
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoFrigorifico: e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        triggerDestinoNameLookup(compraForm.destinoFrigorifico);
+                      }
                     }}
+                    onBlur={() => triggerDestinoNameLookup(compraForm.destinoFrigorifico)}
                     placeholder="Nome da unidade compradora"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Unidade / Fazenda Destino</label>
+                  <input
+                    type="text"
+                    required
+                    value={compraForm.destinoFazenda}
+                    onChange={(e) => setCompraForm({ ...compraForm, destinoFazenda: e.target.value })}
+                    placeholder="Nome do destino / filial"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
