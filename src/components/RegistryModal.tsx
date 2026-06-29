@@ -92,6 +92,32 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
       }
     }
 
+    // 1b. Password Validation for TEAM (users)
+    if (type === 'TEAM') {
+      if (!data.segurancaLogin || !data.segurancaLogin.trim()) {
+        alert("Por favor, preencha o Login de Acesso (E-mail) na aba Segurança.");
+        return false;
+      }
+      
+      const isNew = !data.id;
+      const mustValidatePassword = isNew || data.alterarSenha;
+      
+      if (mustValidatePassword) {
+        if (!data.segurancaSenha || !data.segurancaSenha.trim()) {
+          alert("Por favor, preencha a Senha de Acesso.");
+          return false;
+        }
+        if (data.segurancaSenha.length < 6) {
+          alert("A senha deve conter pelo menos 6 caracteres.");
+          return false;
+        }
+        if (data.segurancaSenha !== data.segurancaConfirmarSenha) {
+          alert("A confirmação da senha não confere. Por favor, verifique.");
+          return false;
+        }
+      }
+    }
+
     // 2. Client and Driver registration validation
     if (type === 'CLIENT' || type === 'DRIVER') {
       // Geral fields validation

@@ -17,6 +17,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { OxLogo } from './ui/Logo';
+import { supabase } from '../supabaseClient';
 
 interface LoginViewProps {
   onLoginSuccess: (username: string) => void;
@@ -25,13 +26,13 @@ interface LoginViewProps {
 }
 
 export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: LoginViewProps) {
-  const [email, setEmail] = useState('diego.silveira@oxcommerce.com.br');
-  const [password, setPassword] = useState('••••••••');
+  const [email, setEmail] = useState('diego@oxcommerce.com.br');
+  const [password, setPassword] = useState('123456');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -45,13 +46,41 @@ export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: L
     }
 
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const { data: user, error: queryErr } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('email', email.trim())
+        .maybeSingle();
+
+      if (queryErr || !user) {
+        setError('Usuário não cadastrado ou credenciais inválidas.');
+        setIsLoading(false);
+        return;
+      }
+
+      const raw = user.raw_data || {};
+      const savedPassword = raw.segurancaSenha || '';
+
+      if (savedPassword !== password) {
+        setError('Senha incorreta. Por favor, tente novamente.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (user.status !== 'Ativo') {
+        setError('Este usuário está inativo ou bloqueado no sistema.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Success
+      onLoginSuccess(user.nome);
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Ocorreu um erro ao tentar realizar o login. Tente novamente.');
       setIsLoading(false);
-      let name = 'Diego Silveira';
-      if (email.toLowerCase().includes('wagner')) name = 'Wagner Targa';
-      else if (email.toLowerCase().includes('admin')) name = 'Administrador do Sistema';
-      onLoginSuccess(name);
-    }, 1500);
+    }
   };
 
   return (

@@ -1478,16 +1478,81 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
            </div>
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Input 
-                label="Login de Acesso (E-mail)" 
-                placeholder="usuario@oxcommerce.com" 
-                value={data.segurancaLogin || ''} 
-                onChange={(e) => onChange({ ...data, segurancaLogin: e.target.value })}
-                fullWidth 
-              />
-              <Input label="Último Login" value="12/10/2023 14:30" readOnly className="bg-slate-50" fullWidth />
-              <Input label="IP Último Acesso" value="192.168.0.1" readOnly className="bg-slate-50" fullWidth />
-           </div>
+               <Input 
+                 label="Login de Acesso (E-mail)" 
+                 placeholder="usuario@oxcommerce.com" 
+                 value={data.segurancaLogin || ''} 
+                 onChange={(e) => onChange({ ...data, segurancaLogin: e.target.value })}
+                 fullWidth 
+               />
+               <Input label="Último Login" value={data.segurancaUltimoLogin || "Ainda não acessou"} readOnly className="bg-slate-50" fullWidth />
+               <Input label="IP Último Acesso" value={data.segurancaIpUltimoAcesso || "N/A"} readOnly className="bg-slate-50" fullWidth />
+            </div>
+
+            {/* Password Section */}
+            <div className="border-t border-slate-100 pt-6">
+               {data.id ? (
+                 <div className="space-y-4">
+                   <div className="flex items-center">
+                     <input
+                       id="alterarSenhaCheckbox"
+                       type="checkbox"
+                       checked={data.alterarSenha || false}
+                       onChange={(e) => onChange({ 
+                         ...data, 
+                         alterarSenha: e.target.checked,
+                         segurancaSenha: '',
+                         segurancaConfirmarSenha: ''
+                       })}
+                       className="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded cursor-pointer"
+                     />
+                     <label htmlFor="alterarSenhaCheckbox" className="ml-2 block text-xs font-bold text-slate-700 uppercase cursor-pointer">
+                       Alterar Senha de Acesso
+                     </label>
+                   </div>
+                   
+                   {data.alterarSenha && (
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadeIn">
+                       <Input 
+                         label="Nova Senha" 
+                         type="password"
+                         placeholder="Mínimo 6 caracteres"
+                         value={data.segurancaSenha || ''} 
+                         onChange={(e) => onChange({ ...data, segurancaSenha: e.target.value })}
+                         fullWidth 
+                       />
+                       <Input 
+                         label="Confirmar Nova Senha" 
+                         type="password"
+                         placeholder="Repita a nova senha"
+                         value={data.segurancaConfirmarSenha || ''} 
+                         onChange={(e) => onChange({ ...data, segurancaConfirmarSenha: e.target.value })}
+                         fullWidth 
+                       />
+                     </div>
+                   )}
+                 </div>
+               ) : (
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <Input 
+                     label="Senha de Acesso *" 
+                     type="password"
+                     placeholder="Mínimo 6 caracteres"
+                     value={data.segurancaSenha || ''} 
+                     onChange={(e) => onChange({ ...data, segurancaSenha: e.target.value })}
+                     fullWidth 
+                   />
+                   <Input 
+                     label="Confirmar Senha *" 
+                     type="password"
+                     placeholder="Repita a senha"
+                     value={data.segurancaConfirmarSenha || ''} 
+                     onChange={(e) => onChange({ ...data, segurancaConfirmarSenha: e.target.value })}
+                     fullWidth 
+                   />
+                 </div>
+               )}
+            </div>
         </div>
     );
   };

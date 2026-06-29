@@ -153,21 +153,50 @@ export default function App() {
     async function loadUsuarios() {
       try {
         const { data, error } = await supabase.from('usuarios').select('*');
-        if (!error && data && data.length > 0) {
-          const mapped = data.map(u => {
-            const raw = u.raw_data || {};
-            return {
-              ...raw,
-              id: u.id,
-              nome: u.nome,
-              email: u.email,
-              papel: u.papel,
-              status: u.status,
-              matricula: u.matricula,
-              raw_data: raw
-            };
-          });
-          setUsuariosList(mapped);
+        if (!error && data) {
+          if (data.length > 0) {
+            const mapped = data.map(u => {
+              const raw = u.raw_data || {};
+              return {
+                ...raw,
+                id: u.id,
+                nome: u.nome,
+                email: u.email,
+                papel: u.papel,
+                status: u.status,
+                matricula: u.matricula,
+                raw_data: raw
+              };
+            });
+            setUsuariosList(mapped);
+          } else {
+            // Seed default mock users with default password '123456'
+            const toSeed = CADASTRO_USUARIOS.map(u => {
+              const raw = {
+                ...u,
+                segurancaLogin: u.email,
+                segurancaStatus: 'A',
+                segurancaSenha: '123456',
+                segurancaConfirmarSenha: '123456',
+                segurancaPerfil: 'ADM',
+                segurancaPapel: u.papel === 'Administrador ERP' ? 'ADM' : 'FIS'
+              };
+              return {
+                id: u.id,
+                nome: u.nome,
+                email: u.email,
+                papel: u.papel,
+                status: u.status,
+                matricula: u.matricula,
+                raw_data: raw
+              };
+            });
+            await supabase.from('usuarios').insert(toSeed);
+            setUsuariosList(CADASTRO_USUARIOS.map((u, i) => ({
+              ...u,
+              raw_data: toSeed[i].raw_data
+            })));
+          }
         }
       } catch (err) {
         console.warn('Failed to load usuarios from Supabase, using mock data:', err);
