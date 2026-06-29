@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Compra, OrdemCompraCliente, Negociacao, Lote, SubMenuComercial } from '../types';
 import { CADASTRO_CLIENTES, CADASTRO_FORNECEDORES, CADASTRO_PARCEIROS, CADASTRO_MOTORISTAS } from '../data/mockData';
 import { supabase } from '../supabaseClient';
+import RegistryDetailsViewModal from './RegistryDetailsViewModal';
 
 const MOCK_CLIENT_UNITS = [
   { id: 'cl-1-1', nomeFantasia: 'JBS - Rondonópolis', razaoSocial: 'Frigorífico JBS S/A', cidade: 'Rondonópolis', uf: 'MT' },
@@ -121,6 +122,17 @@ export default function CommercialView({
   
   // Clientes and Fornecedores states loaded from Supabase
   const [clientes, setClientes] = useState<any[]>(MOCK_CLIENT_UNITS);
+  
+  // State for read-only details modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');
+  const [detailsModalData, setDetailsModalData] = useState<any>(null);
+
+  const handleViewDetails = (type: any, item: any) => {
+    setDetailsModalType(type);
+    setDetailsModalData(item);
+    setShowDetailsModal(true);
+  };
   const [fornecedores, setFornecedores] = useState<any[]>([]);
 
   useEffect(() => {
@@ -1083,6 +1095,7 @@ export default function CommercialView({
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">ID Op.</th>
+                  <th className="p-3">Cód. Forn.</th>
                   <th className="p-3">Fornecedor</th>
                   <th className="p-3">Origem</th>
                   <th className="p-3">Pais</th>
@@ -1102,7 +1115,29 @@ export default function CommercialView({
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredCompras.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold text-gray-800">{c.numeroOperacao}</td>
+                    <td className="p-3 pl-4 font-mono font-bold">
+                      <button
+                        onClick={() => handleViewDetails('PURCHASE_ORDER', c)}
+                        className="text-[#071757] hover:text-[#182763] hover:underline focus:outline-none text-left cursor-pointer"
+                      >
+                        {c.numeroOperacao}
+                      </button>
+                    </td>
+                    <td className="p-3 font-mono font-bold">
+                      <button
+                        onClick={() => {
+                          const foundForn = [...clientes, ...fornecedores].find(f => f.codigo === c.codigoFornecedor || f.id === c.codigoFornecedor);
+                          if (foundForn) {
+                            handleViewDetails('SUPPLIER', foundForn);
+                          } else {
+                            alert('Fornecedor não encontrado.');
+                          }
+                        }}
+                        className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer"
+                      >
+                        {c.codigoFornecedor || '-'}
+                      </button>
+                    </td>
                     <td className="p-3 font-semibold text-gray-800">{c.fornecedor}</td>
                     <td className="p-3 text-xs text-gray-500">{c.fazendaOrigem}</td>
                     <td className="p-3 text-gray-500">Brasil</td>
@@ -1272,10 +1307,7 @@ export default function CommercialView({
                     <tr key={v.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-3 pl-4 font-mono font-bold">
                         <button
-                          onClick={() => {
-                            setVendaForm(v);
-                            setShowAddVendaModal(true);
-                          }}
+                          onClick={() => handleViewDetails('SALES_ORDER', v)}
                           className="text-[#071757] hover:text-[#182763] hover:underline focus:outline-none text-left cursor-pointer"
                         >
                           {v.numeroOC}
@@ -1312,14 +1344,26 @@ export default function CommercialView({
                         </span>
                       </td>
                       <td className="p-3 text-center">
-                        <button
-                          id={`del-venda-${v.id}`}
-                          onClick={() => onDeleteOrdemCompraCliente(v.id)}
-                          className="p-1 text-gray-400 hover:text-rose-500 rounded transition-all cursor-pointer"
-                          title="Deletar Ordem de Compra"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        <div className="flex justify-center space-x-1.5">
+                          <button
+                            onClick={() => {
+                              setVendaForm(v);
+                              setShowAddVendaModal(true);
+                            }}
+                            className="p-1 text-gray-400 hover:text-indigo-600 rounded transition-all cursor-pointer"
+                            title="Editar Ordem de Compra"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            id={`del-venda-${v.id}`}
+                            onClick={() => onDeleteOrdemCompraCliente(v.id)}
+                            className="p-1 text-gray-400 hover:text-rose-500 rounded transition-all cursor-pointer"
+                            title="Deletar Ordem de Compra"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -1369,10 +1413,7 @@ export default function CommercialView({
                         <div>
                           <div className="flex justify-between items-start mb-1.5">
                             <button
-                              onClick={() => {
-                                setNegociacaoForm(card);
-                                setShowAddNegModal(true);
-                              }}
+                              onClick={() => handleViewDetails('NEGOTIATION', card)}
                               className="text-[10px] font-mono text-[#071757] hover:text-[#182763] hover:underline font-bold cursor-pointer"
                             >
                               ID: {card.id.toUpperCase()}
@@ -1409,7 +1450,17 @@ export default function CommercialView({
                           </span>
                           
                           {/* Flow movement simulator */}
-                          <div className="flex space-x-1">
+                          <div className="flex items-center space-x-1">
+                            <button
+                              onClick={() => {
+                                setNegociacaoForm(card);
+                                setShowAddNegModal(true);
+                              }}
+                              className="p-1 hover:bg-slate-100 rounded text-gray-400 hover:text-[#071757] transition-colors cursor-pointer mr-0.5"
+                              title="Editar Negociação"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                            </button>
                             {col.key !== 'aprovado' && col.key !== 'cancelado' && (
                               <button
                                 id={`move-next-${card.id}`}
@@ -2722,6 +2773,19 @@ export default function CommercialView({
           <option key={p.id} value={p.codigo} />
         ))}
       </datalist>
+
+      {showDetailsModal && (
+        <RegistryDetailsViewModal
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+          type={detailsModalType}
+          data={detailsModalData}
+          clientes={clientes}
+          fornecedores={fornecedores}
+          usuarios={usuarios}
+          ordensCompraCliente={ordensCompraCliente}
+        />
+      )}
 
     </div>
   );

@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { RegistryModal } from './RegistryModal';
+import RegistryDetailsViewModal from './RegistryDetailsViewModal';
 import { supabase } from '../supabaseClient';
 
 const BRAZILIAN_BANKS = [
@@ -125,6 +126,17 @@ const sanitizeText = (val: string): string => {
 
 export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario, onDeleteUsuario }: CadastrosViewProps) {
   const [activeTab, setActiveTab] = useState<CadastroTab>('clientes_fornecedores');
+  
+  // State for read-only details modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');
+  const [detailsModalData, setDetailsModalData] = useState<any>(null);
+
+  const handleViewDetails = (type: any, item: any) => {
+    setDetailsModalType(type);
+    setDetailsModalData(item);
+    setShowDetailsModal(true);
+  };
   
   // Persistent list of deleted mock item IDs to prevent them from reappearing on reload
   const [deletedMockIds, setDeletedMockIds] = useState<string[]>(() => {
@@ -1606,7 +1618,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredClientesFornecedores.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('CLIENT', item)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('CLIENT', item)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
                         {item.codigo || '-'}
                       </button>
                     </td>
@@ -1634,7 +1646,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('CLIENT', item)}
+                          onClick={() => handleViewDetails('CLIENT', item)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1693,7 +1705,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredMotoristas.map((mo) => (
                   <tr key={mo.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('DRIVER', mo)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('DRIVER', mo)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
                         {mo.codigo || '-'}
                       </button>
                     </td>
@@ -1715,7 +1727,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('DRIVER', mo)}
+                          onClick={() => handleViewDetails('DRIVER', mo)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1773,7 +1785,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredParceiros.map((pa) => (
                   <tr key={pa.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('PARTNER', pa)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('PARTNER', pa)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
                         {pa.codigo || '-'}
                       </button>
                     </td>
@@ -1789,7 +1801,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('PARTNER', pa)}
+                          onClick={() => handleViewDetails('PARTNER', pa)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1846,7 +1858,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filterBySearch(usuarios, ['matricula', 'nome', 'email', 'papel']).map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('TEAM', u)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('TEAM', u)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
                         {u.matricula || '-'}
                       </button>
                     </td>
@@ -1872,7 +1884,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('TEAM', u)}
+                          onClick={() => handleViewDetails('TEAM', u)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -1929,7 +1941,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredCentrosCusto.map((cc) => (
                   <tr key={cc.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('COST_CENTER', cc)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('COST_CENTER', cc)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
                         {cc.codigo || '-'}
                       </button>
                     </td>
@@ -1954,7 +1966,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('COST_CENTER', cc)}
+                          onClick={() => handleViewDetails('COST_CENTER', cc)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2009,7 +2021,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredBancos.map((b) => (
                   <tr key={b.id || b.code} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('BANK', b)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('BANK', b)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
                         {b.code || '-'}
                       </button>
                     </td>
@@ -2024,7 +2036,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('BANK', b)}
+                          onClick={() => handleViewDetails('BANK', b)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2087,7 +2099,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredTiposParceiro.map((tp) => (
                   <tr key={tp.id || tp.code} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('PARTNER_TYPE', tp)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('PARTNER_TYPE', tp)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
                         {tp.code || '-'}
                       </button>
                     </td>
@@ -2103,7 +2115,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('PARTNER_TYPE', tp)}
+                          onClick={() => handleViewDetails('PARTNER_TYPE', tp)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2166,7 +2178,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 {filteredCategorias.map((cat) => (
                   <tr key={cat.id || cat.code} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleEditRegistry('CATEGORY', cat)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
+                      <button onClick={() => handleViewDetails('CATEGORY', cat)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold font-mono focus:outline-none text-left cursor-pointer">
                         {cat.code || '-'}
                       </button>
                     </td>
@@ -2182,7 +2194,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
-                          onClick={() => handleEditRegistry('CATEGORY', cat)}
+                          onClick={() => handleViewDetails('CATEGORY', cat)}
                           className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
                           title="Editar"
                         >
@@ -2223,6 +2235,24 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
           banks={bancos}
           partnerTypes={tiposParceiro}
           initialData={cliForForm}
+        />
+      )}
+
+      {showDetailsModal && (
+        <RegistryDetailsViewModal
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+          type={detailsModalType}
+          data={detailsModalData}
+          clientes={clientesFornecedores}
+          fornecedores={clientesFornecedores.filter(item => item.relacionamento === 'FOR' || item.relacionamento === 'AMB')}
+          usuarios={usuarios}
+          bancos={bancos}
+          centrosCusto={centrosCusto}
+          tiposParceiro={tiposParceiro}
+          categorias={categorias}
+          motoristas={motoristas}
+          parceiros={parceiros}
         />
       )}
 
