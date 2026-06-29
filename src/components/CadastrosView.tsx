@@ -650,6 +650,34 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
 
   const [cliForForm, setCliForForm] = useState(initialCliForForm);
 
+  const getNextAutoCode = (prefix: string, existingCodes: string[], padLength: number = 4): string => {
+    let maxSeq = 0;
+    existingCodes.forEach(code => {
+      if (code && code.toLowerCase().startsWith(prefix.toLowerCase())) {
+        const seqStr = code.substring(prefix.length);
+        const seqNum = parseInt(seqStr, 10);
+        if (!isNaN(seqNum) && seqNum > maxSeq) {
+          maxSeq = seqNum;
+        }
+      }
+    });
+    const nextSeq = maxSeq + 1;
+    return `${prefix}${String(nextSeq).padStart(padLength, '0')}`;
+  };
+
+  const getNextMatricula = (existingMatriculas: string[]): string => {
+    let maxVal = 156487;
+    existingMatriculas.forEach(mat => {
+      if (mat && mat.startsWith('A')) {
+        const numPart = parseInt(mat.substring(1), 10);
+        if (!isNaN(numPart) && numPart > maxVal) {
+          maxVal = numPart;
+        }
+      }
+    });
+    return `A${maxVal + 1}`;
+  };
+
   const handleOpenRegistryModal = (type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY', rel?: 'CLI' | 'FOR') => {
     setModalType(type);
     const today = new Date();
@@ -661,9 +689,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     if (type === 'CLIENT') {
       const isFornecedor = (rel || 'CLI') === 'FOR';
       const charPrefix = isFornecedor ? 'F' : 'C';
-      const relevantList = clientesFornecedores.filter(c => c.relacionamento === (rel || 'CLI'));
-      const count = relevantList.length + 1;
-      const autoCode = `${charPrefix}-${dateStr}${String(count).padStart(4, '0')}`;
+      const prefix = `${charPrefix}-${dateStr}`;
+      const existingCodes = clientesFornecedores.map(c => c.codigo || c.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 4);
       
       setModalTitle('Cadastro de Cliente e Fornecedor');
       setCliForForm({
@@ -672,9 +700,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         codigo: autoCode
       });
     } else if (type === 'TEAM') {
-      const count = (usuarios || []).length + 1;
-      const baseMatricula = 156488;
-      const autoMatricula = `A${baseMatricula + count - 1}`;
+      const existingMatriculas = (usuarios || []).map(u => u.matricula || '');
+      const autoMatricula = getNextMatricula(existingMatriculas);
       
       setModalTitle('Equipe e Usuário');
       setCliForForm({
@@ -697,8 +724,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         matricula: autoMatricula
       });
     } else if (type === 'DRIVER') {
-      const count = motoristas.length + 1;
-      const autoCode = `M-${dateStr}${String(count).padStart(4, '0')}`;
+      const prefix = `M-${dateStr}`;
+      const existingCodes = motoristas.map(m => m.codigo || m.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 4);
       
       setModalTitle('Cadastro de Motorista');
       setCliForForm({
@@ -726,8 +754,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         codigo: autoCode
       });
     } else if (type === 'PARTNER') {
-      const count = parceiros.length + 1;
-      const autoCode = `P-${dateStr}${String(count).padStart(4, '0')}`;
+      const prefix = `P-${dateStr}`;
+      const existingCodes = parceiros.map(p => p.codigo || p.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 4);
       
       setModalTitle('Cadastro de Parceiro / Corretor');
       setCliForForm({
@@ -751,8 +780,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         codigo: autoCode
       });
     } else if (type === 'COST_CENTER') {
-      const count = centrosCusto.length + 1;
-      const autoCode = `CC-${String(count).padStart(3, '0')}`;
+      const prefix = 'CC-';
+      const existingCodes = centrosCusto.map(cc => cc.codigo || cc.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 3);
       setModalTitle('Cadastro de Centro de Custo');
       setCliForForm({
         codigo: autoCode,
@@ -763,8 +793,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         descricao: ''
       });
     } else if (type === 'BANK') {
-      const count = bancos.length + 1;
-      const autoCode = `BK-${String(count).padStart(3, '0')}`;
+      const prefix = 'BK-';
+      const existingCodes = bancos.map(b => b.codigo || b.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 3);
       setModalTitle('Cadastro de Instituição Bancária');
       setCliForForm({
         codigo: autoCode,
@@ -772,8 +803,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         status: 'Ativo'
       });
     } else if (type === 'PARTNER_TYPE') {
-      const count = tiposParceiro.length + 1;
-      const autoCode = `T-${dateStr}${String(count).padStart(4, '0')}`;
+      const prefix = `T-${dateStr}`;
+      const existingCodes = tiposParceiro.map(tp => tp.codigo || tp.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 4);
       setModalTitle('Cadastro de Tipo de Parceiro');
       setCliForForm({
         codigo: autoCode,
@@ -782,8 +814,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         descricao: ''
       });
     } else if (type === 'CATEGORY') {
-      const count = categorias.length + 1;
-      const autoCode = `K-${dateStr}${String(count).padStart(4, '0')}`;
+      const prefix = `K-${dateStr}`;
+      const existingCodes = categorias.map(c => c.codigo || c.code || '');
+      const autoCode = getNextAutoCode(prefix, existingCodes, 4);
       setModalTitle('Cadastro de Categoria de Animal');
       setCliForForm({
         codigo: autoCode,
@@ -830,8 +863,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     const dateStr = `${dd}${mm}${yy}`;
 
     if (modalType === 'BANK') {
-      const count = bancos.length + 1;
-      const fallbackCode = `BK-${String(count).padStart(3, '0')}`;
+      const fallbackCode = getNextAutoCode('BK-', bancos.map(b => b.codigo || b.code || ''), 3);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newBank = {
         ...formData,
@@ -872,8 +904,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'PARTNER_TYPE') {
-      const count = tiposParceiro.length + 1;
-      const fallbackCode = `T-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`T-${dateStr}`, tiposParceiro.map(tp => tp.codigo || tp.code || ''), 4);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newPT = {
         ...formData,
@@ -916,8 +947,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'CATEGORY') {
-      const count = categorias.length + 1;
-      const fallbackCode = `K-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`K-${dateStr}`, categorias.map(c => c.codigo || c.code || ''), 4);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCategory = {
         ...formData,
@@ -959,8 +989,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'COST_CENTER') {
-      const count = centrosCusto.length + 1;
-      const fallbackCode = `CC-${String(count).padStart(3, '0')}`;
+      const fallbackCode = getNextAutoCode('CC-', centrosCusto.map(cc => cc.codigo || cc.code || ''), 3);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCC = {
         ...formData,
@@ -1003,9 +1032,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'TEAM') {
-      const count = (usuarios || []).length + 1;
-      const baseMatricula = 156488;
-      const fallbackMatricula = `A${baseMatricula + count - 1}`;
+      const fallbackMatricula = getNextMatricula((usuarios || []).map(u => u.matricula || ''));
       const matriculaVal = formData.matricula || fallbackMatricula;
       const novoUsuario = {
         ...formData,
@@ -1024,8 +1051,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'DRIVER') {
-      const count = motoristas.length + 1;
-      const fallbackCode = `M-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`M-${dateStr}`, motoristas.map(m => m.codigo || m.code || ''), 4);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newDriver = {
         ...formData,
@@ -1068,8 +1094,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     }
 
     if (modalType === 'PARTNER') {
-      const count = parceiros.length + 1;
-      const fallbackCode = `P-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`P-${dateStr}`, parceiros.map(p => p.codigo || p.code || ''), 4);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newPartner = {
         ...formData,
@@ -1120,9 +1145,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
 
       const isFornecedor = rel === 'FOR';
       const charPrefix = isFornecedor ? 'F' : 'C';
-      const relevantList = clientesFornecedores.filter(c => c.relacionamento === rel);
-      const count = relevantList.length + 1;
-      const fallbackCode = `${charPrefix}-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`${charPrefix}-${dateStr}`, clientesFornecedores.map(c => c.codigo || c.code || ''), 4);
       const codeVal = formData.codigo || formData.code || fallbackCode;
       const newCliFor = {
         ...formData,
@@ -1187,9 +1210,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const rel = item.relacionamento || 'CLI';
       const isFornecedor = rel === 'FOR';
       const charPrefix = isFornecedor ? 'F' : 'C';
-      const relevantList = clientesFornecedores.filter(c => c.relacionamento === rel);
-      const count = relevantList.length + 1;
-      const fallbackCode = `${charPrefix}-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`${charPrefix}-${dateStr}`, clientesFornecedores.map(c => c.codigo || c.code || ''), 4);
 
       setModalTitle(rel === 'CLI' ? 'Editar Cliente' : rel === 'FOR' ? 'Editar Fornecedor' : 'Editar Cliente/Fornecedor');
       setCliForForm({
@@ -1213,9 +1234,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const nameParts = (item.nome || '').split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
-      const count = (usuarios || []).length + 1;
-      const baseMatricula = 156488;
-      const fallbackMatricula = `A${baseMatricula + count - 1}`;
+      const fallbackMatricula = getNextMatricula((usuarios || []).map(u => u.matricula || ''));
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1243,8 +1262,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const nameParts = (item.nome || '').split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
-      const count = motoristas.length + 1;
-      const fallbackCode = `M-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`M-${dateStr}`, motoristas.map(m => m.codigo || m.code || ''), 4);
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1277,8 +1295,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       const nameParts = (item.nome || '').split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
-      const count = parceiros.length + 1;
-      const fallbackCode = `P-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`P-${dateStr}`, parceiros.map(p => p.codigo || p.code || ''), 4);
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1306,8 +1323,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       });
     } else if (type === 'COST_CENTER') {
       setModalTitle('Editar Centro de Custo');
-      const count = centrosCusto.length + 1;
-      const fallbackCode = `CC-${String(count).padStart(3, '0')}`;
+      const fallbackCode = getNextAutoCode('CC-', centrosCusto.map(cc => cc.codigo || cc.code || ''), 3);
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1321,8 +1337,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       });
     } else if (type === 'BANK') {
       setModalTitle('Editar Instituição Bancária');
-      const count = bancos.length + 1;
-      const fallbackCode = `BK-${String(count).padStart(3, '0')}`;
+      const fallbackCode = getNextAutoCode('BK-', bancos.map(b => b.codigo || b.code || ''), 3);
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1333,8 +1348,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       });
     } else if (type === 'PARTNER_TYPE') {
       setModalTitle('Editar Tipo de Parceiro');
-      const count = tiposParceiro.length + 1;
-      const fallbackCode = `T-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`T-${dateStr}`, tiposParceiro.map(tp => tp.codigo || tp.code || ''), 4);
 
       setCliForForm({
         ...(item.raw_data || {}),
@@ -1346,8 +1360,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       });
     } else if (type === 'CATEGORY') {
       setModalTitle('Editar Categoria de Animal');
-      const count = categorias.length + 1;
-      const fallbackCode = `K-${dateStr}${String(count).padStart(4, '0')}`;
+      const fallbackCode = getNextAutoCode(`K-${dateStr}`, categorias.map(c => c.codigo || c.code || ''), 4);
 
       setCliForForm({
         ...(item.raw_data || {}),
