@@ -1192,8 +1192,8 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 <Input 
                     label="Nome do Tipo" 
                     placeholder="Ex: Fiscal / Tributário"
-                    value={data.col1 || ''} 
-                    onChange={(e) => onChange({ ...data, col1: e.target.value })} 
+                    value={data.nome || ''} 
+                    onChange={(e) => onChange({ ...data, nome: e.target.value })} 
                     fullWidth 
                 />
                 <Select 
@@ -1237,8 +1237,8 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                 <Input 
                     label="Nome da Categoria" 
                     placeholder="Ex: Boi Gordo"
-                    value={data.col1 || ''} 
-                    onChange={(e) => onChange({ ...data, col1: e.target.value })} 
+                    value={data.nome || ''} 
+                    onChange={(e) => onChange({ ...data, nome: e.target.value })} 
                     fullWidth 
                 />
                 <Select 

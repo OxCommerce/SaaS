@@ -812,7 +812,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       setModalTitle('Cadastro de Tipo de Parceiro');
       setCliForForm({
         codigo: autoCode,
-        col1: '',
+        nome: '',
         status: 'Ativo',
         descricao: ''
       });
@@ -823,7 +823,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       setModalTitle('Cadastro de Categoria de Animal');
       setCliForForm({
         codigo: autoCode,
-        col1: '',
+        nome: '',
         status: 'Ativo',
         descricao: ''
       });
@@ -837,7 +837,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     const nameFields = [
       'razaoSocial', 'nomeFantasia', 'apelido', 'nickname', 'contato',
       'contatoNome', 'contatoSobrenome', 'firstName', 'lastName',
-      'responsavel', 'logradouro', 'bairro', 'cidade', 'col1'
+      'responsavel', 'logradouro', 'bairro', 'cidade', 'col1', 'nome'
     ];
     nameFields.forEach(field => {
       if (typeof formData[field] === 'string') {
@@ -913,8 +913,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         id: formData.id || ('pt-' + Math.random().toString(36).substr(2, 9)),
         codigo: codeVal,
         code: codeVal,
-        nome: formData.col1 || 'Sem Nome',
-        name: formData.col1 || 'Sem Nome',
+        nome: formData.nome || 'Sem Nome',
+        name: formData.nome || 'Sem Nome',
         status: formData.status || 'Ativo',
         descricao: formData.descricao || ''
       };
@@ -956,7 +956,8 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         id: formData.id || ('cat-' + Math.random().toString(36).substr(2, 9)),
         code: codeVal,
         codigo: codeVal,
-        name: formData.col1 || 'Sem Nome',
+        name: formData.nome || 'Sem Nome',
+        nome: formData.nome || 'Sem Nome',
         status: formData.status || 'Ativo',
         descricao: formData.descricao || ''
       };
@@ -1366,7 +1367,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         ...(item.raw_data || {}),
         id: item.id,
         codigo: item.code || item.codigo || fallbackCode,
-        col1: item.name || item.nome || '',
+        nome: item.name || item.nome || '',
         status: item.status || 'Ativo',
         descricao: item.descricao || ''
       });
@@ -1378,7 +1379,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         ...(item.raw_data || {}),
         id: item.id,
         codigo: item.code || item.codigo || fallbackCode,
-        col1: item.name || item.nome || '',
+        nome: item.name || item.nome || '',
         status: item.status || 'Ativo',
         descricao: item.descricao || ''
       });
