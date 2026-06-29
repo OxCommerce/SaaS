@@ -415,9 +415,22 @@ export default function CommercialView({
     }
   };
 
-  const triggerFornecedorCodigoLookup = (code: string) => {
-    if (!code) return;
+  const handleFornecedorLookup = async (code: string) => {
     const cleanVal = code.trim();
+    if (!cleanVal) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoFornecedor: '',
+        fornecedor: '',
+        fazendaOrigem: '',
+        estado: '',
+        pais: 'Brasil',
+        municipio: ''
+      }));
+      return;
+    }
+
+    // 1. Local state check
     const foundDb = fornecedores.find(f => 
       (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -434,6 +447,8 @@ export default function CommercialView({
       }));
       return;
     }
+
+    // 2. Mock check
     const found = CADASTRO_FORNECEDORES.find(f => 
       (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -448,64 +463,73 @@ export default function CommercialView({
         pais: 'Brasil',
         municipio: getSupplierCity(found.nome) || ''
       }));
+      return;
+    }
+
+    // 3. Supabase query check
+    try {
+      const { data, error } = await supabase
+        .from('clientes_fornecedores')
+        .select('*')
+        .or(`codigo.eq.${cleanVal},id.eq.${cleanVal}`);
+      
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const raw = item.raw_data || {};
+        const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+        const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+        const cid = raw.cidade || item.fazenda || 'Não Informada';
+        const estadoUf = raw.uf || item.estado || 'SP';
+        
+        setCompraForm(prev => ({
+          ...prev,
+          codigoFornecedor: code,
+          fornecedor: nFantasia,
+          fazendaOrigem: item.fazenda || '',
+          estado: estadoUf,
+          pais: 'Brasil',
+          municipio: cid
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to query Supabase directly for supplier:', err);
     }
   };
 
-  const triggerFornecedorNameLookup = (name: string) => {
-    if (!name) return;
-    const cleanVal = name.trim();
-    const foundDb = fornecedores.find(f => 
-      (f.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (f.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundDb) {
+  const handleCompraDestinoLookup = async (code: string) => {
+    const cleanVal = code.trim();
+    if (!cleanVal) {
       setCompraForm(prev => ({
         ...prev,
-        fornecedor: name,
-        codigoFornecedor: foundDb.codigo || foundDb.id || '',
-        fazendaOrigem: foundDb.fazenda || '',
-        estado: foundDb.uf || '',
-        pais: 'Brasil',
-        municipio: foundDb.cidade || ''
+        destinoCodigo: '',
+        destinoFrigorifico: '',
+        destinoFazenda: '',
+        destinoEstado: '',
+        destinoPais: 'Brasil',
+        destinoCidade: ''
       }));
       return;
     }
-    const found = CADASTRO_FORNECEDORES.find(f => 
-      (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (found) {
-      setCompraForm(prev => ({
-        ...prev,
-        fornecedor: name,
-        codigoFornecedor: found.codigo || '',
-        fazendaOrigem: found.fazenda || '',
-        estado: found.estado || '',
-        pais: 'Brasil',
-        municipio: getSupplierCity(found.nome) || ''
-      }));
-    }
-  };
 
-  const triggerDestinoCodigoLookup = (code: string) => {
-    if (!code) return;
-    const cleanVal = code.trim();
+    // 1. Local state check
     const foundDb = clientes.find(c => 
       (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
-      (c.cnpj || '').trim().toLowerCase() === cleanVal.toLowerCase()
+      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
         destinoCodigo: code,
         destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
+        destinoFazenda: foundDb.fazenda || '',
         destinoEstado: foundDb.uf || '',
-        destinoPais: foundDb.pais || 'Brasil',
+        destinoPais: 'Brasil',
         destinoCidade: foundDb.cidade || ''
       }));
       return;
     }
+
+    // 2. Mock check
     const foundMock = CADASTRO_CLIENTES.find(c => 
       (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -515,49 +539,61 @@ export default function CommercialView({
         ...prev,
         destinoCodigo: code,
         destinoFrigorifico: foundMock.nome || '',
+        destinoFazenda: '',
         destinoEstado: foundMock.estado || '',
         destinoPais: 'Brasil',
         destinoCidade: getClientCity(foundMock.nome) || ''
-      }));
-    }
-  };
-
-  const triggerDestinoNameLookup = (name: string) => {
-    if (!name) return;
-    const cleanVal = name.trim();
-    const foundDb = clientes.find(c => 
-      (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundDb) {
-      setCompraForm(prev => ({
-        ...prev,
-        destinoFrigorifico: name,
-        destinoCodigo: foundDb.codigo || foundDb.id || '',
-        destinoEstado: foundDb.uf || '',
-        destinoPais: foundDb.pais || 'Brasil',
-        destinoCidade: foundDb.cidade || ''
       }));
       return;
     }
-    const foundMock = CADASTRO_CLIENTES.find(c => 
-      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundMock) {
-      setCompraForm(prev => ({
-        ...prev,
-        destinoFrigorifico: name,
-        destinoCodigo: foundMock.codigo || '',
-        destinoEstado: foundMock.estado || '',
-        destinoPais: 'Brasil',
-        destinoCidade: getClientCity(foundMock.nome) || ''
-      }));
+
+    // 3. Supabase query check
+    try {
+      const { data, error } = await supabase
+        .from('clientes_fornecedores')
+        .select('*')
+        .or(`codigo.eq.${cleanVal},id.eq.${cleanVal}`);
+      
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const raw = item.raw_data || {};
+        const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+        const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+        const cid = raw.cidade || item.fazenda || 'Não Informada';
+        const estadoUf = raw.uf || item.estado || 'SP';
+        
+        setCompraForm(prev => ({
+          ...prev,
+          destinoCodigo: code,
+          destinoFrigorifico: nFantasia,
+          destinoFazenda: item.fazenda || '',
+          destinoEstado: estadoUf,
+          destinoPais: 'Brasil',
+          destinoCidade: cid
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to query Supabase directly for destination:', err);
     }
   };
 
-  const triggerClienteFornecedorCodigoLookup = (code: string) => {
-    if (!code) return;
+  const handleCRMParceiroLookup = async (code: string) => {
     const cleanVal = code.trim();
+    if (!cleanVal) {
+      setNegForm(prev => ({
+        ...prev,
+        codigoClienteFornecedor: '',
+        clienteFornecedor: '',
+        fazenda: '',
+        estado: '',
+        cidade: '',
+        contatoTelefone: '',
+        pais: 'Brasil'
+      }));
+      return;
+    }
+
+    // 1. Local state check
     const foundDb = [...clientes, ...fornecedores].find(x => 
       (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -575,6 +611,8 @@ export default function CommercialView({
       }));
       return;
     }
+
+    // 2. Mock check
     const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
       (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -586,54 +624,60 @@ export default function CommercialView({
         clienteFornecedor: found.nome || '',
         fazenda: 'fazenda' in found ? (found as any).fazenda : '',
         estado: found.estado || '',
-        cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
+        cidade: 'fazenda' in found ? getSupplierCity(found.nome) : getClientCity(found.nome),
         contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
-        pais: 'Brasil'
-      }));
-    }
-  };
-
-  const triggerClienteFornecedorNameLookup = (name: string) => {
-    if (!name) return;
-    const cleanVal = name.trim();
-    const foundDb = [...clientes, ...fornecedores].find(x => 
-      (x.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (x.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundDb) {
-      setNegForm(prev => ({
-        ...prev,
-        clienteFornecedor: name,
-        codigoClienteFornecedor: foundDb.codigo || foundDb.id || '',
-        fazenda: foundDb.fazenda || '',
-        estado: foundDb.uf || foundDb.estado || '',
-        cidade: foundDb.cidade || '',
-        contatoTelefone: foundDb.telefone || '',
         pais: 'Brasil'
       }));
       return;
     }
-    const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
-      (x.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (found) {
-      setNegForm(prev => ({
-        ...prev,
-        clienteFornecedor: name,
-        codigoClienteFornecedor: found.codigo || '',
-        fazenda: 'fazenda' in found ? (found as any).fazenda : '',
-        estado: found.estado || '',
-        cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
-        contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
-        pais: 'Brasil'
-      }));
+
+    // 3. Supabase query check
+    try {
+      const { data, error } = await supabase
+        .from('clientes_fornecedores')
+        .select('*')
+        .or(`codigo.eq.${cleanVal},id.eq.${cleanVal}`);
+      
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const raw = item.raw_data || {};
+        const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+        const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+        const cid = raw.cidade || item.fazenda || 'Não Informada';
+        const estadoUf = raw.uf || item.estado || 'SP';
+        
+        setNegForm(prev => ({
+          ...prev,
+          codigoClienteFornecedor: code,
+          clienteFornecedor: nFantasia,
+          fazenda: item.fazenda || '',
+          estado: estadoUf,
+          cidade: cid,
+          contatoTelefone: item.telefone || '',
+          pais: 'Brasil'
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to query Supabase directly for partner:', err);
     }
   };
 
-  const triggerNegDestinoCodigoLookup = (code: string) => {
-    if (!code) return;
+  const handleCRMDestinoLookup = async (code: string) => {
     const cleanVal = code.trim();
+    if (!cleanVal) {
+      setNegForm(prev => ({
+        ...prev,
+        destinoCodigo: '',
+        destinoFrigorifico: '',
+        destinoFazenda: '',
+        destinoEstado: '',
+        destinoCidade: '',
+        destinoPais: 'Brasil'
+      }));
+      return;
+    }
+
+    // 1. Local state check
     const foundDb = clientes.find(c => 
       (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -650,6 +694,8 @@ export default function CommercialView({
       }));
       return;
     }
+
+    // 2. Mock check
     const foundMock = CADASTRO_CLIENTES.find(c => 
       (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
       (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
@@ -664,41 +710,36 @@ export default function CommercialView({
         destinoCidade: getClientCity(foundMock.nome) || '',
         destinoPais: 'Brasil'
       }));
-    }
-  };
-
-  const triggerNegDestinoNameLookup = (name: string) => {
-    if (!name) return;
-    const cleanVal = name.trim();
-    const foundDb = clientes.find(c => 
-      (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundDb) {
-      setNegForm(prev => ({
-        ...prev,
-        destinoFrigorifico: name,
-        destinoCodigo: foundDb.codigo || foundDb.id || '',
-        destinoFazenda: foundDb.fazenda || '',
-        destinoEstado: foundDb.uf || '',
-        destinoCidade: foundDb.cidade || '',
-        destinoPais: 'Brasil'
-      }));
       return;
     }
-    const foundMock = CADASTRO_CLIENTES.find(c => 
-      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
-    );
-    if (foundMock) {
-      setNegForm(prev => ({
-        ...prev,
-        destinoFrigorifico: name,
-        destinoCodigo: foundMock.codigo || '',
-        destinoFazenda: '',
-        destinoEstado: foundMock.estado || '',
-        destinoCidade: getClientCity(foundMock.nome) || '',
-        destinoPais: 'Brasil'
-      }));
+
+    // 3. Supabase query check
+    try {
+      const { data, error } = await supabase
+        .from('clientes_fornecedores')
+        .select('*')
+        .or(`codigo.eq.${cleanVal},id.eq.${cleanVal}`);
+      
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const raw = item.raw_data || {};
+        const rSocial = raw.razaoSocial || item.nome || 'Sem Razão Social';
+        const nFantasia = raw.nomeFantasia || item.nome || rSocial;
+        const cid = raw.cidade || item.fazenda || 'Não Informada';
+        const estadoUf = raw.uf || item.estado || 'SP';
+        
+        setNegForm(prev => ({
+          ...prev,
+          destinoCodigo: code,
+          destinoFrigorifico: nFantasia,
+          destinoFazenda: item.fazenda || '',
+          destinoEstado: estadoUf,
+          destinoCidade: cid,
+          destinoPais: 'Brasil'
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to query Supabase directly for crm destination:', err);
     }
   };
 
@@ -1476,54 +1517,8 @@ export default function CommercialView({
                     value={compraForm.codigoFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm(prev => {
-                        const cleanVal = val.trim();
-                        if (!cleanVal) {
-                          return {
-                            ...prev,
-                            codigoFornecedor: '',
-                            fornecedor: '',
-                            fazendaOrigem: '',
-                            estado: '',
-                            pais: 'Brasil',
-                            municipio: ''
-                          };
-                        }
-                        const foundDb = fornecedores.find(f => 
-                          (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundDb) {
-                          return {
-                            ...prev,
-                            codigoFornecedor: val,
-                            fornecedor: foundDb.nomeFantasia || foundDb.nome || '',
-                            fazendaOrigem: foundDb.fazenda || '',
-                            estado: foundDb.uf || '',
-                            pais: 'Brasil',
-                            municipio: foundDb.cidade || ''
-                          };
-                        }
-                        const found = CADASTRO_FORNECEDORES.find(f => 
-                          (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (found) {
-                          return {
-                            ...prev,
-                            codigoFornecedor: val,
-                            fornecedor: found.nome || '',
-                            fazendaOrigem: found.fazenda || '',
-                            estado: found.estado || '',
-                            pais: 'Brasil',
-                            municipio: getSupplierCity(found.nome) || ''
-                          };
-                        }
-                        return {
-                          ...prev,
-                          codigoFornecedor: val
-                        };
-                      });
+                      setCompraForm(prev => ({ ...prev, codigoFornecedor: val }));
+                      handleFornecedorLookup(val);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -1618,54 +1613,8 @@ export default function CommercialView({
                     value={compraForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm(prev => {
-                        const cleanVal = val.trim();
-                        if (!cleanVal) {
-                          return {
-                            ...prev,
-                            destinoCodigo: '',
-                            destinoFrigorifico: '',
-                            destinoFazenda: '',
-                            destinoEstado: '',
-                            destinoPais: 'Brasil',
-                            destinoCidade: ''
-                          };
-                        }
-                        const foundDb = clientes.find(c => 
-                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundDb) {
-                          return {
-                            ...prev,
-                            destinoCodigo: val,
-                            destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
-                            destinoFazenda: foundDb.fazenda || '',
-                            destinoEstado: foundDb.uf || '',
-                            destinoPais: 'Brasil',
-                            destinoCidade: foundDb.cidade || ''
-                          };
-                        }
-                        const foundMock = CADASTRO_CLIENTES.find(c => 
-                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundMock) {
-                          return {
-                            ...prev,
-                            destinoCodigo: val,
-                            destinoFrigorifico: foundMock.nome || '',
-                            destinoFazenda: '',
-                            destinoEstado: foundMock.estado || '',
-                            destinoPais: 'Brasil',
-                            destinoCidade: getClientCity(foundMock.nome) || ''
-                          };
-                        }
-                        return {
-                          ...prev,
-                          destinoCodigo: val
-                        };
-                      });
+                      setCompraForm(prev => ({ ...prev, destinoCodigo: val }));
+                      handleCompraDestinoLookup(val);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -2438,57 +2387,8 @@ export default function CommercialView({
                     value={negForm.codigoClienteFornecedor}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm(prev => {
-                        const cleanVal = val.trim();
-                        if (!cleanVal) {
-                          return {
-                            ...prev,
-                            codigoClienteFornecedor: '',
-                            clienteFornecedor: '',
-                            fazenda: '',
-                            estado: '',
-                            cidade: '',
-                            contatoTelefone: '',
-                            pais: 'Brasil'
-                          };
-                        }
-                        const foundDb = [...clientes, ...fornecedores].find(x => 
-                          (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundDb) {
-                          return {
-                            ...prev,
-                            codigoClienteFornecedor: val,
-                            clienteFornecedor: foundDb.nomeFantasia || foundDb.nome || '',
-                            fazenda: foundDb.fazenda || '',
-                            estado: foundDb.uf || foundDb.estado || '',
-                            cidade: foundDb.cidade || '',
-                            contatoTelefone: foundDb.telefone || '',
-                            pais: 'Brasil'
-                          };
-                        }
-                        const found = [...CADASTRO_CLIENTES, ...CADASTRO_FORNECEDORES].find(x => 
-                          (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (found) {
-                          return {
-                            ...prev,
-                            codigoClienteFornecedor: val,
-                            clienteFornecedor: found.nome || '',
-                            fazenda: 'fazenda' in found ? (found as any).fazenda : '',
-                            estado: found.estado || '',
-                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : getClientCity(found.nome),
-                            contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
-                            pais: 'Brasil'
-                          };
-                        }
-                        return {
-                          ...prev,
-                          codigoClienteFornecedor: val
-                        };
-                      });
+                      setNegForm(prev => ({ ...prev, codigoClienteFornecedor: val }));
+                      handleCRMParceiroLookup(val);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
@@ -2603,54 +2503,8 @@ export default function CommercialView({
                     value={negForm.destinoCodigo}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setNegForm(prev => {
-                        const cleanVal = val.trim();
-                        if (!cleanVal) {
-                          return {
-                            ...prev,
-                            destinoCodigo: '',
-                            destinoFrigorifico: '',
-                            destinoFazenda: '',
-                            destinoEstado: '',
-                            destinoCidade: '',
-                            destinoPais: 'Brasil'
-                          };
-                        }
-                        const foundDb = clientes.find(c => 
-                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundDb) {
-                          return {
-                            ...prev,
-                            destinoCodigo: val,
-                            destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
-                            destinoFazenda: foundDb.fazenda || '',
-                            destinoEstado: foundDb.uf || '',
-                            destinoCidade: foundDb.cidade || '',
-                            destinoPais: 'Brasil'
-                          };
-                        }
-                        const foundMock = CADASTRO_CLIENTES.find(c => 
-                          (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
-                          (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
-                        );
-                        if (foundMock) {
-                          return {
-                            ...prev,
-                            destinoCodigo: val,
-                            destinoFrigorifico: foundMock.nome || '',
-                            destinoFazenda: '',
-                            destinoEstado: foundMock.estado || '',
-                            destinoCidade: getClientCity(foundMock.nome) || '',
-                            destinoPais: 'Brasil'
-                          };
-                        }
-                        return {
-                          ...prev,
-                          destinoCodigo: val
-                        };
-                      });
+                      setNegForm(prev => ({ ...prev, destinoCodigo: val }));
+                      handleCRMDestinoLookup(val);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
