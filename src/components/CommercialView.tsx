@@ -124,6 +124,18 @@ export default function CommercialView({
   // Clientes and Fornecedores states loaded from Supabase
   const [clientes, setClientes] = useState<any[]>(MOCK_CLIENT_UNITS);
   
+  // State for read-only details modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');
+  const [detailsModalData, setDetailsModalData] = useState<any>(null);
+
+  const handleViewDetails = (type: any, item: any) => {
+    setDetailsModalType(type);
+    setDetailsModalData(item);
+    setShowDetailsModal(true);
+  };
+  const [fornecedores, setFornecedores] = useState<any[]>([]);
+
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -148,18 +160,6 @@ export default function CommercialView({
       }
     }
   }, [searchParams, compras, ordensCompraCliente, negociacoes, clientes, fornecedores]);
-
-  // State for read-only details modal
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [detailsModalType, setDetailsModalType] = useState<any>('CLIENT');
-  const [detailsModalData, setDetailsModalData] = useState<any>(null);
-
-  const handleViewDetails = (type: any, item: any) => {
-    setDetailsModalType(type);
-    setDetailsModalData(item);
-    setShowDetailsModal(true);
-  };
-  const [fornecedores, setFornecedores] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadRelations() {
