@@ -681,10 +681,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
   const handleOpenRegistryModal = (type: 'TEAM' | 'CLIENT' | 'DRIVER' | 'PARTNER' | 'COST_CENTER' | 'BANK' | 'PARTNER_TYPE' | 'CATEGORY', rel?: 'CLI' | 'FOR') => {
     setModalType(type);
     const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yy = String(today.getFullYear()).slice(-2);
-    const dateStr = `${dd}${mm}${yy}`;
+    const dateStr = `${yy}${mm}`;
 
     if (type === 'CLIENT') {
       const isFornecedor = (rel || 'CLI') === 'FOR';
@@ -857,10 +856,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     });
 
     const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yy = String(today.getFullYear()).slice(-2);
-    const dateStr = `${dd}${mm}${yy}`;
+    const dateStr = `${yy}${mm}`;
 
     if (modalType === 'BANK') {
       const fallbackCode = getNextAutoCode('BK-', bancos.map(b => b.codigo || b.code || ''), 3);
@@ -1200,10 +1198,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     setModalType(type);
     
     const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yy = String(today.getFullYear()).slice(-2);
-    const dateStr = `${dd}${mm}${yy}`;
+    const dateStr = `${yy}${mm}`;
     
     // Map item back to cliForForm structure
     if (type === 'CLIENT') {
