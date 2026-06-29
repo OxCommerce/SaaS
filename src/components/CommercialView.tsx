@@ -2501,7 +2501,7 @@ export default function CommercialView({
                             clienteFornecedor: found.nome || '',
                             fazenda: 'fazenda' in found ? (found as any).fazenda : '',
                             estado: found.estado || '',
-                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
+                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : getClientCity(found.nome),
                             contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
                             pais: 'Brasil'
                           };
@@ -2511,6 +2511,11 @@ export default function CommercialView({
                           codigoClienteFornecedor: val
                         };
                       });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
                     }}
                     placeholder="Ex: F-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
@@ -2554,7 +2559,7 @@ export default function CommercialView({
                             codigoClienteFornecedor: found.codigo || '',
                             fazenda: 'fazenda' in found ? (found as any).fazenda : '',
                             estado: found.estado || '',
-                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : '',
+                            cidade: 'fazenda' in found ? getSupplierCity(found.nome) : getClientCity(found.nome),
                             contatoTelefone: 'telefone' in found ? (found as any).telefone : '',
                             pais: 'Brasil'
                           };
@@ -2564,6 +2569,11 @@ export default function CommercialView({
                           clienteFornecedor: val
                         };
                       });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
                     }}
                     placeholder="Nome"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
@@ -2693,6 +2703,11 @@ export default function CommercialView({
                         };
                       });
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
                     placeholder="Ex: C-2706260005"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
@@ -2741,6 +2756,11 @@ export default function CommercialView({
                           destinoFrigorifico: val
                         };
                       });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
                     }}
                     placeholder="Nome da unidade"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
