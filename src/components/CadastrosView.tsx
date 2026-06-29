@@ -1037,6 +1037,20 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     if (modalType === 'TEAM') {
       const fallbackMatricula = getNextMatricula((usuarios || []).map(u => u.matricula || ''));
       const matriculaVal = formData.matricula || fallbackMatricula;
+      
+      // Preserve existing password if not changing
+      let finalSenha = formData.segurancaSenha;
+      let finalConfirmarSenha = formData.segurancaConfirmarSenha;
+      
+      if (formData.id) {
+        const existingUser = (usuarios || []).find(u => u.id === formData.id);
+        const existingRaw = existingUser?.raw_data || {};
+        if (!formData.alterarSenha) {
+          finalSenha = existingRaw.segurancaSenha || '';
+          finalConfirmarSenha = existingRaw.segurancaConfirmarSenha || '';
+        }
+      }
+
       const novoUsuario = {
         ...formData,
         id: formData.id || ('us-' + Math.random().toString(36).substr(2, 9)),
@@ -1047,7 +1061,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         matricula: matriculaVal,
         raw_data: {
           ...formData,
-          matricula: matriculaVal
+          matricula: matriculaVal,
+          segurancaSenha: finalSenha,
+          segurancaConfirmarSenha: finalConfirmarSenha
         }
       };
       if (onAddUsuario) {
@@ -1436,11 +1452,17 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
 
   // Category filters
   const filterBySearch = (list: any[], keys: string[]) => {
-    return list.filter((item) =>
+    const filtered = list.filter((item) =>
       keys.some((key) =>
         String(item[key] || '').toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
+    // Sort ascending by ID column
+    return [...filtered].sort((a, b) => {
+      const idA = String(a.id || '').toLowerCase();
+      const idB = String(b.id || '').toLowerCase();
+      return idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
+    });
   };
 
   const filteredClientesFornecedores = filterBySearch(clientesFornecedores, ['codigo', 'nome', 'documento', 'estado']);
