@@ -204,6 +204,52 @@ export default function App() {
       try {
         const { data, error } = await supabase.from('usuarios').select('*');
         if (!error && data) {
+          // Verify if any default mock user is missing from the database
+          const missingUsers = CADASTRO_USUARIOS.filter(mu => !data.some(u => u.email === mu.email));
+          if (missingUsers.length > 0) {
+            const toUpsert = missingUsers.map(u => {
+              const raw = {
+                ...u,
+                segurancaLogin: u.email,
+                segurancaStatus: 'A',
+                segurancaSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
+                segurancaConfirmarSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
+                segurancaPerfil: 'ADM',
+                segurancaPapel: u.papel === 'Administrador ERP' ? 'ADM' : 'FIS'
+              };
+              return {
+                id: u.id,
+                nome: u.nome,
+                email: u.email,
+                papel: u.papel,
+                status: u.status,
+                matricula: u.matricula,
+                raw_data: raw
+              };
+            });
+            await supabase.from('usuarios').upsert(toUpsert);
+            
+            // Re-fetch users to get full list
+            const { data: updatedData } = await supabase.from('usuarios').select('*');
+            if (updatedData) {
+              const mapped = updatedData.map(u => {
+                const raw = u.raw_data || {};
+                return {
+                  ...raw,
+                  id: u.id,
+                  nome: u.nome,
+                  email: u.email,
+                  papel: u.papel,
+                  status: u.status,
+                  matricula: u.matricula,
+                  raw_data: raw
+                };
+              });
+              setUsuariosList(mapped);
+              return;
+            }
+          }
+
           if (data.length > 0) {
             const mapped = data.map(u => {
               const raw = u.raw_data || {};
@@ -220,14 +266,14 @@ export default function App() {
             });
             setUsuariosList(mapped);
           } else {
-            // Seed default mock users with default password '123456'
+            // Fallback Seed
             const toSeed = CADASTRO_USUARIOS.map(u => {
               const raw = {
                 ...u,
                 segurancaLogin: u.email,
                 segurancaStatus: 'A',
-                segurancaSenha: '123456',
-                segurancaConfirmarSenha: '123456',
+                segurancaSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
+                segurancaConfirmarSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
                 segurancaPerfil: 'ADM',
                 segurancaPapel: u.papel === 'Administrador ERP' ? 'ADM' : 'FIS'
               };
