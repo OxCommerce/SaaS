@@ -409,128 +409,140 @@ export default function CommercialView({
 
   const triggerFornecedorCodigoLookup = (code: string) => {
     if (!code) return;
+    const cleanVal = code.trim();
     const foundDb = fornecedores.find(f => 
-      (f.codigo || '').toLowerCase() === code.toLowerCase() || 
-      (f.id || '').toLowerCase() === code.toLowerCase()
+      (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
-        fornecedor: foundDb.nomeFantasia || foundDb.nome,
-        fazendaOrigem: foundDb.fazenda,
-        estado: foundDb.uf,
+        codigoFornecedor: code,
+        fornecedor: foundDb.nomeFantasia || foundDb.nome || '',
+        fazendaOrigem: foundDb.fazenda || '',
+        estado: foundDb.uf || '',
         pais: 'Brasil',
-        municipio: foundDb.cidade
+        municipio: foundDb.cidade || ''
       }));
       return;
     }
     const found = CADASTRO_FORNECEDORES.find(f => 
-      (f.codigo || '').toLowerCase() === code.toLowerCase() || 
-      (f.id || '').toLowerCase() === code.toLowerCase()
+      (f.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (f.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (found) {
       setCompraForm(prev => ({
         ...prev,
-        fornecedor: found.nome,
-        fazendaOrigem: found.fazenda,
-        estado: found.estado,
+        codigoFornecedor: code,
+        fornecedor: found.nome || '',
+        fazendaOrigem: found.fazenda || '',
+        estado: found.estado || '',
         pais: 'Brasil',
-        municipio: getSupplierCity(found.nome)
+        municipio: getSupplierCity(found.nome) || ''
       }));
     }
   };
 
   const triggerFornecedorNameLookup = (name: string) => {
     if (!name) return;
+    const cleanVal = name.trim();
     const foundDb = fornecedores.find(f => 
-      (f.nomeFantasia || '').toLowerCase() === name.toLowerCase() || 
-      (f.razaoSocial || '').toLowerCase() === name.toLowerCase() || 
-      (f.nome || '').toLowerCase() === name.toLowerCase()
+      (f.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (f.razaoSocial || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
-        codigoFornecedor: foundDb.codigo || foundDb.id,
-        fazendaOrigem: foundDb.fazenda,
-        estado: foundDb.uf,
+        fornecedor: name,
+        codigoFornecedor: foundDb.codigo || foundDb.id || '',
+        fazendaOrigem: foundDb.fazenda || '',
+        estado: foundDb.uf || '',
         pais: 'Brasil',
-        municipio: foundDb.cidade
+        municipio: foundDb.cidade || ''
       }));
       return;
     }
     const found = CADASTRO_FORNECEDORES.find(f => 
-      (f.nome || '').toLowerCase() === name.toLowerCase()
+      (f.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (found) {
       setCompraForm(prev => ({
         ...prev,
-        codigoFornecedor: found.codigo,
-        fazendaOrigem: found.fazenda,
-        estado: found.estado,
+        fornecedor: name,
+        codigoFornecedor: found.codigo || '',
+        fazendaOrigem: found.fazenda || '',
+        estado: found.estado || '',
         pais: 'Brasil',
-        municipio: getSupplierCity(found.nome)
+        municipio: getSupplierCity(found.nome) || ''
       }));
     }
   };
 
   const triggerDestinoCodigoLookup = (code: string) => {
     if (!code) return;
+    const cleanVal = code.trim();
     const foundDb = clientes.find(c => 
-      (c.codigo || '').toLowerCase() === code.toLowerCase() || 
-      (c.id || '').toLowerCase() === code.toLowerCase() ||
-      (c.cnpj || '').toLowerCase() === code.toLowerCase()
+      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
+      (c.cnpj || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
-        destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome,
-        destinoEstado: foundDb.uf,
+        destinoCodigo: code,
+        destinoFrigorifico: foundDb.nomeFantasia || foundDb.nome || '',
+        destinoEstado: foundDb.uf || '',
         destinoPais: foundDb.pais || 'Brasil',
-        destinoCidade: foundDb.cidade
+        destinoCidade: foundDb.cidade || ''
       }));
       return;
     }
     const foundMock = CADASTRO_CLIENTES.find(c => 
-      (c.codigo || '').toLowerCase() === code.toLowerCase() || 
-      (c.id || '').toLowerCase() === code.toLowerCase()
+      (c.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundMock) {
       setCompraForm(prev => ({
         ...prev,
-        destinoFrigorifico: foundMock.nome,
-        destinoEstado: foundMock.estado,
+        destinoCodigo: code,
+        destinoFrigorifico: foundMock.nome || '',
+        destinoEstado: foundMock.estado || '',
         destinoPais: 'Brasil',
-        destinoCidade: getClientCity(foundMock.nome)
+        destinoCidade: getClientCity(foundMock.nome) || ''
       }));
     }
   };
 
   const triggerDestinoNameLookup = (name: string) => {
     if (!name) return;
+    const cleanVal = name.trim();
     const foundDb = clientes.find(c => 
-      (c.nomeFantasia || '').toLowerCase() === name.toLowerCase() || 
-      (c.nome || '').toLowerCase() === name.toLowerCase()
+      (c.nomeFantasia || '').trim().toLowerCase() === cleanVal.toLowerCase() || 
+      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundDb) {
       setCompraForm(prev => ({
         ...prev,
-        destinoCodigo: foundDb.codigo || foundDb.id,
-        destinoEstado: foundDb.uf,
+        destinoFrigorifico: name,
+        destinoCodigo: foundDb.codigo || foundDb.id || '',
+        destinoEstado: foundDb.uf || '',
         destinoPais: foundDb.pais || 'Brasil',
-        destinoCidade: foundDb.cidade
+        destinoCidade: foundDb.cidade || ''
       }));
       return;
     }
     const foundMock = CADASTRO_CLIENTES.find(c => 
-      (c.nome || '').toLowerCase() === name.toLowerCase()
+      (c.nome || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
     if (foundMock) {
       setCompraForm(prev => ({
         ...prev,
-        destinoCodigo: foundMock.codigo,
-        destinoEstado: foundMock.estado,
+        destinoFrigorifico: name,
+        destinoCodigo: foundMock.codigo || '',
+        destinoEstado: foundMock.estado || '',
         destinoPais: 'Brasil',
-        destinoCidade: getClientCity(foundMock.nome)
+        destinoCidade: getClientCity(foundMock.nome) || ''
       }));
     }
   };
