@@ -447,9 +447,5 @@ export const CADASTRO_FAZENDAS = [
 ];
 
 export const CADASTRO_USUARIOS = [
-  { id: 'us-1', matricula: 'A156488', nome: 'Diego Silveira', email: 'diego@oxcommerce.com.br', papel: 'Administrador ERP', status: 'Ativo' },
-  { id: 'us-2', matricula: 'A156489', nome: 'Amanda Costa', email: 'amanda.cte@oxcommerce.com.br', papel: 'Gestora Fiscal/GTA', status: 'Ativo' },
-  { id: 'us-3', matricula: 'A156490', nome: 'Carlos Souza', email: 'carlos.fin@oxcommerce.com.br', papel: 'Operador Financeiro', status: 'Ativo' },
-  { id: 'us-4', matricula: 'A156491', nome: 'Letícia Nogueira', email: 'leticia.log@oxcommerce.com.br', papel: 'Supervisora de Logística', status: 'Ativo' },
   { id: 'us-5', matricula: 'A156492', nome: 'Anderson Everton', email: 'anderson.everton@oxcommerce.com', papel: 'Administrador ERP', status: 'Ativo' }
 ];
