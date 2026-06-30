@@ -1030,9 +1030,9 @@ export default function CommercialView({
       <div className="flex border-b border-gray-250 bg-white p-2 rounded-xl shadow-xs space-x-1">
         <button
           id="tab-vendas"
-          onClick={() => setActiveSubMenu('vendas')}
+          onClick={() => setActiveSubMenu('ordens-compra')}
           className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-            activeSubMenu === 'vendas'
+            activeSubMenu === 'ordens-compra'
               ? 'bg-[#071757] text-white shadow-xs'
               : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
           }`}
@@ -1270,12 +1270,12 @@ export default function CommercialView({
       )}
 
       {/* -------------------- GESTÃO DE VENDAS (ORDENS DE COMPRA CLIENTE) -------------------- */}
-      {activeSubMenu === 'vendas' && (
+      {activeSubMenu === 'ordens-compra' && (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-sm">
             <div>
-              <h3 className="text-sm font-bold text-gray-800">Ordem de Compra (Demandas)</h3>
-              <p className="text-xs text-gray-400 font-medium">Controle de pedidos de compras enviados para clientes</p>
+              <h3 className="text-sm font-bold text-gray-800">Follow-up Acompanhamento das Ordens de Compra</h3>
+              <p className="text-xs text-gray-400 font-medium">Controle de pedidos de compras recebidos do cliente</p>
             </div>
             <button
               id="btn-add-venda"
@@ -1725,7 +1725,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Nome Fantasia</label>
                   <input
                     type="text"
                     required
@@ -2219,7 +2219,7 @@ export default function CommercialView({
               {/* Row 2: Cliente, Destino, Categoria (3 colunas) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cliente</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Razão Social ou Nome Completo</label>
                   <input
                     type="text"
                     required

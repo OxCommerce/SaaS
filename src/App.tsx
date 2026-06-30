@@ -80,7 +80,7 @@ export default function App() {
         setCurrentRoute('app');
       }
       
-      const parts = path.split('/').filter(Boolean); // ['app', 'comercial', 'vendas']
+      const parts = path.split('/').filter(Boolean); // ['app', 'comercial', 'ordens-compra']
       const menu = parts[1] as ActiveMenu;
       const submenu = parts[2];
       
@@ -116,7 +116,7 @@ export default function App() {
   
   // Categorized Submenu states
   const [subMenuComercial, setSubMenuComercial] = useState<SubMenuComercial>(() => {
-    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_comercial') as SubMenuComercial : null) || 'compras';
+    return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_comercial') as SubMenuComercial : null) || 'ordens-compra';
   });
   const [subMenuFiscal, setSubMenuFiscal] = useState<SubMenuFiscal>(() => {
     return (typeof window !== 'undefined' ? localStorage.getItem('ox_submenu_fiscal') as SubMenuFiscal : null) || 'gta';

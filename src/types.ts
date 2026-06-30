@@ -14,7 +14,7 @@ export type ActiveMenu =
   | 'relatorios'
   | 'configuracoes';
 
-export type SubMenuComercial = 'compras' | 'vendas' | 'negociacoes';
+export type SubMenuComercial = 'compras' | 'ordens-compra' | 'negociacoes';
 export type SubMenuFiscal = 'gta' | 'cte' | 'nfe';
 export type SubMenuFinanceiro = 'receber' | 'pagar' | 'fluxo' | 'conciliacao';
 export type SubMenuLogistica = 'transporte' | 'viagens' | 'rastreamento' | 'fretes';

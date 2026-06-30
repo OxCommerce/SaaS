@@ -182,6 +182,7 @@ export default function RegistryDetailsViewModal({
                 {renderField("Código de Identificação", currentData.codigo || getVal("codigo", "Gerado Automaticamente"))}
                 {renderField("Razão Social / Nome Completo", currentData.nome || getVal("razaoSocial"))}
                 {renderField("Nome Fantasia / Apelido", currentData.nomeFantasia || getVal("nomeFantasia"))}
+                {renderField("Nome da Fazenda", currentData.fazenda || getVal("fazenda") || getVal("fazendaPrincipal"))}
                 {renderField("CNPJ / CPF", getVal("cnpj") || getVal("cpf") || currentData.documento)}
                 {renderField("Inscrição Estadual", getVal("ie"))}
                 {renderField("Inscrição Municipal", getVal("im"))}

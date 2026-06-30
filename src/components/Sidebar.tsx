@@ -157,8 +157,8 @@ export default function Sidebar({
           </button>
           {openComercial && !collapsed && (
             <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-vendas" onClick={() => setActiveMenu('comercial', 'vendas')}
-                className={subItem(activeMenu === 'comercial' && subMenuComercial === 'vendas')}>
+              <button id="submenu-vendas" onClick={() => setActiveMenu('comercial', 'ordens-compra')}
+                className={subItem(activeMenu === 'comercial' && subMenuComercial === 'ordens-compra')}>
                 Ordens de Compra
               </button>
               <button id="submenu-compras" onClick={() => setActiveMenu('comercial', 'compras')}
