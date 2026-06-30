@@ -151,19 +151,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
   const [clientesFornecedores, setClientesFornecedores] = useState<any[]>([]);
   const [dbError, setDbError] = useState<string | null>(null);
 
-  const [parceiros, setParceiros] = useState(() => {
-    const deleted = (() => {
-      try { return JSON.parse(localStorage.getItem('deleted_mock_ids') || '[]'); } catch { return []; }
-    })();
-    return CADASTRO_PARCEIROS.filter(item => !deleted.includes(item.id));
-  });
+  const [parceiros, setParceiros] = useState<any[]>([]);
 
-  const [motoristas, setMotoristas] = useState(() => {
-    const deleted = (() => {
-      try { return JSON.parse(localStorage.getItem('deleted_mock_ids') || '[]'); } catch { return []; }
-    })();
-    return CADASTRO_MOTORISTAS.filter(item => !deleted.includes(item.id));
-  });
+  const [motoristas, setMotoristas] = useState<any[]>([]);
 
   const [bancos, setBancos] = useState<any[]>(() => {
     const deleted = (() => {
@@ -186,12 +176,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     return DEFAULT_ANIMAL_CATEGORIES.filter(item => !deleted.includes(item.id));
   });
 
-  const [centrosCusto, setCentrosCusto] = useState<any[]>(() => {
-    const deleted = (() => {
-      try { return JSON.parse(localStorage.getItem('deleted_mock_ids') || '[]'); } catch { return []; }
-    })();
-    return DEFAULT_COST_CENTERS.filter(item => !deleted.includes(item.id));
-  });
+  const [centrosCusto, setCentrosCusto] = useState<any[]>([]);
 
   const [searchParams] = useSearchParams();
 
@@ -321,45 +306,17 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('parceiros').select('*');
         if (!error && data) {
-          const hasNewData = data.some(item => item.id === 'pa-10');
-          if ((data.length === 0 || !hasNewData) && CADASTRO_PARCEIROS.length > 0) {
-            const toUpsert = CADASTRO_PARCEIROS.map(item => ({
-              id: item.id,
-              nome: item.nome,
-              contato: item.contato,
-              telefone: item.telefone,
-              regiao: item.regiao,
-              tipo: item.tipo,
-              raw_data: item
-            }));
-            await supabase.from('parceiros').upsert(toUpsert);
-            const refetched = await supabase.from('parceiros').select('*');
-            if (refetched.data) {
-              const mapped = refetched.data.map(item => ({
-                ...(item.raw_data || {}),
-                id: item.id,
-                nome: item.nome,
-                contato: item.contato,
-                telefone: item.telefone,
-                regiao: item.regiao,
-                tipo: item.tipo,
-                raw_data: loadRawDataFallback(item.id, item.raw_data || {})
-              }));
-              setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
-            }
-          } else {
-            const mapped = data.map(item => ({
-              ...(item.raw_data || {}),
-              id: item.id,
-              nome: item.nome,
-              contato: item.contato,
-              telefone: item.telefone,
-              regiao: item.regiao,
-              tipo: item.tipo,
-              raw_data: loadRawDataFallback(item.id, item.raw_data || {})
-            }));
-            setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
-          }
+          const mapped = data.map(item => ({
+            ...(item.raw_data || {}),
+            id: item.id,
+            nome: item.nome,
+            contato: item.contato,
+            telefone: item.telefone,
+            regiao: item.regiao,
+            tipo: item.tipo,
+            raw_data: loadRawDataFallback(item.id, item.raw_data || {})
+          }));
+          setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
         }
       } catch (err) {
         console.warn('Failed to load parceiros from Supabase:', err);
@@ -369,45 +326,17 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
       try {
         const { data, error } = await supabase.from('motoristas').select('*');
         if (!error && data) {
-          const hasNewData = data.some(item => item.id === 'mo-10');
-          if ((data.length === 0 || !hasNewData) && CADASTRO_MOTORISTAS.length > 0) {
-            const toUpsert = CADASTRO_MOTORISTAS.map(item => ({
-              id: item.id,
-              nome: item.nome,
-              cnh: item.cnh,
-              placa: item.placa,
-              transportadora: item.transportadora,
-              status: item.status,
-              raw_data: item
-            }));
-            await supabase.from('motoristas').upsert(toUpsert);
-            const refetched = await supabase.from('motoristas').select('*');
-            if (refetched.data) {
-              const mapped = refetched.data.map(item => ({
-                ...(item.raw_data || {}),
-                id: item.id,
-                nome: item.nome,
-                cnh: item.cnh,
-                placa: item.placa,
-                transportadora: item.transportadora,
-                status: item.status,
-                raw_data: loadRawDataFallback(item.id, item.raw_data || {})
-              }));
-              setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
-            }
-          } else {
-            const mapped = data.map(item => ({
-              ...(item.raw_data || {}),
-              id: item.id,
-              nome: item.nome,
-              cnh: item.cnh,
-              placa: item.placa,
-              transportadora: item.transportadora,
-              status: item.status,
-              raw_data: loadRawDataFallback(item.id, item.raw_data || {})
-            }));
-            setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
-          }
+          const mapped = data.map(item => ({
+            ...(item.raw_data || {}),
+            id: item.id,
+            nome: item.nome,
+            cnh: item.cnh,
+            placa: item.placa,
+            transportadora: item.transportadora,
+            status: item.status,
+            raw_data: loadRawDataFallback(item.id, item.raw_data || {})
+          }));
+          setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
         }
       } catch (err) {
         console.warn('Failed to load motoristas from Supabase:', err);

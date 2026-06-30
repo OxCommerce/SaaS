@@ -140,16 +140,16 @@ export default function App() {
   });
 
   // In-Memory Mutatable States
-  const [compras, setCompras] = useState<Compra[]>(INITIAL_COMPRAS);
-  const [ordensCompraCliente, setOrdensCompraCliente] = useState<OrdemCompraCliente[]>(INITIAL_ORDENS_COMPRA_CLIENTE);
-  const [negociacoes, setNegociacoes] = useState<Negociacao[]>(INITIAL_NEGOCIACOES);
-  const [lotes, setLotes] = useState<Lote[]>(INITIAL_LOTES);
-  const [gtas, setGtas] = useState<GTA[]>(INITIAL_GTAS);
-  const [ctes, setCtes] = useState<CTE[]>(INITIAL_CTES);
-  const [nfes, setNfes] = useState<NFE[]>(INITIAL_NFES);
-  const [transacoes, setTransacoes] = useState<TransacaoFinanceira[]>(INITIAL_TRANSACÕES);
-  const [conciliacoes, setConciliacoes] = useState<ConciliacaoBancaria[]>(INITIAL_CONCILIACOES);
-  const [viagens, setViagens] = useState<ViagemLogistica[]>(INITIAL_VIAGENS);
+  const [compras, setCompras] = useState<Compra[]>([]);
+  const [ordensCompraCliente, setOrdensCompraCliente] = useState<OrdemCompraCliente[]>([]);
+  const [negociacoes, setNegociacoes] = useState<Negociacao[]>([]);
+  const [lotes, setLotes] = useState<Lote[]>([]);
+  const [gtas, setGtas] = useState<GTA[]>([]);
+  const [ctes, setCtes] = useState<CTE[]>([]);
+  const [nfes, setNfes] = useState<NFE[]>([]);
+  const [transacoes, setTransacoes] = useState<TransacaoFinanceira[]>([]);
+  const [conciliacoes, setConciliacoes] = useState<ConciliacaoBancaria[]>([]);
+  const [viagens, setViagens] = useState<ViagemLogistica[]>([]);
   const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [dbStats, setDbStats] = useState<DatabaseStats>(INITIAL_DB_STATS);
@@ -320,73 +320,40 @@ export default function App() {
         // 1. Compras
         const { data: compData, error: compErr } = await supabase.from('compras').select('*');
         if (!compErr && compData) {
-          if (compData.length > 0) {
-            const list = compData.map(d => {
-              if (!d.raw_data) return null;
-              return {
-                id: d.id,
-                ...d.raw_data
-              };
-            }).filter(Boolean) as Compra[];
-            setCompras(list);
-          } else {
-            const toInsert = INITIAL_COMPRAS.map(c => ({
-              id: c.id,
-              numero_operacao: c.numeroOperacao,
-              status: c.status,
-              raw_data: c
-            }));
-            await supabase.from('compras').upsert(toInsert);
-            setCompras(INITIAL_COMPRAS);
-          }
+          const list = compData.map(d => {
+            if (!d.raw_data) return null;
+            return {
+              id: d.id,
+              ...d.raw_data
+            };
+          }).filter(Boolean) as Compra[];
+          setCompras(list);
         }
 
         // 2. Vendas
         const { data: vendData, error: vendErr } = await supabase.from('vendas').select('*');
         if (!vendErr && vendData) {
-          if (vendData.length > 0) {
-            const list = vendData.map(d => {
-              if (!d.raw_data) return null;
-              return {
-                id: d.id,
-                ...d.raw_data
-              };
-            }).filter(Boolean) as OrdemCompraCliente[];
-            setOrdensCompraCliente(list);
-          } else {
-            const toInsert = INITIAL_ORDENS_COMPRA_CLIENTE.map(v => ({
-              id: v.id,
-              numero_oc: v.numeroOC,
-              status: v.status,
-              raw_data: v
-            }));
-            await supabase.from('vendas').upsert(toInsert);
-            setOrdensCompraCliente(INITIAL_ORDENS_COMPRA_CLIENTE);
-          }
+          const list = vendData.map(d => {
+            if (!d.raw_data) return null;
+            return {
+              id: d.id,
+              ...d.raw_data
+            };
+          }).filter(Boolean) as OrdemCompraCliente[];
+          setOrdensCompraCliente(list);
         }
 
         // 3. Negociacoes
         const { data: negData, error: negErr } = await supabase.from('negociacoes').select('*');
         if (!negErr && negData) {
-          if (negData.length > 0) {
-            const list = negData.map(d => {
-              if (!d.raw_data) return null;
-              return {
-                id: d.id,
-                ...d.raw_data
-              };
-            }).filter(Boolean) as Negociacao[];
-            setNegociacoes(list);
-          } else {
-            const toInsert = INITIAL_NEGOCIACOES.map(n => ({
-              id: n.id,
-              titulo: n.titulo,
-              fase: n.fase,
-              raw_data: n
-            }));
-            await supabase.from('negociacoes').upsert(toInsert);
-            setNegociacoes(INITIAL_NEGOCIACOES);
-          }
+          const list = negData.map(d => {
+            if (!d.raw_data) return null;
+            return {
+              id: d.id,
+              ...d.raw_data
+            };
+          }).filter(Boolean) as Negociacao[];
+          setNegociacoes(list);
         }
       } catch (err) {
         console.warn('Failed to load commercial data from Supabase:', err);
