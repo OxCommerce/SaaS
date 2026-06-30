@@ -1643,9 +1643,9 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
                   <th className="p-3">CNPJ / CPF</th>
-                  <th className="p-3">Razão Social</th>
+                  <th className="p-3">Razão Social / Nome</th>
                   <th className="p-3">Nome Fantasia / Sobrenome*</th>
-                  <th className="p-3 text-center">Estado</th>
+                  <th className="p-3 text-center">UF</th>
                   <th className="p-3 text-center">Cidade</th>
                   <th className="p-3">Telefone</th>
                   <th className="p-3 text-center">Relacionamento</th>
@@ -1689,28 +1689,27 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                           {item.tipo || 'Pessoa Jurídica'}
                         </span>
                       </td>
+                      <td className="p-3 text-right">
+                        <div className="flex justify-end gap-1.5">
+                          <button 
+                            onClick={() => handleEditRegistry('CLIENT', item)}
+                            className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
+                            title="Editar"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteRegistry('CLIENT', item)}
+                            className="p-1 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                            title="Excluir"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                   );
                 })}
-                    <td className="p-3 text-right">
-                      <div className="flex justify-end gap-1.5">
-                        <button 
-                          onClick={() => handleEditRegistry('CLIENT', item)}
-                          className="p-1 text-slate-400 hover:text-[#071757] transition-colors cursor-pointer"
-                          title="Editar"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteRegistry('CLIENT', item)}
-                          className="p-1 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                          title="Excluir"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
               </tbody>
             </table>
           </div>
