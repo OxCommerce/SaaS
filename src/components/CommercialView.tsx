@@ -1317,11 +1317,10 @@ export default function CommercialView({
                   <th className="p-3">Cód. Cliente</th>
                   <th className="p-3">CNPJ/CPF</th>
                   <th className="p-3">Razão Social</th>
-                  <th className="p-3">Nome Fantasia</th>
                   <th className="p-3">UF</th>
                   <th className="p-3">Cidade</th>
                   <th className="p-3">Categoria</th>
-                  <th className="p-3 text-right">Quantidade</th>
+                  <th className="p-3 text-right">Qtd.</th>
                   <th className="p-3 text-right">Peso</th>
                   <th className="p-3 text-right">Preço</th>
                   <th className="p-3 text-right">Valor</th>
@@ -1335,7 +1334,6 @@ export default function CommercialView({
                   const codCliente = cliInfo?.codigo || 'Sem Código';
                   const cnpjCpf = cliInfo?.documento || (cliInfo as any)?.raw_data?.cnpj || (cliInfo as any)?.raw_data?.cpf || 'Não Informado';
                   const razaoSocial = cliInfo?.razaoSocial || cliInfo?.nome || v.cliente;
-                  const nomeFantasia = cliInfo?.nomeFantasia || cliInfo?.nome || v.cliente;
                   
                   const uf = cliInfo ? cliInfo.uf : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[1].replace(')', '') : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[1].trim() : 'MT'));
                   const cidade = cliInfo ? cliInfo.cidade : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[0].trim() : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[0].trim() : v.frigorifico.replace('Planta ', '').replace('Unidade ', '').trim()));
@@ -1353,7 +1351,6 @@ export default function CommercialView({
                       <td className="p-3 font-mono text-gray-500" title={codCliente}>{abbreviateText(codCliente, 12)}</td>
                       <td className="p-3 text-gray-500" title={cnpjCpf}>{abbreviateText(cnpjCpf, 14)}</td>
                       <td className="p-3 font-semibold text-gray-800" title={razaoSocial}>{abbreviateText(razaoSocial, 15)}</td>
-                      <td className="p-3 text-gray-500" title={nomeFantasia}>{abbreviateText(nomeFantasia, 15)}</td>
                       <td className="p-3 font-mono text-gray-500" title={uf}>{abbreviateText(uf, 4)}</td>
                       <td className="p-3 text-gray-500" title={cidade}>{abbreviateText(cidade, 12)}</td>
                       <td className="p-3">
