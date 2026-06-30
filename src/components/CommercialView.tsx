@@ -1280,7 +1280,7 @@ export default function CommercialView({
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-lg border border-white/20 p-4 rounded-xl shadow-sm">
             <div>
-              <h3 className="text-sm font-bold text-gray-800">Follow-up Acompanhamento das Ordens de Compra</h3>
+              <h3 className="text-sm font-bold text-gray-800">Follow-up Ordens de Compra</h3>
               <p className="text-xs text-gray-400 font-medium">Controle de pedidos de compras recebidos do cliente</p>
             </div>
             <button
