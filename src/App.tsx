@@ -233,7 +233,13 @@ export default function App() {
             const { data: updatedData } = await supabase.from('usuarios').select('*');
             if (updatedData) {
               const mapped = updatedData.map(u => {
-                const raw = u.raw_data || {};
+                let raw = u.raw_data || {};
+                if (typeof window !== 'undefined') {
+                  const cached = localStorage.getItem('ox_raw_data_' + u.id);
+                  if (cached) {
+                    try { raw = { ...raw, ...JSON.parse(cached) }; } catch (e) {}
+                  }
+                }
                 return {
                   ...raw,
                   id: u.id,
@@ -252,7 +258,13 @@ export default function App() {
 
           if (data.length > 0) {
             const mapped = data.map(u => {
-              const raw = u.raw_data || {};
+              let raw = u.raw_data || {};
+              if (typeof window !== 'undefined') {
+                const cached = localStorage.getItem('ox_raw_data_' + u.id);
+                if (cached) {
+                  try { raw = { ...raw, ...JSON.parse(cached) }; } catch (e) {}
+                }
+              }
               return {
                 ...raw,
                 id: u.id,
@@ -960,6 +972,9 @@ export default function App() {
               searchQuery={searchQuery}
               usuarios={usuariosList}
               onAddUsuario={async (novoUsuario) => {
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('ox_raw_data_' + novoUsuario.id, JSON.stringify(novoUsuario.raw_data || novoUsuario));
+                }
                 const localUser = {
                   ...novoUsuario,
                   raw_data: novoUsuario.raw_data || novoUsuario

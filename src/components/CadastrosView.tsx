@@ -269,7 +269,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 if (rel === 'Fornecedor') rel = 'FOR';
                 if (rel === 'Ambos') rel = 'AMB';
                 
-                const raw = item.raw_data || {};
+                const raw = loadRawDataFallback(item.id, item.raw_data || {});
                 const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
                 return {
                   ...raw,
@@ -294,7 +294,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               if (rel === 'Fornecedor') rel = 'FOR';
               if (rel === 'Ambos') rel = 'AMB';
               
-              const raw = item.raw_data || {};
+              const raw = loadRawDataFallback(item.id, item.raw_data || {});
               const cType = item.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
               return {
                 ...raw,
@@ -343,7 +343,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 telefone: item.telefone,
                 regiao: item.regiao,
                 tipo: item.tipo,
-                raw_data: item.raw_data || {}
+                raw_data: loadRawDataFallback(item.id, item.raw_data || {})
               }));
               setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
             }
@@ -356,7 +356,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               telefone: item.telefone,
               regiao: item.regiao,
               tipo: item.tipo,
-              raw_data: item.raw_data || {}
+              raw_data: loadRawDataFallback(item.id, item.raw_data || {})
             }));
             setParceiros(mapped.filter(item => !deletedMockIds.includes(item.id)));
           }
@@ -391,7 +391,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
                 placa: item.placa,
                 transportadora: item.transportadora,
                 status: item.status,
-                raw_data: item.raw_data || {}
+                raw_data: loadRawDataFallback(item.id, item.raw_data || {})
               }));
               setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
             }
@@ -404,7 +404,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               placa: item.placa,
               transportadora: item.transportadora,
               status: item.status,
-              raw_data: item.raw_data || {}
+              raw_data: loadRawDataFallback(item.id, item.raw_data || {})
             }));
             setMotoristas(mapped.filter(item => !deletedMockIds.includes(item.id)));
           }
@@ -1048,6 +1048,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         status: formData.status || 'Ativo',
         descricao: formData.descricao || ''
       };
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newCostCenter.id, JSON.stringify(newCostCenter.raw_data || newCostCenter)); }
       setCentrosCusto(prev => {
         const exists = prev.some(c => c.id === newCC.id);
         if (exists) {
@@ -1110,6 +1111,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
           segurancaConfirmarSenha: finalConfirmarSenha
         }
       };
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + novoUsuario.id, JSON.stringify(novoUsuario.raw_data || novoUsuario)); }
       if (onAddUsuario) {
         onAddUsuario(novoUsuario);
       }
@@ -1134,6 +1136,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
           codigo: codeVal
         }
       };
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newDriver.id, JSON.stringify(newDriver.raw_data || newDriver)); }
       setMotoristas(prev => {
         const exists = prev.some(m => m.id === newDriver.id);
         if (exists) {
@@ -1178,6 +1181,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         codigo: codeVal,
         raw_data: { ...formData, codigo: codeVal }
       };
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newPartner.id, JSON.stringify(newPartner.raw_data || newPartner)); }
       setParceiros(prev => {
         const exists = prev.some(p => p.id === newPartner.id);
         if (exists) {
@@ -1231,6 +1235,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         codigo: codeVal,
         raw_data: { ...formData, codigo: codeVal }
       };
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newCliFor.id, JSON.stringify(newCliFor.raw_data || newCliFor)); }
       setClientesFornecedores(prev => {
         const exists = prev.some(c => c.id === newCliFor.id);
         if (exists) {
