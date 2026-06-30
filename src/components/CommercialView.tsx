@@ -2167,6 +2167,7 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                   />
                 </div>
+                <div></div> {/* Espaço vazio na terceira coluna */}
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Status</label>
                   <div className="w-full mt-1 px-3 py-1.5 border border-gray-300 bg-gray-50 rounded-lg text-xs font-bold text-amber-700 flex items-center h-[34px]" title="Conciliação automática baseada em entregas físicas">
@@ -2174,7 +2175,6 @@ export default function CommercialView({
                     Pendente (Automático)
                   </div>
                 </div>
-                <div></div> {/* Espaço vazio para manter grid de 4 colunas */}
               </div>
 
               {/* Seção 2: Identificação do Cliente */}
@@ -2182,8 +2182,9 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">2. Identificação do Cliente</span>
               </div>
 
-              {/* Row 1: Cód. Cliente (4 colunas) */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Grid unificado de 3 colunas e 3 linhas para Identificação do Cliente */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Linha 1 */}
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Cliente</label>
                   <input
@@ -2204,11 +2205,24 @@ export default function CommercialView({
                 </div>
                 <div></div>
                 <div></div>
-                <div></div>
-              </div>
 
-              {/* Row 2: Cliente, Destino (2 colunas) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Linha 2 */}
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">CNPJ / CPF</label>
+                  <input
+                    type="text"
+                    readOnly
+                    disabled
+                    value={(() => {
+                      const foundMock = CADASTRO_CLIENTES.find(c => c.codigo === vendaForm.codigoCliente);
+                      if (foundMock) return foundMock.documento;
+                      const foundDb = clientes.find(c => c.codigo === vendaForm.codigoCliente || c.id === vendaForm.codigoCliente);
+                      if (foundDb) return foundDb.documento || foundDb.raw_data?.cnpj || foundDb.raw_data?.cpf || '';
+                      return '';
+                    })()}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-gray-100 text-gray-500 font-medium cursor-not-allowed"
+                  />
+                </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Razão Social ou Nome Completo</label>
                   <input
@@ -2239,10 +2253,8 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                   />
                 </div>
-              </div>
 
-              {/* Row 3: Endereço do Destino (3 colunas) */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Linha 3 (Endereço do Destino) */}
                 {(() => {
                   const selectedUnit = clientes.find(c => c.nomeFantasia === vendaForm.frigorifico);
                   const foundMock = CADASTRO_CLIENTES.find(c => c.nome === vendaForm.frigorifico);
