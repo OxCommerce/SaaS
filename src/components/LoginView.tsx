@@ -27,8 +27,8 @@ interface LoginViewProps {
 }
 
 export default function LoginView({ onLoginSuccess, onNavigateBack, logoUrl }: LoginViewProps) {
-  const [email, setEmail] = useState('diego@oxcommerce.com.br');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
