@@ -984,6 +984,12 @@ export default function CommercialView({
     });
   };
 
+  // Text abbreviation helper for visual columns
+  const abbreviateText = (text: string, maxLen = 10) => {
+    if (!text) return '';
+    return text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
+  };
+
   // Grid Filters
   // Automatic reconciliation of Client Purchase Order status based on linked purchases
   const reconciledVendas = ordensCompraCliente.map(v => {
@@ -1308,9 +1314,10 @@ export default function CommercialView({
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">ID OC</th>
-                  <th className="p-3">Cliente</th>
-                  <th className="p-3">Destino</th>
-                  <th className="p-3">País</th>
+                  <th className="p-3">Cód. Cliente</th>
+                  <th className="p-3">CNPJ/CPF</th>
+                  <th className="p-3">Razão Social</th>
+                  <th className="p-3">Nome Fantasia</th>
                   <th className="p-3">UF</th>
                   <th className="p-3">Cidade</th>
                   <th className="p-3">Categoria</th>
@@ -1324,8 +1331,12 @@ export default function CommercialView({
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
                 {filteredVendas.map((v) => {
-                  const cliInfo = clientes.find(c => c.nomeFantasia === v.cliente);
-                  const pais = cliInfo ? (cliInfo.pais || 'Brasil') : 'Brasil';
+                  const cliInfo = clientes.find(c => c.nomeFantasia === v.cliente || c.nome === v.cliente || c.razaoSocial === v.cliente) || CADASTRO_CLIENTES.find(c => c.nome === v.cliente);
+                  const codCliente = cliInfo?.codigo || 'Sem Código';
+                  const cnpjCpf = cliInfo?.documento || (cliInfo as any)?.raw_data?.cnpj || (cliInfo as any)?.raw_data?.cpf || 'Não Informado';
+                  const razaoSocial = cliInfo?.razaoSocial || cliInfo?.nome || v.cliente;
+                  const nomeFantasia = cliInfo?.nomeFantasia || cliInfo?.nome || v.cliente;
+                  
                   const uf = cliInfo ? cliInfo.uf : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[1].replace(')', '') : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[1].trim() : 'MT'));
                   const cidade = cliInfo ? cliInfo.cidade : (v.frigorifico.includes('(') ? v.frigorifico.split('(')[0].trim() : (v.frigorifico.includes('-') ? v.frigorifico.split('-')[0].trim() : v.frigorifico.replace('Planta ', '').replace('Unidade ', '').trim()));
                   
@@ -1339,14 +1350,15 @@ export default function CommercialView({
                           {v.numeroOC}
                         </button>
                       </td>
-                      <td className="p-3 font-semibold text-gray-800">{v.cliente}</td>
-                      <td className="p-3 text-gray-500">{v.frigorifico}</td>
-                      <td className="p-3 text-gray-500">{pais}</td>
-                      <td className="p-3 font-mono text-gray-500">{uf}</td>
-                      <td className="p-3 text-gray-500">{cidade}</td>
+                      <td className="p-3 font-mono text-gray-500" title={codCliente}>{abbreviateText(codCliente, 12)}</td>
+                      <td className="p-3 text-gray-500" title={cnpjCpf}>{abbreviateText(cnpjCpf, 14)}</td>
+                      <td className="p-3 font-semibold text-gray-800" title={razaoSocial}>{abbreviateText(razaoSocial, 15)}</td>
+                      <td className="p-3 text-gray-500" title={nomeFantasia}>{abbreviateText(nomeFantasia, 15)}</td>
+                      <td className="p-3 font-mono text-gray-500" title={uf}>{abbreviateText(uf, 4)}</td>
+                      <td className="p-3 text-gray-500" title={cidade}>{abbreviateText(cidade, 12)}</td>
                       <td className="p-3">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FDF6E3] text-[#8A6D2E] border border-[#D8B46A]/30">
-                          {v.categoriaAnimal || 'Boi Gordo'}
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FDF6E3] text-[#8A6D2E] border border-[#D8B46A]/30" title={v.categoriaAnimal || 'Boi Gordo'}>
+                          {abbreviateText(v.categoriaAnimal || 'Boi Gordo', 12)}
                         </span>
                       </td>
                       <td className="p-3 text-right font-mono font-semibold">{v.quantidade}</td>
