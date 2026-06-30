@@ -1501,10 +1501,10 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         String(item[key] || '').toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-    // Sort ascending by ID column
+    // Sort ascending by ID column (visual code column first)
     return [...filtered].sort((a, b) => {
-      const idA = String(a.id || '').toLowerCase();
-      const idB = String(b.id || '').toLowerCase();
+      const idA = String(a.codigo || a.code || a.matricula || a.id || '').toLowerCase();
+      const idB = String(b.codigo || b.code || b.matricula || b.id || '').toLowerCase();
       return idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
     });
   };

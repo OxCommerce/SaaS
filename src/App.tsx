@@ -795,6 +795,24 @@ export default function App() {
     );
   }
 
+  // Alphanumeric ascending sort helper
+  const sortList = (list: any[], key: string) => {
+    return [...list].sort((a, b) => {
+      const valA = String(a[key] || '');
+      const valB = String(b[key] || '');
+      return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+    });
+  };
+
+  const sortedCompras = sortList(compras, 'numeroOperacao');
+  const sortedVendas = sortList(ordensCompraCliente, 'numeroOC');
+  const sortedNegociacoes = sortList(negociacoes, 'id');
+  const sortedGtas = sortList(gtas, 'numeroGTA');
+  const sortedCtes = sortList(ctes, 'numeroCTE');
+  const sortedNfes = sortList(nfes, 'numeroNFE');
+  const sortedTransacoes = sortList(transacoes, 'id');
+  const sortedViagens = sortList(viagens, 'id');
+
   return (
     <div className="h-screen flex font-sans antialiased relative glass-panel-mode overflow-hidden">
       {/* Global Background Image for Glassmorphism ERP theme */}
@@ -860,13 +878,13 @@ export default function App() {
           
           {activeMenu === 'dashboard' && (
             <DashboardView
-              compras={compras}
-              ordensCompraCliente={ordensCompraCliente}
-              negociacoes={negociacoes}
-              gtas={gtas}
-              nfes={nfes}
-              viagens={viagens}
-              transacoes={transacoes}
+              compras={sortedCompras}
+              ordensCompraCliente={sortedVendas}
+              negociacoes={sortedNegociacoes}
+              gtas={sortedGtas}
+              nfes={sortedNfes}
+              viagens={sortedViagens}
+              transacoes={sortedTransacoes}
               searchQuery={searchQuery}
               onNavigateTo={handleNavigateTo}
             />
@@ -874,19 +892,19 @@ export default function App() {
 
           {activeMenu === 'comercial' && (
             <CommercialView
-              compras={compras}
+              compras={sortedCompras}
               onAddCompra={handleAddCompra}
               onDeleteCompra={handleDeleteCompra}
-              ordensCompraCliente={ordensCompraCliente}
+              ordensCompraCliente={sortedVendas}
               onAddOrdemCompraCliente={handleAddOrdemCompraCliente}
               onDeleteOrdemCompraCliente={handleDeleteOrdemCompraCliente}
-              negociacoes={negociacoes}
+              negociacoes={sortedNegociacoes}
               onUpdateNegociacaoStage={handleUpdateNegociacaoStage}
               onAddNegociacao={handleAddNegociacao}
               searchQuery={searchQuery}
               activeSubMenu={subMenuComercial}
               setActiveSubMenu={setSubMenuComercial}
-              viagens={viagens}
+              viagens={sortedViagens}
               onGoToLogistica={() => {
                 setActiveMenu('logistica');
                 setSubMenuLogistica('transporte');
@@ -896,25 +914,25 @@ export default function App() {
 
           {activeMenu === 'fiscal' && (
             <FiscalView
-              gtas={gtas}
+              gtas={sortedGtas}
               onResolveGTA={handleResolveGTA}
               onAddGTA={handleAddGTA}
-              ctes={ctes}
+              ctes={sortedCtes}
               onEmitCTE={handleEmitCTE}
               onAddCTE={handleAddCTE}
-              nfes={nfes}
+              nfes={sortedNfes}
               onEmitNFE={handleEmitNFE}
               searchQuery={searchQuery}
               activeSubMenu={subMenuFiscal}
               setActiveSubMenu={setSubMenuFiscal}
-              negociacoes={negociacoes}
+              negociacoes={sortedNegociacoes}
               lotes={lotes}
             />
           )}
 
           {activeMenu === 'financeiro' && (
             <FinancialView
-              transacoes={transacoes}
+              transacoes={sortedTransacoes}
               onAddTransacao={(t) => setTransacoes([t, ...transacoes])}
               onLiquidateTransacao={handleLiquidateTransacao}
               conciliacoes={conciliacoes}
@@ -922,13 +940,13 @@ export default function App() {
               searchQuery={searchQuery}
               activeSubMenu={subMenuFinanceiro}
               setActiveSubMenu={setSubMenuFinanceiro}
-              viagens={viagens}
+              viagens={sortedViagens}
             />
           )}
 
           {activeMenu === 'logistica' && (
             <LogisticsView
-              viagens={viagens}
+              viagens={sortedViagens}
               onUpdateViagemStatus={handleUpdateViagemStatus}
               onSimulateLocations={handleSimulateLocations}
               activeSubMenu={subMenuLogistica}
