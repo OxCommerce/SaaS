@@ -200,6 +200,41 @@ export default function App() {
   }, [subMenuConfiguracoes]);
 
   useEffect(() => {
+    async function tempClearDb() {
+      const tables = [
+        'compras',
+        'vendas',
+        'negociacoes',
+        'clientes_fornecedores',
+        'parceiros',
+        'motoristas',
+        'centros_custo',
+        'tipos_parceiro',
+        'categorias',
+        'viagens',
+        'transacoes',
+        'lotes',
+        'gtas',
+        'ctes',
+        'nfes'
+      ];
+      console.log("TEMPORARY DATABASE CLEANUP STARTING...");
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      for (const t of tables) {
+        try {
+          await supabase.from(t).delete().neq('id', 'placeholder-does-not-exist');
+        } catch (e) {
+          console.error("Failed to clear", t, e);
+        }
+      }
+      console.log("TEMPORARY DATABASE CLEANUP COMPLETE!");
+    }
+    tempClearDb();
+  }, []);
+
+  useEffect(() => {
     async function loadUsuarios() {
       try {
         const { data, error } = await supabase.from('usuarios').select('*');
