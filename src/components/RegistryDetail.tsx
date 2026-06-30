@@ -673,7 +673,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                    )}
                  </div>
                 <Input 
-                    label="Razão Social / Nome Completo *" 
+                    label="Razão Social / Nome" 
                     value={data.col1 || ''} 
                     onChange={(e) => {
                       const val = e.target.value;
@@ -687,7 +687,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                     fullWidth 
                 />
                 <Input 
-                    label="Nome Fantasia / Apelido *" 
+                    label="Nome Fantasia / Sobrenome*" 
                     value={data.nomeFantasia || ''} 
                     onChange={(e) => onChange({ ...data, nomeFantasia: e.target.value })} 
                     fullWidth 
@@ -765,7 +765,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                     )}
                   </div>
                  <Input 
-                     label="Razão Social / Nome Completo *" 
+                     label="Razão Social / Nome" 
                      value={data.col1 || ''} 
                      onChange={(e) => {
                        const val = e.target.value;
@@ -789,7 +789,7 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                      fullWidth 
                  />
                  <Input 
-                     label="Nome Fantasia / Apelido *" 
+                     label="Nome Fantasia / Sobrenome*" 
                      value={data.nomeFantasia || ''} 
                      onChange={(e) => onChange({ ...data, nomeFantasia: e.target.value })} 
                      fullWidth 

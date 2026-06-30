@@ -142,11 +142,11 @@ export const RegistryModal: React.FC<RegistryModalProps> = ({
       }
 
       if ((!data.col1 || !data.col1.trim()) && (!data.razaoSocial || !data.razaoSocial.trim())) {
-        alert("Por favor, preencha o campo Razão Social / Nome Completo na aba Geral.");
+        alert("Por favor, preencha o campo Razão Social / Nome na aba Geral.");
         return false;
       }
       if (!data.nomeFantasia || !data.nomeFantasia.trim()) {
-        alert("Por favor, preencha o campo Nome Fantasia / Apelido na aba Geral.");
+        alert("Por favor, preencha o campo Nome Fantasia / Sobrenome na aba Geral.");
         return false;
       }
 

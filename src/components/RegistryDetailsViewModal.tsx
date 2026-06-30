@@ -180,8 +180,8 @@ export default function RegistryDetailsViewModal({
               {renderSectionHeader("Informações Gerais", <User className="h-4 w-4" />)}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {renderField("Código de Identificação", currentData.codigo || getVal("codigo", "Gerado Automaticamente"))}
-                {renderField("Razão Social / Nome Completo", currentData.nome || getVal("razaoSocial"))}
-                {renderField("Nome Fantasia / Apelido", currentData.nomeFantasia || getVal("nomeFantasia"))}
+                {renderField("Razão Social / Nome", currentData.nome || getVal("razaoSocial"))}
+                {renderField("Nome Fantasia / Sobrenome", currentData.nomeFantasia || getVal("nomeFantasia"))}
                 {renderField("Nome da Fazenda", currentData.fazenda || getVal("fazenda") || getVal("fazendaPrincipal"))}
                 {renderField("CNPJ / CPF", getVal("cnpj") || getVal("cpf") || currentData.documento)}
                 {renderField("Inscrição Estadual", getVal("ie"))}
