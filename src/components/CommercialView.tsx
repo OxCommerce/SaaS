@@ -2207,8 +2207,8 @@ export default function CommercialView({
                 <div></div>
               </div>
 
-              {/* Row 2: Cliente, Destino, Categoria (3 colunas) */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Row 2: Cliente, Destino (2 colunas) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Razão Social ou Nome Completo</label>
                   <input
@@ -2238,22 +2238,6 @@ export default function CommercialView({
                     placeholder="Selecione o destino"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800"
                   />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
-                  <select
-                    value={vendaForm.categoriaAnimal}
-                    onChange={(e) => setVendaForm({ ...vendaForm, categoriaAnimal: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800 bg-white"
-                    required
-                  >
-                    <option value="">-- Selecione --</option>
-                    {categorias.map((cat) => (
-                      <option key={cat.code} value={cat.name}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               </div>
 
@@ -2317,7 +2301,7 @@ export default function CommercialView({
 
                     {/* Grid Unificado de 4 colunas (sendo 3 linhas de 4 colunas cada) */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      {/* Linha 1: Ordem de Compra do Cliente (sozinha) */}
+                      {/* Linha 1: Ordem de Compra do Cliente e Categoria */}
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
                         <input
@@ -2328,7 +2312,22 @@ export default function CommercialView({
                           className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                         />
                       </div>
-                      <div></div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
+                        <select
+                          value={vendaForm.categoriaAnimal}
+                          onChange={(e) => setVendaForm({ ...vendaForm, categoriaAnimal: e.target.value })}
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-800 bg-white"
+                          required
+                        >
+                          <option value="">-- Selecione --</option>
+                          {categorias.map((cat) => (
+                            <option key={cat.code} value={cat.name}>
+                              {cat.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       <div></div>
                       <div></div>
 
