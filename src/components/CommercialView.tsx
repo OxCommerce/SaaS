@@ -2237,7 +2237,7 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Destino (Frigorífico / Unidade)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Nome Fantasia</label>
                   <input
                     type="text"
                     required
