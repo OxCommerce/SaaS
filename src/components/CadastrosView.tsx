@@ -1509,6 +1509,11 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
     });
   };
 
+  const abbreviateText = (text: string, maxLen = 10) => {
+    if (!text) return '';
+    return text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
+  };
+
   const filteredClientesFornecedores = filterBySearch(clientesFornecedores, ['codigo', 'nome', 'documento', 'estado']);
   const filteredParceiros = filterBySearch(parceiros, ['codigo', 'nome', 'contato', 'regiao']);
   const filteredMotoristas = filterBySearch(motoristas, ['codigo', 'nome', 'placa', 'transportadora']);
@@ -1637,44 +1642,55 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">Código</th>
-                  <th className="p-3">Nome / Razão Social</th>
                   <th className="p-3">CNPJ / CPF</th>
-                  <th className="p-3">Telefone / Detalhe</th>
+                  <th className="p-3">Razão Social</th>
+                  <th className="p-3">Nome Fantasia / Sobrenome*</th>
                   <th className="p-3 text-center">Estado</th>
+                  <th className="p-3 text-center">Cidade</th>
+                  <th className="p-3">Telefone</th>
                   <th className="p-3 text-center">Relacionamento</th>
                   <th className="p-3 text-center">Segmento</th>
                   <th className="p-3 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
-                {filteredClientesFornecedores.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-3 pl-4 font-mono font-bold">
-                      <button onClick={() => handleViewDetails('CLIENT', item)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
-                        {item.codigo || '-'}
-                      </button>
-                    </td>
-                    <td className="p-3 font-bold text-gray-800">{item.nome}</td>
-                    <td className="p-3 font-mono text-gray-500">{item.documento}</td>
-                    <td className="p-3 font-mono text-gray-500">
-                      {item.relacionamento === 'FOR' ? (item.fazenda || 'Sem Fazenda') : (item.telefone || '-')}
-                    </td>
-                    <td className="p-3 text-center font-bold text-gray-600">{item.estado}</td>
-                    <td className="p-3 text-center">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
-                        item.relacionamento === 'CLI' ? 'bg-[#F8F8FA] text-[#071757]' :
-                        item.relacionamento === 'FOR' ? 'bg-green-50 text-green-700' :
-                        'bg-amber-50 text-amber-700'
-                      }`}>
-                        {item.relacionamento === 'CLI' ? 'Cliente' :
-                         item.relacionamento === 'FOR' ? 'Fornecedor' : 'Ambos'}
-                      </span>
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[9px] uppercase font-bold">
-                        {item.tipo || 'Pessoa Jurídica'}
-                      </span>
-                    </td>
+                {filteredClientesFornecedores.map((item) => {
+                  const cnpjCpf = item.documento || item.cnpjCpf || item.raw_data?.cnpjCpf || '-';
+                  const razaoSocial = item.nome || item.razaoSocial || item.raw_data?.razaoSocial || '-';
+                  const nomeFantasia = item.nomeFantasia || item.raw_data?.nomeFantasia || '-';
+                  const cidade = item.cidade || item.raw_data?.cidade || item.raw_data?.enderecoCidade || '-';
+                  const telefone = item.telefone || item.raw_data?.contatoTelefone || '-';
+                  
+                  return (
+                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-3 pl-4 font-mono font-bold">
+                        <button onClick={() => handleViewDetails('CLIENT', item)} className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer">
+                          {item.codigo || '-'}
+                        </button>
+                      </td>
+                      <td className="p-3 font-mono text-gray-500">{cnpjCpf}</td>
+                      <td className="p-3 font-bold text-gray-800" title={razaoSocial}>{abbreviateText(razaoSocial, 15)}</td>
+                      <td className="p-3 text-gray-500" title={nomeFantasia}>{abbreviateText(nomeFantasia, 15)}</td>
+                      <td className="p-3 text-center font-bold text-gray-600">{item.estado}</td>
+                      <td className="p-3 text-center text-gray-500" title={cidade}>{abbreviateText(cidade, 12)}</td>
+                      <td className="p-3 font-mono text-gray-500">{telefone}</td>
+                      <td className="p-3 text-center">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                          item.relacionamento === 'CLI' ? 'bg-[#F8F8FA] text-[#071757]' :
+                          item.relacionamento === 'FOR' ? 'bg-green-50 text-green-700' :
+                          'bg-amber-50 text-amber-700'
+                        }`}>
+                          {item.relacionamento === 'CLI' ? 'Cliente' :
+                           item.relacionamento === 'FOR' ? 'Fornecedor' : 'Ambos'}
+                        </span>
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[9px] uppercase font-bold">
+                          {item.tipo || 'Pessoa Jurídica'}
+                        </span>
+                      </td>
+                  );
+                })}
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-1.5">
                         <button 
