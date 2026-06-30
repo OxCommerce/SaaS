@@ -791,7 +791,15 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
                  <Input 
                      label="Nome Fantasia / Sobrenome*" 
                      value={data.nomeFantasia || ''} 
-                     onChange={(e) => onChange({ ...data, nomeFantasia: e.target.value })} 
+                     onChange={(e) => {
+                       const val = e.target.value;
+                       const updateObj: any = { ...data, nomeFantasia: val };
+                       if (clientType === 'PF') {
+                         updateObj.contatoSobrenome = val;
+                         updateObj.contatoNomeContato = `${data.col1 || ''} ${val}`.trim();
+                       }
+                       onChange(updateObj);
+                     }} 
                      fullWidth 
                  />
                  <Select 
