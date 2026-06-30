@@ -210,6 +210,18 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
   }, [searchParams, clientesFornecedores, parceiros, motoristas, usuarios, centrosCusto, bancos, tiposParceiro, categorias]);
 
   useEffect(() => {
+    const loadRawDataFallback = (id: string, defaultRaw: any) => {
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem('ox_raw_data_' + id);
+        if (cached) {
+          try {
+            return { ...defaultRaw, ...JSON.parse(cached) };
+          } catch (e) {}
+        }
+      }
+      return defaultRaw;
+    };
+
     async function loadData() {
       // 1. Clientes / Fornecedores
       try {
@@ -977,7 +989,7 @@ export default function CadastrosView({ searchQuery, usuarios = [], onAddUsuario
         status: formData.status || 'Ativo',
         descricao: formData.descricao || ''
       };
-      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newCostCenter.id, JSON.stringify(newCostCenter.raw_data || newCostCenter)); }
+      if (typeof window !== 'undefined') { localStorage.setItem('ox_raw_data_' + newCC.id, JSON.stringify(newCC.raw_data || newCC)); }
       setCentrosCusto(prev => {
         const exists = prev.some(c => c.id === newCC.id);
         if (exists) {
