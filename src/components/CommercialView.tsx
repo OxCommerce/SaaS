@@ -2129,7 +2129,7 @@ export default function CommercialView({
         <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-gray-150">
-              <h3 className="text-sm font-bold text-gray-800">{vendaForm.id ? 'Editar Ordem de Compra (Demanda)' : 'Receber Ordem de Compra (Demanda)'}</h3>
+              <h3 className="text-sm font-bold text-gray-800">Formulário de Ordem de Compra (Demandas)</h3>
               <button onClick={() => setShowAddVendaModal(false)} className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer">
                 <X className="h-4 w-4 text-gray-500" />
               </button>
@@ -2182,7 +2182,7 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">2. Identificação do Cliente</span>
               </div>
 
-              {/* Row 1: Cód. Cliente, Ordem de Compra do Cliente (4 colunas) */}
+              {/* Row 1: Cód. Cliente (4 colunas) */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Cliente</label>
@@ -2202,16 +2202,7 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
                   />
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
-                  <input
-                    type="text"
-                    value={vendaForm.codigoOrdemCompraCliente}
-                    onChange={(e) => setVendaForm({ ...vendaForm, codigoOrdemCompraCliente: e.target.value })}
-                    placeholder="Opcional (preenchimento manual)"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
-                  />
-                </div>
+                <div></div>
                 <div></div>
                 <div></div>
               </div>
@@ -2324,9 +2315,24 @@ export default function CommercialView({
                       <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhamento da Ordem de Compra</span>
                     </div>
 
-                    {/* Grid Unificado de 4 colunas (sendo 2 linhas de 4 colunas cada) */}
+                    {/* Grid Unificado de 4 colunas (sendo 3 linhas de 4 colunas cada) */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      {/* Linha 1: Editáveis */}
+                      {/* Linha 1: Ordem de Compra do Cliente (sozinha) */}
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase">Ordem de Compra do Cliente</label>
+                        <input
+                          type="text"
+                          value={vendaForm.codigoOrdemCompraCliente}
+                          onChange={(e) => setVendaForm({ ...vendaForm, codigoOrdemCompraCliente: e.target.value })}
+                          placeholder="Opcional (preenchimento manual)"
+                          className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-gray-800"
+                        />
+                      </div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+
+                      {/* Linha 2: Editáveis */}
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Total (kg)</label>
                         <input
