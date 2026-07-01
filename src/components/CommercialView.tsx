@@ -71,6 +71,19 @@ const parseWeightBR = (val: string): number => {
   return Number(cleaned) / 100;
 };
 
+const formatIntBR = (value: number | string | null | undefined): string => {
+  if (value === null || value === undefined || value === '') return '';
+  const num = typeof value === 'number' ? value : Number(value);
+  if (isNaN(num) || num === 0) return '';
+  return num.toLocaleString('pt-BR');
+};
+
+const parseIntBR = (val: string): number => {
+  const cleaned = val.replace(/\D/g, '');
+  if (!cleaned) return 0;
+  return Number(cleaned);
+};
+
 import {
   Search,
   Plus,
@@ -355,7 +368,7 @@ export default function CommercialView({
   const livePesoTotal = Number(compraForm.pesoTotal) || 0;
   const livePesoMedio = (Number(compraForm.quantidade) > 0 && livePesoTotal > 0) ? (livePesoTotal / Number(compraForm.quantidade)) : 0;
   const liveArrobas = livePesoTotal / 30;
-  const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
+  const liveValorGado = livePesoTotal * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
   const liveFrete = Number(compraForm.frete) || 0;
   const liveValorGTA = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
@@ -801,7 +814,7 @@ export default function CommercialView({
     const pesoTotal = Number(compraForm.pesoTotal);
     const pesoMedio = Number(compraForm.quantidade) > 0 ? (pesoTotal / Number(compraForm.quantidade)) : 0;
     const arrobas = pesoTotal / 30;
-    const valorGado = arrobas * Number(compraForm.valorArroba);
+    const valorGado = pesoTotal * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
     const freteValor = Number(compraForm.frete);
     const gtaValor = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
@@ -1208,8 +1221,10 @@ export default function CommercialView({
                         {c.categoriaAnimal}
                       </span>
                     </td>
-                    <td className="p-3 text-right font-bold">{c.quantidade}</td>
-                    <td className="p-3 text-right text-gray-500 font-mono">{c.pesoMedio} kg</td>
+                    <td className="p-3 text-right font-bold">{c.quantidade ? c.quantidade.toLocaleString('pt-BR') : '0'}</td>
+                    <td className="p-3 text-right text-gray-500 font-mono">
+                      {c.pesoMedio ? c.pesoMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'} kg
+                    </td>
                     <td className="p-3 text-right text-[#D8B46A] font-mono font-semibold">
                       {c.valorArroba.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </td>
@@ -1858,19 +1873,13 @@ export default function CommercialView({
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    min={1}
-                    value={compraForm.quantidade}
+                    value={formatIntBR(compraForm.quantidade)}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, quantidade: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.quantidade === '') {
-                        setCompraForm({ ...compraForm, quantidade: 0 });
-                      }
+                      const parsed = parseIntBR(e.target.value);
+                      setCompraForm({ ...compraForm, quantidade: parsed });
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -1878,18 +1887,13 @@ export default function CommercialView({
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Fazenda (kg)</label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    value={compraForm.pesoTotal}
+                    value={formatWeightBR(compraForm.pesoTotal)}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, pesoTotal: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.pesoTotal === '') {
-                        setCompraForm({ ...compraForm, pesoTotal: 0 });
-                      }
+                      const parsed = parseWeightBR(e.target.value);
+                      setCompraForm({ ...compraForm, pesoTotal: parsed });
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -1900,25 +1904,20 @@ export default function CommercialView({
                     type="text"
                     disabled
                     readOnly
-                    value={livePesoMedio > 0 ? livePesoMedio.toFixed(2) + ' kg' : ''}
+                    value={livePesoMedio > 0 ? livePesoMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' kg' : ''}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço de Compra (R$/@)</label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    value={compraForm.valorArroba}
+                    value={formatWeightBR(compraForm.valorArroba)}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, valorArroba: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.valorArroba === '') {
-                        setCompraForm({ ...compraForm, valorArroba: 0 });
-                      }
+                      const parsed = parseWeightBR(e.target.value);
+                      setCompraForm({ ...compraForm, valorArroba: parsed });
                     }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
@@ -1929,12 +1928,12 @@ export default function CommercialView({
                   <div>
                     <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total da Compra</span>
                     <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
-                      Valor calculated do gado somado aos custos operacionais contabilizados.
+                      Valor calculado do gado (Peso Fazenda × Preço de Compra).
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-black font-mono text-[#071757]">
-                      R$ {liveTotalEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      R$ {liveValorGado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                 </div>
