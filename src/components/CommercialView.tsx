@@ -283,6 +283,7 @@ export default function CommercialView({
     categoriaAnimal: '' as any,
     quantidade: '' as any,
     pesoMedio: '' as any,
+    pesoTotal: '' as any,
     valorArroba: '' as any,
     comissao: '' as any,
     frete: '' as any,
@@ -349,7 +350,8 @@ export default function CommercialView({
   });
 
   // Live calculations for Add Compra Modal
-  const livePesoTotal = (Number(compraForm.quantidade) || 0) * (Number(compraForm.pesoMedio) || 0);
+  const livePesoTotal = Number(compraForm.pesoTotal) || 0;
+  const livePesoMedio = (Number(compraForm.quantidade) > 0 && livePesoTotal > 0) ? (livePesoTotal / Number(compraForm.quantidade)) : 0;
   const liveArrobas = livePesoTotal / 30;
   const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
@@ -789,11 +791,12 @@ export default function CommercialView({
   const handleAddCompraSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Validate required fields to prevent saving empty forms
-    if (!compraForm.codigoFornecedor || !compraForm.fornecedor || !compraForm.fazendaOrigem || !compraForm.categoriaAnimal || !compraForm.quantidade || !compraForm.pesoMedio || !compraForm.valorArroba) {
-      alert("Por favor, preencha todos os campos obrigatórios (Código do Fornecedor, Fornecedor, Fazenda, Categoria, Quantidade, Peso Médio e Valor da Arroba).");
+    if (!compraForm.codigoFornecedor || !compraForm.fornecedor || !compraForm.fazendaOrigem || !compraForm.categoriaAnimal || !compraForm.quantidade || !compraForm.pesoTotal || !compraForm.valorArroba) {
+      alert("Por favor, preencha todos os campos obrigatórios (Código do Fornecedor, Fornecedor, Fazenda, Categoria, Quantidade, Peso Fazenda e Valor da Arroba).");
       return;
     }
-    const pesoTotal = Number(compraForm.quantidade) * Number(compraForm.pesoMedio);
+    const pesoTotal = Number(compraForm.pesoTotal);
+    const pesoMedio = Number(compraForm.quantidade) > 0 ? (pesoTotal / Number(compraForm.quantidade)) : 0;
     const arrobas = pesoTotal / 30;
     const valorGado = arrobas * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
@@ -853,6 +856,7 @@ export default function CommercialView({
       categoriaAnimal: '' as any,
       quantidade: '' as any,
       pesoMedio: '' as any,
+      pesoTotal: '' as any,
       valorArroba: '' as any,
       comissao: '' as any,
       frete: '' as any,
@@ -1089,6 +1093,7 @@ export default function CommercialView({
                   categoriaAnimal: '' as any,
                   quantidade: '' as any,
                   pesoMedio: '' as any,
+                  pesoTotal: '' as any,
                   valorArroba: '' as any,
                   comissao: '' as any,
                   frete: '' as any,
@@ -1220,6 +1225,7 @@ export default function CommercialView({
                             categoriaAnimal: c.categoriaAnimal,
                             quantidade: c.quantidade as any,
                             pesoMedio: c.pesoMedio as any,
+                            pesoTotal: c.pesoTotal as any,
                             valorArroba: c.valorArroba as any,
                             comissao: c.comissao as any,
                             frete: c.frete as any,
@@ -1816,80 +1822,111 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5 pt-2">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">3. Detalhes da Compra</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
-                  <select
-                    value={compraForm.categoriaAnimal}
-                    onChange={(e) => setCompraForm({ ...compraForm, categoriaAnimal: e.target.value as any })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                    required
-                  >
-                    <option value="">-- Selecione --</option>
-                    {categorias.map((cat) => (
-                      <option key={cat.code} value={cat.name}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+              <div className="space-y-4">
+                {/* Linha 1: Categoria */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
+                    <select
+                      value={compraForm.categoriaAnimal}
+                      onChange={(e) => setCompraForm({ ...compraForm, categoriaAnimal: e.target.value as any })}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                      required
+                    >
+                      <option value="">-- Selecione --</option>
+                      {categorias.map((cat) => (
+                        <option key={cat.code} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    value={compraForm.quantidade}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, quantidade: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.quantidade === '') {
-                        setCompraForm({ ...compraForm, quantidade: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
+
+                {/* Linha 2: Quantidade, Peso Fazenda, Peso Médio */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
+                    <input
+                      type="number"
+                      required
+                      min={1}
+                      value={compraForm.quantidade}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCompraForm({ ...compraForm, quantidade: val === '' ? '' : Number(val) });
+                      }}
+                      onBlur={() => {
+                        if (compraForm.quantidade === '') {
+                          setCompraForm({ ...compraForm, quantidade: 0 });
+                        }
+                      }}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Fazenda (kg)</label>
+                    <input
+                      type="number"
+                      required
+                      value={compraForm.pesoTotal}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCompraForm({ ...compraForm, pesoTotal: val === '' ? '' : Number(val) });
+                      }}
+                      onBlur={() => {
+                        if (compraForm.pesoTotal === '') {
+                          setCompraForm({ ...compraForm, pesoTotal: 0 });
+                        }
+                      }}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
+                    <input
+                      type="text"
+                      disabled
+                      readOnly
+                      value={livePesoMedio > 0 ? livePesoMedio.toFixed(2) + ' kg' : ''}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
-                  <input
-                    type="number"
-                    required
-                    value={compraForm.pesoMedio}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, pesoMedio: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.pesoMedio === '') {
-                        setCompraForm({ ...compraForm, pesoMedio: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Arroba (BRL)</label>
-                  <input
-                    type="number"
-                    required
-                    value={compraForm.valorArroba}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, valorArroba: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.valorArroba === '') {
-                        setCompraForm({ ...compraForm, valorArroba: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
+
+                {/* Linha 3: Preço de Compra, Valor Total */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço de Compra (R$/@)</label>
+                    <input
+                      type="number"
+                      required
+                      value={compraForm.valorArroba}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCompraForm({ ...compraForm, valorArroba: val === '' ? '' : Number(val) });
+                      }}
+                      onBlur={() => {
+                        if (compraForm.valorArroba === '') {
+                          setCompraForm({ ...compraForm, valorArroba: 0 });
+                        }
+                      }}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total (R$)</label>
+                    <input
+                      type="text"
+                      disabled
+                      readOnly
+                      value={`R$ ${liveTotalEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                      className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold font-mono"
+                    />
+                  </div>
                 </div>
               </div>
 
