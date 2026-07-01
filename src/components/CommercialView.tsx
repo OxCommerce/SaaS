@@ -1945,36 +1945,12 @@ export default function CommercialView({
 
               {/* Row 2: Frete */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
-                {Number(compraForm.quantidade) > 50 ? (
-                  <div className="col-span-1 md:col-span-4 bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-start justify-between space-x-3 text-amber-900 shadow-sm">
-                    <div className="flex items-start space-x-2.5">
-                      <span className="text-base mt-0.5">⚠️</span>
-                      <div className="text-[11px]">
-                        <strong className="font-bold text-amber-950 block mb-0.5">Operação acima de 50 cabeças detectada ({compraForm.quantidade} animais)</strong>
-                        O preenchimento direto de transporte está bloqueado por motivos de compliance e segurança operacional. 
-                        Por favor, acesse o módulo de <strong>Logística</strong> para cadastrar, programar e detalhar cada viagem, motorista, veículo e as condições específicas deste lote.
-                      </div>
-                    </div>
-                    {onGoToLogistica && (
-                      <button
-                        type="button"
-                        onClick={onGoToLogistica}
-                        className="flex-shrink-0 flex items-center space-x-1.5 bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-sm"
-                      >
-                        <span>🚛</span>
-                        <span>Ir para Logística</span>
-                      </button>
-                    )}
-                  </div>
-                ) : null}
-
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista</label>
                   <input
                     type="text"
                     list="motoristas-list"
-                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.motorista}
-                    disabled={Number(compraForm.quantidade) > 50}
+                    value={compraForm.motorista}
                     onChange={(e) => {
                       const val = e.target.value;
                       setCompraForm(prev => {
@@ -1993,50 +1969,35 @@ export default function CommercialView({
                         return updated;
                       });
                     }}
-                    placeholder={Number(compraForm.quantidade) > 50 ? "Detalhamento via Logística" : "Nome do motorista"}
-                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
-                      Number(compraForm.quantidade) > 50 
-                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
-                        : 'border-gray-300 text-gray-800'
-                    }`}
+                    placeholder="Nome do motorista"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Caminhão / Veículo</label>
                   <input
                     type="text"
-                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.veiculo}
-                    disabled={Number(compraForm.quantidade) > 50}
+                    value={compraForm.veiculo}
                     onChange={(e) => setCompraForm({ ...compraForm, veiculo: e.target.value })}
-                    placeholder={Number(compraForm.quantidade) > 50 ? "Bloqueado" : "Ex: Bitrem Scania"}
-                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
-                      Number(compraForm.quantidade) > 50 
-                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
-                        : 'border-gray-300 text-gray-800'
-                    }`}
+                    placeholder="Ex: Bitrem Scania"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Placa</label>
                   <input
                     type="text"
-                    value={Number(compraForm.quantidade) > 50 ? '' : compraForm.placa}
-                    disabled={Number(compraForm.quantidade) > 50}
+                    value={compraForm.placa}
                     onChange={(e) => setCompraForm({ ...compraForm, placa: e.target.value })}
-                    placeholder={Number(compraForm.quantidade) > 50 ? "Bloqueado" : "Placa do veículo"}
-                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
-                      Number(compraForm.quantidade) > 50 
-                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
-                        : 'border-gray-300 text-gray-800'
-                    }`}
+                    placeholder="Placa do veículo"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor do Frete (R$)</label>
                   <input
                     type="number"
-                    value={Number(compraForm.quantidade) > 50 ? 0 : compraForm.frete}
-                    disabled={Number(compraForm.quantidade) > 50}
+                    value={compraForm.frete}
                     onFocus={(e) => e.target.select()}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -2047,11 +2008,7 @@ export default function CommercialView({
                         setCompraForm({ ...compraForm, frete: 0 });
                       }
                     }}
-                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs ${
-                      Number(compraForm.quantidade) > 50 
-                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed font-mono' 
-                        : 'border-gray-300 text-gray-800'
-                    }`}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
               </div>
