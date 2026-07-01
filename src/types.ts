@@ -58,6 +58,8 @@ export interface Compra {
   codigoFornecedor?: string;
   codigoOrdemCompraCliente?: string;
   tipoCompra?: string;
+  emissorGTA?: string;
+  valorGTA?: number;
 }
 
 export interface OrdemCompraCliente {

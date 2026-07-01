@@ -287,6 +287,8 @@ export default function CommercialView({
     valorArroba: '' as any,
     comissao: '' as any,
     frete: '' as any,
+    emissorGTA: 'Vendedor',
+    valorGTA: '' as any,
     ordemCompraClienteId: '',
     prazoPagamento: '',
     formaPagamento: '',
@@ -356,7 +358,8 @@ export default function CommercialView({
   const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
   const liveFrete = Number(compraForm.frete) || 0;
-  const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete);
+  const liveValorGTA = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
+  const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete + liveValorGTA);
 
   useEffect(() => {
     if (showAddVendaModal) {
@@ -801,7 +804,8 @@ export default function CommercialView({
     const valorGado = arrobas * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
     const freteValor = Number(compraForm.frete);
-    const valorTotal = Math.round(valorGado + comissaoValor + freteValor);
+    const gtaValor = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
+    const valorTotal = Math.round(valorGado + comissaoValor + freteValor + gtaValor);
 
     const novaCompra: Compra = {
       id: isEditCompraMode && editCompraId ? editCompraId : 'c-' + Math.random().toString(36).substr(2, 9),
@@ -814,11 +818,13 @@ export default function CommercialView({
       estado: compraForm.estado,
       categoriaAnimal: compraForm.categoriaAnimal,
       quantidade: Number(compraForm.quantidade),
-      pesoMedio: Number(compraForm.pesoMedio),
+      pesoMedio: pesoMedio,
       pesoTotal: pesoTotal,
       valorArroba: Number(compraForm.valorArroba),
       comissao: Number(compraForm.comissao),
       frete: freteValor,
+      emissorGTA: compraForm.emissorGTA,
+      valorGTA: Number(compraForm.valorGTA) || 0,
       valorTotal: valorTotal,
       dataCriacao: compraForm.dataEmissao || new Date().toISOString().split('T')[0],
       dataEntrega: compraForm.dataEntrega || new Date().toISOString().split('T')[0],
@@ -860,6 +866,8 @@ export default function CommercialView({
       valorArroba: '' as any,
       comissao: '' as any,
       frete: '' as any,
+      emissorGTA: 'Vendedor',
+      valorGTA: '' as any,
       ordemCompraClienteId: '',
       prazoPagamento: '',
       formaPagamento: '',
@@ -1097,6 +1105,8 @@ export default function CommercialView({
                   valorArroba: '' as any,
                   comissao: '' as any,
                   frete: '' as any,
+                  emissorGTA: 'Vendedor',
+                  valorGTA: '' as any,
                   ordemCompraClienteId: '',
                   prazoPagamento: '',
                   formaPagamento: '',
@@ -1229,6 +1239,8 @@ export default function CommercialView({
                             valorArroba: c.valorArroba as any,
                             comissao: c.comissao as any,
                             frete: c.frete as any,
+                            emissorGTA: c.emissorGTA || 'Vendedor',
+                            valorGTA: c.valorGTA as any || '',
                             ordemCompraClienteId: c.ordemCompraClienteId || '',
                             prazoPagamento: c.prazoPagamento || '',
                             formaPagamento: c.formaPagamento || '',
@@ -1910,72 +1922,31 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Total (R$)</label>
-                  <input
-                    type="text"
-                    disabled
-                    readOnly
-                    value={`R$ ${liveTotalEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold font-mono"
-                  />
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+
+                {/* Linha 3: Valor de Destaque */}
+                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total da Compra</span>
+                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
+                      Valor calculado do gado somado aos custos operacionais contabilizados.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black font-mono text-[#071757]">
+                      R$ {liveTotalEstimado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
               </div>
 
-              {/* Seção 4: Custos e Comissões */}
+              {/* Seção 4: Logística */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Custos e Comissões</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Logística</span>
               </div>
-              
-              {/* Row 1: Comissão */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Corretor / Parceiro</label>
-                  <input
-                    type="text"
-                    list="parceiros-list"
-                    value={compraForm.corretor}
-                    onChange={(e) => setCompraForm({ ...compraForm, corretor: e.target.value })}
-                    placeholder="Nome do parceiro/corretor"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Comissão (%)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={compraForm.comissao}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, comissao: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.comissao === '') {
-                        setCompraForm({ ...compraForm, comissao: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Comissão (R$)</label>
-                  <input
-                    type="text"
-                    disabled
-                    readOnly
-                    value={`R$ ${liveComissao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
-                  />
-                </div>
-                <div className="hidden md:block"></div>
-              </div>
-
-              {/* Row 2: Frete */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista</label>
                   <input
@@ -2044,25 +2015,96 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Dynamic Value Banner */}
-              <div className="bg-[#D0EBFC] text-blue-900 px-4 py-3 rounded-xl flex justify-between items-center font-sans border border-blue-200/50 shadow-sm">
+              {/* Seção 5: Comissões */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Comissões</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-800">Resultado Estimado da Operação</span>
-                  <p className="text-[10.5px] text-blue-700 mt-1 font-medium">
-                    Peso Total: <strong className="text-blue-900">{livePesoTotal.toLocaleString('pt-BR')} kg</strong> ({liveArrobas.toFixed(1)} @) | Gado: <strong className="text-blue-900">R$ {Math.round(liveValorGado).toLocaleString('pt-BR')}</strong> | Comissão: <strong className="text-blue-900">R$ {Math.round(liveComissao).toLocaleString('pt-BR')}</strong>
-                  </p>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Corretor / Parceiro</label>
+                  <input
+                    type="text"
+                    list="parceiros-list"
+                    value={compraForm.corretor}
+                    onChange={(e) => setCompraForm({ ...compraForm, corretor: e.target.value })}
+                    placeholder="Nome do parceiro/corretor"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
                 </div>
-                <div className="text-right">
-                  <span className="text-[9px] uppercase font-bold text-blue-800 block tracking-wider">Valor Total Estimado</span>
-                  <p className="text-lg font-black font-mono text-blue-950 mt-0.5">
-                    R$ {liveTotalEstimado.toLocaleString('pt-BR')}
-                  </p>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Comissão (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={compraForm.comissao}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, comissao: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.comissao === '') {
+                        setCompraForm({ ...compraForm, comissao: 0 });
+                      }
+                    }}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Comissão (R$)</label>
+                  <input
+                    type="text"
+                    disabled
+                    readOnly
+                    value={`R$ ${liveComissao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
+                  />
+                </div>
+                <div className="hidden md:block"></div>
               </div>
 
-              {/* Seção 5: Condições e Observações */}
+              {/* Seção 6: Custo Documental */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Condições e Observações</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">6. Custo Documental</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Emissor da GTA</label>
+                  <select
+                    value={compraForm.emissorGTA || 'Vendedor'}
+                    onChange={(e) => setCompraForm({ ...compraForm, emissorGTA: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
+                  >
+                    <option value="Vendedor">Vendedor (Produtor) - Não deduzido</option>
+                    <option value="Nós">Nós (Empresa) - Contabilizar custo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor da Taxa GTA (R$)</label>
+                  <input
+                    type="number"
+                    value={compraForm.valorGTA}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm({ ...compraForm, valorGTA: val === '' ? '' : Number(val) });
+                    }}
+                    onBlur={() => {
+                      if (compraForm.valorGTA === '') {
+                        setCompraForm({ ...compraForm, valorGTA: 0 });
+                      }
+                    }}
+                    placeholder="Ex: 150"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+              </div>
+
+              {/* Seção 7: Condições de Pagamento */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">7. Condições de Pagamento</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -2105,6 +2147,22 @@ export default function CommercialView({
                   rows={2}
                   className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 resize-none animate-in fade-in"
                 />
+              </div>
+
+              {/* Dynamic Value Banner (at the very bottom) */}
+              <div className="bg-[#D0EBFC] text-blue-900 px-4 py-3 rounded-xl flex justify-between items-center font-sans border border-blue-200/50 shadow-sm mt-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-800">Resultado Estimado da Operação</span>
+                  <p className="text-[10.5px] text-blue-700 mt-1 font-medium">
+                    Peso Total: <strong className="text-blue-900">{livePesoTotal.toLocaleString('pt-BR')} kg</strong> ({liveArrobas.toFixed(1)} @) | Gado: <strong className="text-blue-900">R$ {Math.round(liveValorGado).toLocaleString('pt-BR')}</strong> | Comissão: <strong className="text-blue-900">R$ {Math.round(liveComissao).toLocaleString('pt-BR')}</strong> | GTA: <strong className="text-blue-900">R$ {liveValorGTA.toLocaleString('pt-BR')}</strong>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] uppercase font-bold text-blue-800 block tracking-wider">Valor Total Estimado</span>
+                  <p className="text-lg font-black font-mono text-blue-950 mt-0.5">
+                    R$ {liveTotalEstimado.toLocaleString('pt-BR')}
+                  </p>
+                </div>
               </div>
 
               <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
