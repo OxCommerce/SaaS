@@ -141,7 +141,9 @@ export default function Header({
             </div>
             <div className="hidden sm:block text-left leading-none pr-1">
               <p className="text-xs font-bold text-[#0F172A]">{currentUser}</p>
-              <p className="text-[10px] text-[#94A3B8] font-medium">Fazenda Real MT</p>
+              <p className="text-[10px] text-[#94A3B8] font-medium">
+                {currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
+              </p>
             </div>
           </button>
 
