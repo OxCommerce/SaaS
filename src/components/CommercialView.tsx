@@ -1572,7 +1572,15 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">ID OC</label>
                   <select
                     value={compraForm.ordemCompraClienteId}
-                    onChange={(e) => setCompraForm({ ...compraForm, ordemCompraClienteId: e.target.value })}
+                    onChange={(e) => {
+                      const ocId = e.target.value;
+                      const selectedOC = ordensCompraCliente.find(o => o.id === ocId);
+                      setCompraForm({
+                        ...compraForm,
+                        ordemCompraClienteId: ocId,
+                        categoriaAnimal: selectedOC ? selectedOC.categoriaAnimal : compraForm.categoriaAnimal
+                      });
+                    }}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-mono text-gray-855 font-bold bg-[#D8B46A]/5"
                   >
                     <option value="">-- Sem vínculo --</option>

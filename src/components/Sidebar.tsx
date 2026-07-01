@@ -377,18 +377,7 @@ export default function Sidebar({
 
       </nav>
 
-      {/* ── Footer System Status ── */}
-      <div className="px-4 py-3 border-t border-[#E2E8F0]/40 bg-transparent flex flex-col items-center justify-center">
-        <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-2 w-full'}`}>
-          <span className="h-2.5 w-2.5 rounded-full bg-[#D8B46A] animate-pulse flex-shrink-0" />
-          {!collapsed && (
-            <span className="text-[10px] text-[#64748B] font-medium leading-tight">
-              Sincronizado · SEFAZ & GTA
-            </span>
-          )}
-        </div>
-        {!collapsed && <p className="text-[10px] text-[#94A3B8] mt-0.5 pl-4 w-full text-left">v4.0.2 · Licença Premium</p>}
-      </div>
+
     </aside>
   );
 }

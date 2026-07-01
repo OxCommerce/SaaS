@@ -419,10 +419,6 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
     <>
         <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-4">
             <h4 className="text-sm font-bold text-slate-800">{title}</h4>
-            <div className="flex items-center gap-3">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wide">JPG ou PNG, máx 2MB</span>
-                <Button label="Foto do Perfil" icon="upload" variant="secondary" className="h-8 text-xs" />
-            </div>
         </div>
         
         {/* Row 0: Custom Identifier Code */}
