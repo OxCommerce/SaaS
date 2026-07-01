@@ -312,6 +312,7 @@ export default function CommercialView({
     pais: '',
     corretor: '',
     motorista: '',
+    codigoMotorista: '',
     veiculo: '',
     placa: '',
     destinoFrigorifico: '',
@@ -553,6 +554,51 @@ export default function CommercialView({
       }
     } catch (err) {
       console.warn('Failed to query Supabase directly for supplier:', err);
+    }
+  };
+
+  const handleMotoristaLookup = (code: string) => {
+    const cleanVal = code.trim();
+    if (!cleanVal) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoMotorista: '',
+        motorista: '',
+        veiculo: '',
+        placa: ''
+      }));
+      return;
+    }
+
+    const found = CADASTRO_MOTORISTAS.find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+
+    if (found) {
+      let veiculo = 'Bitrem Scania';
+      if (found.nome === 'Valdecir Rodrigues Alves') {
+        veiculo = 'Bitrem Scania R440';
+      } else if (found.nome === 'Ailton Senna de Souza') {
+        veiculo = 'Carreta Simples Volvo FH540';
+      } else if (found.nome === 'Roberto Carlos Santos') {
+        veiculo = 'Bi-trem Mercedes Actros';
+      } else if (found.transportadora.includes('Transportadora')) {
+        veiculo = 'Frota Transportadora';
+      }
+
+      setCompraForm(prev => ({
+        ...prev,
+        codigoMotorista: code,
+        motorista: found.nome,
+        veiculo: veiculo,
+        placa: found.placa
+      }));
+    } else {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoMotorista: code
+      }));
     }
   };
 
@@ -849,6 +895,7 @@ export default function CommercialView({
       pais: compraForm.pais,
       corretor: compraForm.corretor,
       motorista: compraForm.motorista,
+      codigoMotorista: compraForm.codigoMotorista,
       veiculo: compraForm.veiculo,
       placa: compraForm.placa,
       destinoFrigorifico: compraForm.destinoFrigorifico,
@@ -891,6 +938,7 @@ export default function CommercialView({
       pais: '',
       corretor: '',
       motorista: '',
+      codigoMotorista: '',
       veiculo: '',
       placa: '',
       destinoFrigorifico: '',
@@ -1130,6 +1178,7 @@ export default function CommercialView({
                   pais: '',
                   corretor: '',
                   motorista: '',
+                  codigoMotorista: '',
                   veiculo: '',
                   placa: '',
                   destinoFrigorifico: '',
@@ -1266,6 +1315,7 @@ export default function CommercialView({
                             pais: c.pais || '',
                             corretor: c.corretor || '',
                             motorista: c.motorista || '',
+                            codigoMotorista: c.codigoMotorista || '',
                             veiculo: c.veiculo || '',
                             placa: c.placa || '',
                             destinoFrigorifico: c.destinoFrigorifico || '',
@@ -1944,31 +1994,28 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Logística</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Linha 1 */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Motorista / Transportador</label>
                   <input
                     type="text"
-                    list="motoristas-list"
-                    value={compraForm.motorista}
+                    value={compraForm.codigoMotorista || ''}
                     onChange={(e) => {
                       const val = e.target.value;
-                      setCompraForm(prev => {
-                        const updated = { ...prev, motorista: val };
-                        const found = CADASTRO_MOTORISTAS.find(m => m.nome === val);
-                        if (found) {
-                          updated.placa = found.placa;
-                          if (found.nome === 'Valdecir Rodrigues Alves') {
-                            updated.veiculo = 'Bitrem Scania R440';
-                          } else if (found.nome === 'Ailton Senna de Souza') {
-                            updated.veiculo = 'Carreta Simples Volvo FH540';
-                          } else if (found.nome === 'Roberto Carlos Santos') {
-                            updated.veiculo = 'Bi-trem Mercedes Actros';
-                          }
-                        }
-                        return updated;
-                      });
+                      setCompraForm(prev => ({ ...prev, codigoMotorista: val }));
+                      handleMotoristaLookup(val);
                     }}
-                    placeholder="Nome do motorista"
+                    placeholder="Ex: M-1006260001"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista / Transportador</label>
+                  <input
+                    type="text"
+                    value={compraForm.motorista || ''}
+                    onChange={(e) => setCompraForm({ ...compraForm, motorista: e.target.value })}
+                    placeholder="Nome do motorista/empresa"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
@@ -1976,7 +2023,7 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Caminhão / Veículo</label>
                   <input
                     type="text"
-                    value={compraForm.veiculo}
+                    value={compraForm.veiculo || ''}
                     onChange={(e) => setCompraForm({ ...compraForm, veiculo: e.target.value })}
                     placeholder="Ex: Bitrem Scania"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
@@ -1986,12 +2033,14 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Placa</label>
                   <input
                     type="text"
-                    value={compraForm.placa}
+                    value={compraForm.placa || ''}
                     onChange={(e) => setCompraForm({ ...compraForm, placa: e.target.value })}
                     placeholder="Placa do veículo"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
+
+                {/* Linha 2 */}
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor do Frete (R$)</label>
                   <input
@@ -2010,6 +2059,9 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
               </div>
 
               {/* Seção 5: Comissões */}
