@@ -354,11 +354,10 @@ export default function Sidebar({
         </button>
         {openConfig && !collapsed && (
           <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-            {(['usuarios', 'identidade', 'banco', 'integracoes', 'auditoria'] as const).map((sub) => {
+            {(['usuarios', 'identidade', 'integracoes', 'auditoria'] as const).map((sub) => {
               const labels: Record<string, string> = {
                 usuarios: 'Usuários & Permissões',
                 identidade: 'Identidade Visual',
-                banco: 'Contas Bancárias',
                 integracoes: 'Integrações',
                 auditoria: 'Auditoria & Logs',
               };

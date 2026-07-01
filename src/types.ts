@@ -19,7 +19,7 @@ export type SubMenuFiscal = 'gta' | 'cte' | 'nfe';
 export type SubMenuFinanceiro = 'receber' | 'pagar' | 'fluxo' | 'conciliacao';
 export type SubMenuLogistica = 'transporte' | 'viagens' | 'rastreamento' | 'fretes';
 export type SubMenuCadastros = 'clientes' | 'fornecedores' | 'parceiros' | 'motoristas' | 'usuarios' | 'centros_custo' | 'bancos' | 'tipos_parceiro' | 'categorias';
-export type SubMenuConfiguracoes = 'usuarios' | 'identidade' | 'banco' | 'integracoes' | 'auditoria';
+export type SubMenuConfiguracoes = 'usuarios' | 'identidade' | 'integracoes' | 'auditoria';
 
 // Commercial module structures
 export interface Compra {

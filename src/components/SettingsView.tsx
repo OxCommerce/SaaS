@@ -4,10 +4,9 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { AppConfig, DatabaseStats, SubMenuConfiguracoes } from '../types';
+import { AppConfig, SubMenuConfiguracoes } from '../types';
 import {
   Settings,
-  Database,
   Link,
   ShieldAlert,
   Users,
@@ -15,7 +14,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Play,
-  RotateCcw,
   UserCheck,
   Smartphone,
   Mail,
@@ -46,8 +44,6 @@ import neloreElite2 from '@/assets/nelore_elite_2.png';
 interface SettingsViewProps {
   config: AppConfig;
   onUpdateConfig: (config: AppConfig) => void;
-  dbStats: DatabaseStats;
-  onRunBackup: () => void;
   activeSubMenu: SubMenuConfiguracoes;
   setActiveSubMenu: (sub: SubMenuConfiguracoes) => void;
   auditoriaLogs: Array<{ id: string; usuario: string; acao: string; horario: string; ip: string }>;
@@ -60,8 +56,6 @@ interface SettingsViewProps {
 export default function SettingsView({
   config,
   onUpdateConfig,
-  dbStats,
-  onRunBackup,
   activeSubMenu,
   setActiveSubMenu,
   auditoriaLogs,
@@ -71,11 +65,6 @@ export default function SettingsView({
   isRefreshing
 }: SettingsViewProps) {
   
-  // Realtime fluctuating RAM usages for interactive DB view
-  const [cpuUsage, setCpuUsage] = useState(dbStats.usoCPU);
-  const [memUsage, setMemUsage] = useState(dbStats.usoMemoria);
-  const [latency, setLatency] = useState(dbStats.latenciaMs);
-  const [isBackupRunning, setIsBackupRunning] = useState(false);
   const [dbConnected, setDbConnected] = useState<'online' | 'offline' | 'online_schema_error' | 'checking'>('checking');
 
   useEffect(() => {
@@ -100,29 +89,6 @@ export default function SettingsView({
     }
     checkConnection();
     const interval = setInterval(checkConnection, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Fluctuating metric simulator
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCpuUsage((prev) => {
-        const delta = Math.floor(Math.random() * 5) - 2;
-        const next = prev + delta;
-        return next > 5 && next < 85 ? next : prev;
-      });
-      setMemUsage((prev) => {
-        const delta = Math.floor(Math.random() * 3) - 1;
-        const next = prev + delta;
-        return next > 10 && next < 90 ? next : prev;
-      });
-      setLatency((prev) => {
-        const delta = Math.floor(Math.random() * 4) - 2;
-        const next = prev + delta;
-        return next > 2 && next < 50 ? next : prev;
-      });
-    }, 3000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -226,13 +192,7 @@ export default function SettingsView({
     return matchesSearch && matchesCategory;
   });
 
-  const handleBackupClick = () => {
-    setIsBackupRunning(true);
-    setTimeout(() => {
-      onRunBackup();
-      setIsBackupRunning(false);
-    }, 2000);
-  };
+
 
   const handleToggleIntegration = (key: keyof AppConfig['integracoes']) => {
     const updated = {
@@ -299,16 +259,7 @@ export default function SettingsView({
           <Palette className="h-4 w-4" />
           <span>Identidade Visual</span>
         </button>
-        <button
-          id="set-sub-banco"
-          onClick={() => setActiveSubMenu('banco')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center space-x-1 flex-shrink-0 ${
-            activeSubMenu === 'banco' ? 'bg-[#071757] text-white shadow-xs' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
-          }`}
-        >
-          <Database className="h-4 w-4" />
-          <span>Banco de Dados</span>
-        </button>
+
         <button
           id="set-sub-integracoes"
           onClick={() => setActiveSubMenu('integracoes')}
@@ -896,91 +847,7 @@ export default function SettingsView({
       </>
     )}
 
-      {/* ==================== 3. BANCO DE DADOS MONITOR ==================== */}
-      {activeSubMenu === 'banco' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Charts meters */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5 shadow-xs space-y-5">
-            <div className="flex justify-between items-center">
-              <div>
-                <h4 className="text-sm font-bold text-gray-800">Monitor Computacional Drizzle / Cloud SQL</h4>
-                <p className="text-xs text-gray-500">Latência de requisições de gado e persistência durável em tempo real</p>
-              </div>
-              <span className="h-2 w-2 rounded-full bg-[#D8B46A] animate-ping"></span>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              
-              {/* CPU */}
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1 relative overflow-hidden">
-                <div className="h-1.5 bg-emerald-600 absolute bottom-0 left-0" style={{ width: `${cpuUsage}%` }}></div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Processamento CPU</p>
-                <h3 className="text-2xl font-bold font-mono text-gray-800">{cpuUsage}%</h3>
-                <p className="text-[9px] text-gray-400">Instância db-f1-micro</p>
-              </div>
-
-              {/* RAM */}
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1 relative overflow-hidden">
-                <div className="h-1.5 bg-[#182763] absolute bottom-0 left-0" style={{ width: `${memUsage}%` }}></div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Uso de Memória</p>
-                <h3 className="text-2xl font-bold font-mono text-gray-800">{memUsage}%</h3>
-                <p className="text-[9px] text-gray-400">0.6 GB de 1.7 GB Alocados</p>
-              </div>
-
-              {/* Latency */}
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1 relative">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono">Latência Local</p>
-                <h3 className="text-2xl font-bold font-mono text-[#182763]">{latency} ms</h3>
-                <p className="text-[9px] text-gray-400">Tempo de Resposta DDL</p>
-              </div>
-
-            </div>
-
-            {/* Simulated latency status bar */}
-            <div className="p-3 bg-[#F8F8FA] border border-[#DEE1E9] text-[#071757] rounded-lg text-xs flex justify-between items-center">
-              <span>Status do SQL: <strong>Relacional PostgreSQL Ativo</strong></span>
-              <span className="font-mono text-[10px]">Pool: 15/20 conexões</span>
-            </div>
-          </div>
-
-          {/* Backup area */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-xs flex flex-col justify-between">
-            <div>
-              <h4 className="text-sm font-bold text-gray-800"><span className="w-2 h-2 rounded-full bg-[#D8B46A] animate-pulse inline-block mr-1"></span>Resiliência de Negócio</h4>
-              <p className="text-xs text-gray-500 mt-1">Cálculos de backup diário às 04:00 AM</p>
-            </div>
-
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs space-y-2 mt-4 font-mono">
-              <p className="flex justify-between">
-                <span className="text-gray-400">ÚLTIMO BACKUP:</span>
-                <span className="font-bold text-gray-800">{dbStats.ultimoBackup}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="text-gray-400">INTEGRIDADE:</span>
-                <span className="font-bold text-green-700 uppercase">100% VERIFICADA</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="text-gray-400">RETENÇÃO:</span>
-                <span className="text-slate-700">30 Dias em Cold Storage</span>
-              </p>
-            </div>
-
-            <button
-              id="btn-trigger-backup"
-              onClick={handleBackupClick}
-              disabled={isBackupRunning}
-              className={`w-full py-2 bg-slate-900 text-white rounded-lg text-xs font-bold shadow-md transition-all uppercase cursor-pointer flex items-center justify-center space-x-1.5 mt-4 ${
-                isBackupRunning ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-950'
-              }`}
-            >
-              <RotateCcw className={`h-4 w-4 ${isBackupRunning ? 'animate-spin' : ''}`} />
-              <span>{isBackupRunning ? 'Gerando Backup...' : 'Iniciar Backup Manual'}</span>
-            </button>
-          </div>
-
-        </div>
-      )}
 
       {/* ==================== 4. INTEGRACOES SEFAZ & BANCOS ==================== */}
       {activeSubMenu === 'integracoes' && (

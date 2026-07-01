@@ -37,7 +37,6 @@ import {
   TransacaoFinanceira,
   ConciliacaoBancaria,
   ViagemLogistica,
-  DatabaseStats,
   AppConfig
 } from './types';
 
@@ -52,7 +51,6 @@ import {
   INITIAL_TRANSACÕES,
   INITIAL_CONCILIACOES,
   INITIAL_VIAGENS,
-  INITIAL_DB_STATS,
   INITIAL_CONFIG,
   CHANNELS_AUDITORIA,
   CADASTRO_USUARIOS
@@ -152,7 +150,7 @@ export default function App() {
   const [viagens, setViagens] = useState<ViagemLogistica[]>([]);
   const [config, setConfig] = useState<AppConfig>(INITIAL_CONFIG);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [dbStats, setDbStats] = useState<DatabaseStats>(INITIAL_DB_STATS);
+
   const [auditoriaLogs, setAuditoriaLogs] = useState(CHANNELS_AUDITORIA);
   const [usuariosList, setUsuariosList] = useState(CADASTRO_USUARIOS);
 
@@ -398,12 +396,7 @@ export default function App() {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
-      // Simulate slightly updated stats
-      setDbStats({
-        ...dbStats,
-        latenciaMs: Math.floor(Math.random() * 8 + 4),
-        ultimoBackup: 'Hoje, ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
-      });
+
       // Append a security sync audit log
       const newAuditLog = {
         id: 'aud-' + Math.random().toString(36).substr(2, 5),
@@ -679,13 +672,7 @@ export default function App() {
     );
   };
 
-  // 13. Backups Database manual actions
-  const handleRunBackup = () => {
-    setDbStats({
-      ...dbStats,
-      ultimoBackup: 'Agora Mesmo'
-    });
-  };
+
 
   // 14. Toggle employee active credentials
   const handleToggleUserStatus = async (id: string) => {
@@ -1000,8 +987,6 @@ export default function App() {
             <SettingsView
               config={config}
               onUpdateConfig={setConfig}
-              dbStats={dbStats}
-              onRunBackup={handleRunBackup}
               activeSubMenu={subMenuConfiguracoes}
               setActiveSubMenu={setSubMenuConfiguracoes}
               auditoriaLogs={auditoriaLogs}
