@@ -1901,7 +1901,7 @@ export default function CommercialView({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Linha 1 */}
-                <div className="md:col-span-2">
+                <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
                   <select
                     value={compraForm.categoriaAnimal}
@@ -1917,7 +1917,9 @@ export default function CommercialView({
                     ))}
                   </select>
                 </div>
-                <div className="hidden md:block md:col-span-2"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
 
                 {/* Linha 2 */}
                 <div>
