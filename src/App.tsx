@@ -132,7 +132,7 @@ export default function App() {
   // Search filter query
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [currentUser, setCurrentUser] = useState('Diego Silveira');
+  const [currentUser, setCurrentUser] = useState('Anderson Everton');
   const [currentRoute, setCurrentRoute] = useState<'home' | 'login' | 'app'>(() => {
     return (typeof window !== 'undefined' ? localStorage.getItem('ox_current_route') as any : null) || 'home';
   });

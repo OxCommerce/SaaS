@@ -392,11 +392,7 @@ export const INITIAL_CONFIG: AppConfig = {
   }
 };
 
-export const CHANNELS_AUDITORIA = [
-  { id: 'aud-1', usuario: 'Diego Silveira (Diretor)', acao: 'Aprovação de Negociação - OP-2026-NELORE', horario: 'Hoje, 11:45', ip: '191.185.12.90' },
-  { id: 'aud-2', usuario: 'Amanda Costa (Fiscal)', acao: 'Emissão de GTA de trânsito #3514032', horario: 'Hoje, 10:14', ip: '191.185.12.92' },
-  { id: 'aud-3', usuario: 'Carlos Souza (Financeiro)', acao: 'Liquidou Transação TED JBS #t-1', horario: 'Ontem, 16:32', ip: '200.143.120.3' }
-];
+export const CHANNELS_AUDITORIA = [];
 
 export const CADASTRO_CLIENTES = [
   { id: 'cl-1', codigo: 'C-1006260001', nome: 'Frigorífico JBS S/A', documento: '01.234.567/0001-89', telefone: '(66) 3411-9000', estado: 'MT', tipo: 'Cliente', relacionamento: 'CLI', clientType: 'PJ' },
