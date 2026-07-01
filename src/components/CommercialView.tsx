@@ -1851,7 +1851,7 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado Destino (UF)</label>
                   <select
                     disabled
-                    value={compraForm.destinoState}
+                    value={compraForm.destinoEstado}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   >
                     <option value="">-- UF --</option>
