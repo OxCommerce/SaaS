@@ -353,7 +353,7 @@ export default function CommercialView({
   const liveArrobas = livePesoTotal / 30;
   const liveValorGado = liveArrobas * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
-  const liveFrete = Number(compraForm.quantidade) > 50 ? 0 : (Number(compraForm.frete) || 0);
+  const liveFrete = Number(compraForm.frete) || 0;
   const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete);
 
   useEffect(() => {
@@ -797,7 +797,7 @@ export default function CommercialView({
     const arrobas = pesoTotal / 30;
     const valorGado = arrobas * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
-    const freteValor = Number(compraForm.quantidade) > 50 ? 0 : Number(compraForm.frete);
+    const freteValor = Number(compraForm.frete);
     const valorTotal = Math.round(valorGado + comissaoValor + freteValor);
 
     const novaCompra: Compra = {
@@ -826,9 +826,9 @@ export default function CommercialView({
       status: compraForm.status,
       pais: compraForm.pais,
       corretor: compraForm.corretor,
-      motorista: Number(compraForm.quantidade) > 50 ? '' : compraForm.motorista,
-      veiculo: Number(compraForm.quantidade) > 50 ? '' : compraForm.veiculo,
-      placa: Number(compraForm.quantidade) > 50 ? '' : compraForm.placa,
+      motorista: compraForm.motorista,
+      veiculo: compraForm.veiculo,
+      placa: compraForm.placa,
       destinoFrigorifico: compraForm.destinoFrigorifico,
       destinoCidade: compraForm.destinoCidade,
       destinoState: compraForm.destinoEstado,
