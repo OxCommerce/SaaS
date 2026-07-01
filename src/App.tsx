@@ -843,6 +843,9 @@ export default function App() {
               currentUser={currentUser}
               currentUserMatricula={matchedUser?.matricula}
               currentUserPapel={matchedUser?.papel}
+              currentUserDepartamento={matchedUser?.departamento}
+              currentUserUnidade={matchedUser?.unidade}
+              currentUserCargo={matchedUser?.cargo}
               collapsed={sidebarCollapsed}
               onLogout={() => {
                 if (typeof window !== 'undefined') {

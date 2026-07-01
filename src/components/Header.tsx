@@ -9,6 +9,9 @@ interface HeaderProps {
   currentUser: string;
   currentUserMatricula?: string;
   currentUserPapel?: string;
+  currentUserDepartamento?: string;
+  currentUserUnidade?: string;
+  currentUserCargo?: string;
   collapsed?: boolean;
   onLogout?: () => void;
 }
@@ -20,6 +23,9 @@ export default function Header({
   currentUser,
   currentUserMatricula,
   currentUserPapel,
+  currentUserDepartamento,
+  currentUserUnidade,
+  currentUserCargo,
   collapsed = false,
   onLogout
 }: HeaderProps) {
@@ -47,6 +53,31 @@ export default function Header({
   ];
 
   const initials = currentUser.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  const getDepartamentoLabel = (dept?: string) => {
+    if (!dept) return 'Administrativo';
+    const d = dept.toUpperCase();
+    if (d === 'TI') return 'Tecnologia';
+    if (d === 'COM') return 'Comercial';
+    if (d === 'LOG') return 'Logística';
+    if (d === 'FIN') return 'Financeiro';
+    if (d === 'DIR') return 'Diretoria';
+    if (d === 'ADM') return 'Administrativo';
+    if (d === 'FIS') return 'Fiscal';
+    return dept;
+  };
+
+  const getUnidadeLabel = (uni?: string) => {
+    if (!uni) return 'Planta MT';
+    const u = uni.toUpperCase();
+    if (u === 'MT') return 'Planta MT';
+    if (u === 'MS') return 'Planta MS';
+    if (u === 'GO') return 'Planta GO';
+    if (u === 'PA') return 'Planta PA';
+    if (u === 'MG') return 'Planta MG';
+    if (u === 'SP') return 'Planta SP';
+    return `Planta ${uni}`;
+  };
 
   const getUserDepartment = (papel: string) => {
     const p = (papel || '').toLowerCase();
@@ -142,7 +173,7 @@ export default function Header({
             <div className="hidden sm:block text-left leading-none pr-1">
               <p className="text-xs font-bold text-[#0F172A]">{currentUser}</p>
               <p className="text-[10px] text-[#94A3B8] font-medium">
-                {currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
+                {currentUserCargo || currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
               </p>
             </div>
           </button>
@@ -156,7 +187,7 @@ export default function Header({
                 <div>
                   <h4 className="text-sm font-bold text-slate-800 leading-tight">{currentUser}</h4>
                   <p className="text-[10px] text-[#D8B46A] uppercase font-bold tracking-wide mt-0.5">
-                    {currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
+                    {currentUserCargo || currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
                   </p>
                 </div>
               </div>
@@ -165,7 +196,7 @@ export default function Header({
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Departamento</span>
                   <span className="font-semibold text-slate-800">
-                    {getUserDepartment(currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'))}
+                    {getDepartamentoLabel(currentUserDepartamento)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -176,7 +207,9 @@ export default function Header({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Unidade</span>
-                  <span className="font-semibold text-slate-800">Planta MT</span>
+                  <span className="font-semibold text-slate-800">
+                    {getUnidadeLabel(currentUserUnidade)}
+                  </span>
                 </div>
               </div>
 
