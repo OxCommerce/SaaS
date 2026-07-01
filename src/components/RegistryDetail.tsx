@@ -160,7 +160,20 @@ export const RegistryDetail: React.FC<RegistryDetailProps> = ({ type, data, onCh
   // Sync parent data change down to internal states (e.g. on mount or edit load)
   useEffect(() => {
     if (data) {
-      if (data.clientType && data.clientType !== clientType) {
+      if (data.cnpjCpf) {
+        const valDigits = data.cnpjCpf.replace(/\D/g, '');
+        if (valDigits.length > 0) {
+          const isPJ = valDigits.length > 11;
+          const detectedType = isPJ ? 'PJ' : 'PF';
+          if (clientType !== detectedType) {
+            setClientType(detectedType);
+          }
+          if (data.clientType !== detectedType) {
+            data.clientType = detectedType;
+            onChange({ ...data, clientType: detectedType });
+          }
+        }
+      } else if (data.clientType && data.clientType !== clientType) {
         setClientType(data.clientType);
       }
       if (data.bankCode !== undefined && data.bankCode !== bankInfo.code) {
