@@ -1732,51 +1732,41 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Fornecedor</label>
                   <input
                     type="text"
-                    required
+                    disabled
+                    readOnly
                     value={compraForm.fornecedor}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => ({ ...prev, fornecedor: val }));
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                    placeholder="Nome do produtor rural"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Origem (Fazenda)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Origem</label>
                   <input
                     type="text"
-                    required
+                    disabled
+                    readOnly
                     value={compraForm.fazendaOrigem}
-                    onChange={(e) => setCompraForm({ ...compraForm, fazendaOrigem: e.target.value })}
-                    placeholder="Nome da propriedade"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Origem)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País Origem</label>
                   <input
                     type="text"
-                    value={compraForm.pais}
-                    onChange={(e) => setCompraForm({ ...compraForm, pais: e.target.value })}
-                    placeholder="Brasil"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    disabled
+                    readOnly
+                    value={compraForm.pais || 'Brasil'}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Origem - UF)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado Origem (UF)</label>
                   <select
+                    disabled
                     value={compraForm.estado}
-                    onChange={(e) => setCompraForm({ ...compraForm, estado: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   >
                     <option value="">-- UF --</option>
                     <option value="MT">MT</option>
@@ -1788,13 +1778,13 @@ export default function CommercialView({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Origem)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade Origem</label>
                   <input
                     type="text"
+                    disabled
+                    readOnly
                     value={compraForm.municipio}
-                    onChange={(e) => setCompraForm({ ...compraForm, municipio: e.target.value })}
-                    placeholder="Cidade de origem"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
               </div>
@@ -1805,7 +1795,7 @@ export default function CommercialView({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Destino</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Fornecedor</label>
                   <input
                     type="text"
                     required
@@ -1825,54 +1815,44 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Nome Fantasia</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fornecedor</label>
                   <input
                     type="text"
-                    required
+                    disabled
+                    readOnly
                     value={compraForm.destinoFrigorifico}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => ({ ...prev, destinoFrigorifico: val }));
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                    placeholder="Nome da unidade compradora"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Unidade / Fazenda Destino</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Fazenda Destino</label>
                   <input
                     type="text"
-                    required
+                    disabled
+                    readOnly
                     value={compraForm.destinoFazenda}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoFazenda: e.target.value })}
-                    placeholder="Nome do destino / filial"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País (Destino)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">País Destino</label>
                   <input
                     type="text"
-                    value={compraForm.destinoPais}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoPais: e.target.value })}
-                    placeholder="Brasil"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    disabled
+                    readOnly
+                    value={compraForm.destinoPais || 'Brasil'}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado (Destino - UF)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado Destino (UF)</label>
                   <select
-                    value={compraForm.destinoEstado}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoEstado: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    disabled
+                    value={compraForm.destinoState}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   >
                     <option value="">-- UF --</option>
                     <option value="MT">MT</option>
@@ -1884,13 +1864,13 @@ export default function CommercialView({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade (Destino)</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade Destino</label>
                   <input
                     type="text"
+                    disabled
+                    readOnly
                     value={compraForm.destinoCidade}
-                    onChange={(e) => setCompraForm({ ...compraForm, destinoCidade: e.target.value })}
-                    placeholder="Cidade de destino"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
                   />
                 </div>
               </div>
