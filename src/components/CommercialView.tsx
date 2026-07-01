@@ -1836,7 +1836,7 @@ export default function CommercialView({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Linha 1 */}
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Categoria</label>
                   <select
                     value={compraForm.categoriaAnimal}
@@ -1852,6 +1852,9 @@ export default function CommercialView({
                     ))}
                   </select>
                 </div>
+                <div className="hidden md:block md:col-span-2"></div>
+
+                {/* Linha 2 */}
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Quantidade</label>
                   <input
@@ -1892,6 +1895,16 @@ export default function CommercialView({
                   />
                 </div>
                 <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
+                  <input
+                    type="text"
+                    disabled
+                    readOnly
+                    value={livePesoMedio > 0 ? livePesoMedio.toFixed(2) + ' kg' : ''}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
+                  />
+                </div>
+                <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Preço de Compra (R$/@)</label>
                   <input
                     type="number"
@@ -1911,27 +1924,12 @@ export default function CommercialView({
                   />
                 </div>
 
-                {/* Linha 2 */}
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Peso Médio (kg)</label>
-                  <input
-                    type="text"
-                    disabled
-                    readOnly
-                    value={livePesoMedio > 0 ? livePesoMedio.toFixed(2) + ' kg' : ''}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
-                  />
-                </div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
-
                 {/* Linha 3: Valor de Destaque */}
                 <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs">
                   <div>
                     <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total da Compra</span>
                     <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
-                      Valor calculado do gado somado aos custos operacionais contabilizados.
+                      Valor calculated do gado somado aos custos operacionais contabilizados.
                     </p>
                   </div>
                   <div className="text-right">
