@@ -156,7 +156,7 @@ export default function Header({
                 <div>
                   <h4 className="text-sm font-bold text-slate-800 leading-tight">{currentUser}</h4>
                   <p className="text-[10px] text-[#D8B46A] uppercase font-bold tracking-wide mt-0.5">
-                    {currentUserPapel || (currentUser.includes('Admin') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
+                    {currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial')}
                   </p>
                 </div>
               </div>
@@ -165,13 +165,13 @@ export default function Header({
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Departamento</span>
                   <span className="font-semibold text-slate-800">
-                    {getUserDepartment(currentUserPapel || (currentUser.includes('Admin') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'))}
+                    {getUserDepartment(currentUserPapel || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'Administrador ERP' : currentUser.includes('Wagner') ? 'Diretor Geral' : 'Gestor Comercial'))}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-medium">Matrícula</span>
                   <span className="font-mono text-slate-800">
-                    {currentUserMatricula || (currentUser.includes('Admin') ? 'OX-00001' : currentUser.includes('Wagner') ? 'OX-15648' : 'OX-38519')}
+                    {currentUserMatricula || (currentUser.includes('Admin') || currentUser.includes('Anderson') ? 'A156492' : currentUser.includes('Wagner') ? 'OX-15648' : 'OX-38519')}
                   </span>
                 </div>
                 <div className="flex justify-between">

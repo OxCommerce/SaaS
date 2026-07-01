@@ -203,6 +203,23 @@ export default function App() {
       try {
         const { data, error } = await supabase.from('usuarios').select('*');
         if (!error && data) {
+          // Check if Anderson Everton needs to be corrected in the database
+          const anderson = data.find(u => u.email === 'anderson.everton@oxcommerce.com');
+          if (anderson && (anderson.matricula !== 'A156492' || anderson.papel !== 'Administrador ERP')) {
+            anderson.matricula = 'A156492';
+            anderson.papel = 'Administrador ERP';
+            if (anderson.raw_data) {
+              anderson.raw_data.matricula = 'A156492';
+              anderson.raw_data.papel = 'Administrador ERP';
+              anderson.raw_data.segurancaPapel = 'Administrador ERP';
+            }
+            await supabase.from('usuarios').upsert([anderson]);
+            const idx = data.findIndex(u => u.email === 'anderson.everton@oxcommerce.com');
+            if (idx !== -1) {
+              data[idx] = { ...anderson };
+            }
+          }
+
           // Verify if any default mock user is missing from the database
           const missingUsers = CADASTRO_USUARIOS.filter(mu => !data.some(u => u.email === mu.email));
           if (missingUsers.length > 0) {
@@ -214,7 +231,7 @@ export default function App() {
                 segurancaSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
                 segurancaConfirmarSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
                 segurancaPerfil: 'ADM',
-                segurancaPapel: u.papel === 'Administrador ERP' ? 'ADM' : 'FIS'
+                segurancaPapel: u.papel === 'Administrador ERP' ? 'Administrador ERP' : 'FIS'
               };
               return {
                 id: u.id,
@@ -286,7 +303,7 @@ export default function App() {
                 segurancaSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
                 segurancaConfirmarSenha: u.email === 'anderson.everton@oxcommerce.com' ? 'Ox@020685' : '123456',
                 segurancaPerfil: 'ADM',
-                segurancaPapel: u.papel === 'Administrador ERP' ? 'ADM' : 'FIS'
+                segurancaPapel: u.papel === 'Administrador ERP' ? 'Administrador ERP' : 'FIS'
               };
               return {
                 id: u.id,
