@@ -431,6 +431,7 @@ export default function CommercialView({
     ? compraForm.documentos.reduce((sum, doc) => sum + (doc.emissor === 'Nós' ? Number(doc.valor || 0) : 0), 0)
     : (compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0);
   const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete + liveValorGTA);
+  const liveTotalOperacao = liveValorGado + liveFrete + liveValorGTA;
 
   useEffect(() => {
     if (showAddVendaModal) {
@@ -2426,15 +2427,15 @@ export default function CommercialView({
               {/* Dynamic Value Banner (at the very bottom) */}
               <div className="bg-[#D0EBFC] text-blue-900 px-4 py-3 rounded-xl flex justify-between items-center font-sans border border-blue-200/50 shadow-sm mt-4">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-800">Resultado Estimado da Operação</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-800">Valor Total da Operação</span>
                   <p className="text-[10.5px] text-blue-700 mt-1 font-medium">
-                    Peso Total: <strong className="text-blue-900">{livePesoTotal.toLocaleString('pt-BR')} kg</strong> ({liveArrobas.toFixed(1)} @) | Gado: <strong className="text-blue-900">R$ {Math.round(liveValorGado).toLocaleString('pt-BR')}</strong> | Comissão: <strong className="text-blue-900">R$ {Math.round(liveComissao).toLocaleString('pt-BR')}</strong> | GTA: <strong className="text-blue-900">R$ {liveValorGTA.toLocaleString('pt-BR')}</strong>
+                    Peso Total: <strong className="text-blue-900">{livePesoTotal.toLocaleString('pt-BR')} kg</strong> ({liveArrobas.toFixed(1)} @) | Gado: <strong className="text-blue-900">R$ {liveValorGado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> | Frete: <strong className="text-blue-900">R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> | Custo Doc.: <strong className="text-blue-900">R$ {liveValorGTA.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[9px] uppercase font-bold text-blue-800 block tracking-wider">Valor Total Estimado</span>
+                  <span className="text-[9px] uppercase font-bold text-blue-800 block tracking-wider">Valor Total</span>
                   <p className="text-lg font-black font-mono text-blue-950 mt-0.5">
-                    R$ {liveTotalEstimado.toLocaleString('pt-BR')}
+                    R$ {liveTotalOperacao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>
