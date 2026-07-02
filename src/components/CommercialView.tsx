@@ -2393,6 +2393,7 @@ export default function CommercialView({
                     <option value="PIX">PIX</option>
                     <option value="Boleto">Boleto</option>
                     <option value="Depósito">Depósito</option>
+                    <option value="Prazo">Prazo</option>
                   </select>
                 </div>
                 <div>
@@ -2405,9 +2406,10 @@ export default function CommercialView({
                   >
                     <option value="">-- Selecione o Prazo --</option>
                     <option value="À Vista">À Vista</option>
-                    <option value="30 dias">30 dias</option>
-                    <option value="60 dias">60 dias</option>
-                    <option value="90 dias">90 dias</option>
+                    <option value="D+7">D+7</option>
+                    <option value="D+30">D+30</option>
+                    <option value="D+60">D+60</option>
+                    <option value="D+90">D+90</option>
                   </select>
                 </div>
                 <div className="hidden md:block"></div>
