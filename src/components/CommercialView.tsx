@@ -1424,12 +1424,12 @@ export default function CommercialView({
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">ID Op.</th>
-                  <th className="p-3">Cód. Forn.</th>
-                  <th className="p-3">Fornecedor</th>
-                  <th className="p-3">Origem</th>
-                  <th className="p-3">Pais</th>
-                  <th className="p-3">UP</th>
-                  <th className="p-3">Cidade</th>
+                  <th className="p-3">Cód. Destino</th>
+                  <th className="p-3">Destino</th>
+                  <th className="p-3">Fazenda Destino</th>
+                  <th className="p-3">País Destino</th>
+                  <th className="p-3">UF Destino</th>
+                  <th className="p-3">Cidade Destino</th>
                   <th className="p-3 text-center">ID OC</th>
                   <th className="p-3">Categoria</th>
                   <th className="p-3 text-right">Qtd</th>
@@ -1455,23 +1455,23 @@ export default function CommercialView({
                     <td className="p-3 font-mono font-bold">
                       <button
                         onClick={() => {
-                          const foundForn = [...clientes, ...fornecedores].find(f => f.codigo === c.codigoFornecedor || f.id === c.codigoFornecedor);
-                          if (foundForn) {
-                            handleViewDetails('SUPPLIER', foundForn);
+                          const foundDest = [...clientes, ...fornecedores].find(f => f.codigo === c.destinoCodigo || f.id === c.destinoCodigo);
+                          if (foundDest) {
+                            handleViewDetails(foundDest.relacionamento === 'CLI' ? 'CLIENT' : 'SUPPLIER', foundDest);
                           } else {
-                            alert('Fornecedor não encontrado.');
+                            alert('Destino não encontrado.');
                           }
                         }}
                         className="text-[#071757] hover:text-[#182763] hover:underline font-bold focus:outline-none text-left cursor-pointer"
                       >
-                        {c.codigoFornecedor || '-'}
+                        {c.destinoCodigo || '-'}
                       </button>
                     </td>
-                    <td className="p-3 font-semibold text-gray-800">{c.fornecedor}</td>
-                    <td className="p-3 text-xs text-gray-500">{c.fazendaOrigem}</td>
-                    <td className="p-3 text-gray-500">Brasil</td>
-                    <td className="p-3 font-mono text-gray-500">{c.estado}</td>
-                    <td className="p-3 text-gray-500">{c.municipio}</td>
+                    <td className="p-3 font-semibold text-gray-800">{c.destinoFrigorifico || '-'}</td>
+                    <td className="p-3 text-xs text-gray-500">{c.destinoFazenda || '-'}</td>
+                    <td className="p-3 text-gray-500">{c.destinoPais || 'Brasil'}</td>
+                    <td className="p-3 font-mono text-gray-500">{c.destinoEstado || '-'}</td>
+                    <td className="p-3 text-gray-500">{c.destinoCidade || '-'}</td>
                     <td className="p-3 text-center">
                       {c.ordemCompraClienteId ? (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#071757]/10 text-[#071757] font-mono border border-[#071757]/20" title={ordensCompraCliente.find(o => o.id === c.ordemCompraClienteId)?.cliente}>
