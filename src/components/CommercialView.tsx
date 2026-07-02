@@ -98,7 +98,8 @@ import {
   MapPin,
   FileCheck,
   Edit2,
-  Truck
+  Truck,
+  FileText
 } from 'lucide-react';
 
 interface CommercialViewProps {
@@ -283,6 +284,7 @@ export default function CommercialView({
   const [showAddVendaModal, setShowAddVendaModal] = useState(false);
   const [showAddNegModal, setShowAddNegModal] = useState(false);
   const [showLogisticaModal, setShowLogisticaModal] = useState(false);
+  const [showDocumentosModal, setShowDocumentosModal] = useState(false);
 
   const [isEditCompraMode, setIsEditCompraMode] = useState(false);
   const [editCompraId, setEditCompraId] = useState<string | null>(null);
@@ -327,7 +329,8 @@ export default function CommercialView({
     destinoFazenda: '',
     codigoOrdemCompraCliente: '',
     tipoCompra: 'Compra Direta',
-    fretes: [] as any[]
+    fretes: [] as any[],
+    documentos: [] as any[]
   });
 
   // Form State for OrdemCompraCliente
@@ -379,7 +382,9 @@ export default function CommercialView({
   const liveFrete = compraForm.fretes && compraForm.fretes.length > 0
     ? compraForm.fretes.reduce((sum, item) => sum + (Number(item.frete) || 0), 0)
     : (Number(compraForm.frete) || 0);
-  const liveValorGTA = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
+  const liveValorGTA = compraForm.documentos && compraForm.documentos.length > 0
+    ? compraForm.documentos.reduce((sum, doc) => sum + (doc.emissor === 'Nós' ? Number(doc.valor || 0) : 0), 0)
+    : (compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0);
   const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete + liveValorGTA);
 
   useEffect(() => {
@@ -1019,7 +1024,8 @@ export default function CommercialView({
       destinoCodigo: compraForm.destinoCodigo || '',
       destinoFazenda: compraForm.destinoFazenda || '',
       tipoCompra: compraForm.tipoCompra,
-      fretes: compraForm.fretes || []
+      fretes: compraForm.fretes || [],
+      documentos: compraForm.documentos || []
     } as any;
 
     onAddCompra(novaCompra);
@@ -1066,7 +1072,8 @@ export default function CommercialView({
       destinoFazenda: '',
       codigoOrdemCompraCliente: '',
       tipoCompra: 'Compra Direta',
-      fretes: []
+      fretes: [],
+      documentos: []
     });
   };
 
@@ -1308,7 +1315,8 @@ export default function CommercialView({
                   destinoCodigo: '',
                   destinoFazenda: '',
                   codigoOrdemCompraCliente: '',
-                  fretes: [] as any[]
+                  fretes: [] as any[],
+                  documentos: [] as any[]
                 });
                 setShowAddCompraModal(true);
               }}
@@ -1456,6 +1464,15 @@ export default function CommercialView({
                                 veiculo: c.veiculo || '',
                                 placa: c.placa || '',
                                 frete: Number(c.frete) || 0
+                              }
+                            ],
+                            documentos: (c as any).documentos || [
+                              {
+                                id: 'd-1',
+                                tipoDocumento: 'GTA',
+                                numeroDocumento: '',
+                                emissor: c.emissorGTA || 'Vendedor',
+                                valor: Number(c.valorGTA) || 0
                               }
                             ]
                           });
@@ -2151,9 +2168,49 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Seção 5: Comissões */}
+              {/* Seção 5: Custo Documental */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Comissões</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Custo Documental</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                {/* Linha 1: Botão de Detalhamento e Status */}
+                <div className="md:col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowDocumentosModal(true)}
+                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                    title="Detalhamento Documental"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>Detalhamento</span>
+                  </button>
+                </div>
+                
+                <div className="md:col-span-3 flex flex-col justify-center">
+                  <div className="text-[11px] text-gray-600 font-medium">
+                    <span className="font-bold text-[#071757]">{compraForm.documentos?.length || 0}</span> {compraForm.documentos?.length === 1 ? 'documento utilizado' : 'documentos utilizados'}
+                  </div>
+                </div>
+
+                {/* Linha 2: Banner do Valor Total Custo Documental */}
+                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total Custo Documental</span>
+                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
+                      Soma das taxas documentais pagas pela empresa (Nós).
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black font-mono text-[#071757]">
+                      R$ {liveValorGTA.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Seção 6: Comissões */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">6. Comissões</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Linha 1 */}
@@ -2225,44 +2282,6 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
                   />
                 </div>
-              </div>
-
-              {/* Seção 6: Custo Documental */}
-              <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">6. Custo Documental</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Emissor da GTA</label>
-                  <input
-                    type="text"
-                    value={compraForm.emissorGTA || ''}
-                    onChange={(e) => setCompraForm({ ...compraForm, emissorGTA: e.target.value })}
-                    placeholder="Ex: Vendedor ou Nós"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor da Taxa GTA (R$)</label>
-                  <input
-                    type="number"
-                    value={compraForm.valorGTA}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, valorGTA: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.valorGTA === '') {
-                        setCompraForm({ ...compraForm, valorGTA: 0 });
-                      }
-                    }}
-                    placeholder="Ex: 150"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
               </div>
 
               {/* Seção 7: Condições de Pagamento */}
@@ -2559,6 +2578,207 @@ export default function CommercialView({
               <button
                 type="button"
                 onClick={() => setShowLogisticaModal(false)}
+                className="bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2 px-4 rounded-lg shadow-md cursor-pointer uppercase transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== DETALHAMENTO DOCUMENTAL MODAL ==================== */}
+      {showDocumentosModal && (
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-[60] p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-150">
+              <div className="flex items-center space-x-2">
+                <FileText className="h-5 w-5 text-[#071757]" />
+                <h3 className="text-sm font-bold text-gray-800">
+                  Detalhamento Documental - Operação {compraForm.numeroOperacao || 'Nova'}
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowDocumentosModal(false)} 
+                className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer"
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-4">
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-gray-500">
+                  Cadastre os documentos, guias (GTA), taxas e notas fiscais para o gado da operação.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newId = 'd-' + Math.random().toString(36).substr(2, 9);
+                    setCompraForm(prev => ({
+                      ...prev,
+                      documentos: [
+                        ...(prev.documentos || []),
+                        {
+                          id: newId,
+                          tipoDocumento: 'GTA',
+                          numeroDocumento: '',
+                          emissor: 'Nós',
+                          valor: 0
+                        }
+                      ]
+                    }));
+                  }}
+                  className="flex items-center space-x-1.5 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-sm transition-all uppercase cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Adicionar Documento</span>
+                </button>
+              </div>
+
+              {(!compraForm.documentos || compraForm.documentos.length === 0) ? (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+                  <FileText className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-xs text-gray-500 font-medium">Nenhum documento ou taxa utilizado para esta operação.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCompraForm(prev => ({
+                        ...prev,
+                        documentos: [
+                          {
+                            id: 'd-1',
+                            tipoDocumento: 'GTA',
+                            numeroDocumento: '',
+                            emissor: 'Nós',
+                            valor: 0
+                          }
+                        ]
+                      }));
+                    }}
+                    className="mt-3 inline-flex items-center space-x-1 bg-blue-55 hover:bg-blue-60 px-3 py-1.5 rounded-lg text-[11px] font-bold text-blue-900 border border-blue-150 cursor-pointer shadow-xs"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Adicionar Primeiro Documento</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {compraForm.documentos.map((item, index) => (
+                    <div 
+                      key={item.id} 
+                      className="bg-gray-50 border border-gray-200 rounded-xl p-4 relative animate-in fade-in"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCompraForm(prev => ({
+                            ...prev,
+                            documentos: (prev.documentos || []).filter(d => d.id !== item.id)
+                          }));
+                        }}
+                        className="absolute top-3 right-3 p-1 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-white transition-all cursor-pointer"
+                        title="Remover Documento"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pr-8">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Tipo do Documento</label>
+                          <select
+                            value={item.tipoDocumento}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.documentos || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], tipoDocumento: val };
+                                return { ...prev, documentos: updated };
+                              });
+                            }}
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
+                          >
+                            <option value="GTA">GTA (Guia de Trânsito Animal)</option>
+                            <option value="Nota Fiscal">Nota Fiscal</option>
+                            <option value="Taxa Sanitária">Taxa Sanitária</option>
+                            <option value="Outros">Outros</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Número do Documento</label>
+                          <input
+                            type="text"
+                            value={item.numeroDocumento}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.documentos || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], numeroDocumento: val };
+                                return { ...prev, documentos: updated };
+                              });
+                            }}
+                            placeholder="Ex: GTA-202611"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Responsável / Emissor</label>
+                          <input
+                            type="text"
+                            value={item.emissor}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.documentos || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], emissor: val };
+                                return { ...prev, documentos: updated };
+                              });
+                            }}
+                            placeholder="Ex: Nós ou Vendedor"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor da Taxa (R$)</label>
+                          <input
+                            type="number"
+                            value={item.valor === 0 ? '' : item.valor}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.documentos || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], valor: val === '' ? 0 : Number(val) };
+                                return { ...prev, documentos: updated };
+                              });
+                            }}
+                            placeholder="Ex: 150"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Banner de resumo dentro do modal */}
+              {compraForm.documentos && compraForm.documentos.length > 0 && (
+                <div className="bg-blue-50 border border-blue-105 rounded-xl p-3 flex justify-between items-center text-xs animate-in fade-in">
+                  <div className="text-gray-600">
+                    Soma de <strong className="text-blue-900">{compraForm.documentos.length}</strong> documentos utilizados.
+                  </div>
+                  <div className="text-[#071757] font-bold font-mono text-sm">
+                    Total Pago por Nós: R$ {liveValorGTA.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={() => setShowDocumentosModal(false)}
                 className="bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2 px-4 rounded-lg shadow-md cursor-pointer uppercase transition-colors"
               >
                 Confirmar

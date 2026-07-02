@@ -48,6 +48,13 @@ export interface Compra {
   corretor?: string;
   codigoCorretor?: string;
   apelidoCorretor?: string;
+  documentos?: {
+    id: string;
+    tipoDocumento: string;
+    numeroDocumento: string;
+    emissor: string;
+    valor: number;
+  }[];
   motorista?: string;
   codigoMotorista?: string;
   veiculo?: string;

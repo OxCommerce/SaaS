@@ -513,6 +513,40 @@ export default function RegistryDetailsViewModal({
                 </div>
               )}
 
+              {currentData.documentos && currentData.documentos.length > 0 && (
+                <div className="mt-4 bg-slate-50 border border-slate-200/60 rounded-xl p-4 animate-in fade-in">
+                  <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-mono">
+                    Detalhamento dos Custos Documentais / Taxas
+                  </span>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-[11px] text-gray-700">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-gray-400 font-bold uppercase tracking-wider">
+                          <th className="pb-1 pl-2">Item</th>
+                          <th className="pb-1">Tipo de Doc.</th>
+                          <th className="pb-1">Número</th>
+                          <th className="pb-1">Emissor / Responsável</th>
+                          <th className="pb-1 text-right pr-2">Taxa / Custo</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {currentData.documentos.map((d: any, idx: number) => (
+                          <tr key={d.id || idx} className="hover:bg-slate-100/50 transition-colors">
+                            <td className="py-2 pl-2 font-bold text-gray-900">#{idx + 1}</td>
+                            <td className="py-2 font-semibold text-gray-800">{d.tipoDocumento || '-'}</td>
+                            <td className="py-2 font-mono font-medium text-gray-600">{d.numeroDocumento || '-'}</td>
+                            <td className="py-2 text-gray-500">{d.emissor || '-'}</td>
+                            <td className="py-2 text-right pr-2 font-mono font-bold text-slate-700">
+                              {Number(d.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               {currentData.observacoes && (
                 <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-gray-150">
                   <label className="block text-[10px] font-bold text-gray-400 uppercase">Observações da Compra</label>
