@@ -2068,8 +2068,32 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Logística</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                {/* Banner do Valor Total do Frete */}
-                <div className="md:col-span-2 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
+                {/* Linha 1: Botão de Detalhamento e Status */}
+                <div className="md:col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowLogisticaModal(true)}
+                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                  >
+                    <Truck className="h-4 w-4" />
+                    <span>Detalhamento Logístico</span>
+                  </button>
+                </div>
+                
+                <div className="md:col-span-3 flex flex-col justify-center">
+                  <div className="text-[11px] text-gray-600 font-medium">
+                    <span className="font-bold text-[#071757]">{compraForm.fretes?.length || 0}</span> {compraForm.fretes?.length === 1 ? 'carreta utilizada' : 'carretas utilizadas'}
+                  </div>
+                  {/* Dica / Alerta para mais de 65 animais */}
+                  {Number(compraForm.quantidade) > 65 && (
+                    <p className="text-[10px] text-amber-600 font-medium animate-pulse mt-0.5">
+                      ⚠️ Operação com {compraForm.quantidade} animais. Recomendado preencher múltiplos fretes/carretas.
+                    </p>
+                  )}
+                </div>
+
+                {/* Linha 2: Banner do Valor Total do Frete */}
+                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
                   <div>
                     <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total do Frete</span>
                     <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
@@ -2081,32 +2105,6 @@ export default function CommercialView({
                       R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
-                </div>
-
-                {/* Botão de Detalhamento Logístico */}
-                <div className="md:col-span-2 flex flex-col space-y-1 justify-center">
-                  <div className="flex items-center space-x-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowLogisticaModal(true)}
-                      className="flex items-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
-                    >
-                      <Truck className="h-4 w-4" />
-                      <span>Detalhamento Logístico</span>
-                    </button>
-                    
-                    {/* Resumo rápido */}
-                    <div className="text-[11px] text-gray-600">
-                      <span className="font-bold">{compraForm.fretes?.length || 0}</span> {compraForm.fretes?.length === 1 ? 'carreta cadastrada' : 'carretas cadastradas'}
-                    </div>
-                  </div>
-                  
-                  {/* Dica / Alerta para mais de 65 animais */}
-                  {Number(compraForm.quantidade) > 65 && (
-                    <p className="text-[10px] text-amber-600 font-medium animate-pulse mt-1">
-                      ⚠️ Operação com {compraForm.quantidade} animais. Recomendado preencher múltiplos fretes/carretas.
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -2336,7 +2334,7 @@ export default function CommercialView({
               {(!compraForm.fretes || compraForm.fretes.length === 0) ? (
                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
                   <Truck className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500 font-medium">Nenhuma carreta ou frete cadastrado para esta operação.</p>
+                  <p className="text-xs text-gray-500 font-medium">Nenhuma carreta ou frete utilizado para esta operação.</p>
                   <button
                     type="button"
                     onClick={() => {
@@ -2478,7 +2476,7 @@ export default function CommercialView({
               {compraForm.fretes && compraForm.fretes.length > 0 && (
                 <div className="bg-blue-50 border border-blue-105 rounded-xl p-3 flex justify-between items-center text-xs animate-in fade-in">
                   <div className="text-gray-600">
-                    Soma de <strong className="text-blue-900">{compraForm.fretes.length}</strong> fretes cadastrados.
+                    Soma de <strong className="text-blue-900">{compraForm.fretes.length}</strong> carretas utilizadas.
                   </div>
                   <div className="text-[#071757] font-bold font-mono text-sm">
                     Total: R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
