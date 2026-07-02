@@ -313,6 +313,7 @@ export default function CommercialView({
     status: 'Aberta',
     pais: '',
     corretor: '',
+    codigoCorretor: '',
     motorista: '',
     codigoMotorista: '',
     veiculo: '',
@@ -670,6 +671,36 @@ export default function CommercialView({
     }
   };
 
+  const handleCorretorLookup = (code: string) => {
+    const cleanVal = code.trim();
+    if (!cleanVal) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoCorretor: '',
+        corretor: ''
+      }));
+      return;
+    }
+
+    const found = CADASTRO_PARCEIROS.find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+
+    if (found) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoCorretor: code,
+        corretor: found.nome
+      }));
+    } else {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoCorretor: code
+      }));
+    }
+  };
+
   const handleCompraDestinoLookup = async (code: string) => {
     const cleanVal = code.trim();
     if (!cleanVal) {
@@ -972,6 +1003,7 @@ export default function CommercialView({
       status: compraForm.status,
       pais: compraForm.pais,
       corretor: compraForm.corretor,
+      codigoCorretor: compraForm.codigoCorretor,
       motorista: motorista,
       codigoMotorista: codigoMotorista,
       veiculo: veiculo,
@@ -1016,6 +1048,7 @@ export default function CommercialView({
       status: 'Aberta',
       pais: '',
       corretor: '',
+      codigoCorretor: '',
       motorista: '',
       codigoMotorista: '',
       veiculo: '',
@@ -1257,6 +1290,7 @@ export default function CommercialView({
                   status: 'Aberta',
                   pais: '',
                   corretor: '',
+                  codigoCorretor: '',
                   motorista: '',
                   codigoMotorista: '',
                   veiculo: '',
@@ -1395,6 +1429,7 @@ export default function CommercialView({
                             status: c.status || 'Aberta',
                             pais: c.pais || '',
                             corretor: c.corretor || '',
+                            codigoCorretor: (c as any).codigoCorretor || '',
                             motorista: c.motorista || '',
                             codigoMotorista: c.codigoMotorista || '',
                             veiculo: c.veiculo || '',
@@ -2074,9 +2109,10 @@ export default function CommercialView({
                     type="button"
                     onClick={() => setShowLogisticaModal(true)}
                     className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                    title="Detalhamento Logístico"
                   >
                     <Truck className="h-4 w-4" />
-                    <span>Detalhamento Logístico</span>
+                    <span>Detalhamento</span>
                   </button>
                 </div>
                 
@@ -2113,8 +2149,28 @@ export default function CommercialView({
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Comissões</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Linha 1 */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Corretor / Parceiro</label>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Parceiro / Corretor</label>
+                  <input
+                    type="text"
+                    value={compraForm.codigoCorretor || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCompraForm(prev => ({ ...prev, codigoCorretor: val }));
+                      handleCorretorLookup(val);
+                    }}
+                    placeholder="Ex: P-10"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                  />
+                </div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+
+                {/* Linha 2 */}
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro / Corretor</label>
                   <input
                     type="text"
                     list="parceiros-list"

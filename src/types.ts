@@ -46,6 +46,7 @@ export interface Compra {
   status?: string;
   pais?: string;
   corretor?: string;
+  codigoCorretor?: string;
   motorista?: string;
   codigoMotorista?: string;
   veiculo?: string;
