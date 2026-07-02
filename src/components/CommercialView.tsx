@@ -2288,22 +2288,7 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5 pt-2">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">7. Condições de Pagamento</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Prazo de Pagamento</label>
-                  <select
-                    value={compraForm.prazoPagamento}
-                    onChange={(e) => setCompraForm({ ...compraForm, prazoPagamento: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                    required
-                  >
-                    <option value="">-- Selecione o Prazo --</option>
-                    <option value="À Vista">À Vista</option>
-                    <option value="30 dias">30 dias</option>
-                    <option value="60 dias">60 dias</option>
-                    <option value="90 dias">90 dias</option>
-                  </select>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Forma de Pagamento</label>
                   <select
@@ -2319,6 +2304,23 @@ export default function CommercialView({
                     <option value="Depósito">Depósito</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Prazo de Pagamento</label>
+                  <select
+                    value={compraForm.prazoPagamento}
+                    onChange={(e) => setCompraForm({ ...compraForm, prazoPagamento: e.target.value })}
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    required
+                  >
+                    <option value="">-- Selecione o Prazo --</option>
+                    <option value="À Vista">À Vista</option>
+                    <option value="30 dias">30 dias</option>
+                    <option value="60 dias">60 dias</option>
+                    <option value="90 dias">90 dias</option>
+                  </select>
+                </div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-gray-500 uppercase">Observações Gerais</label>
