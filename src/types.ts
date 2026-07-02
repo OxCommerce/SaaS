@@ -47,6 +47,7 @@ export interface Compra {
   pais?: string;
   corretor?: string;
   codigoCorretor?: string;
+  apelidoCorretor?: string;
   motorista?: string;
   codigoMotorista?: string;
   veiculo?: string;

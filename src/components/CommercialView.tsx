@@ -314,6 +314,7 @@ export default function CommercialView({
     pais: '',
     corretor: '',
     codigoCorretor: '',
+    apelidoCorretor: '',
     motorista: '',
     codigoMotorista: '',
     veiculo: '',
@@ -677,7 +678,8 @@ export default function CommercialView({
       setCompraForm(prev => ({
         ...prev,
         codigoCorretor: '',
-        corretor: ''
+        corretor: '',
+        apelidoCorretor: ''
       }));
       return;
     }
@@ -691,7 +693,8 @@ export default function CommercialView({
       setCompraForm(prev => ({
         ...prev,
         codigoCorretor: code,
-        corretor: found.nome
+        corretor: found.nome,
+        apelidoCorretor: found.contato || ''
       }));
     } else {
       setCompraForm(prev => ({
@@ -1004,6 +1007,7 @@ export default function CommercialView({
       pais: compraForm.pais,
       corretor: compraForm.corretor,
       codigoCorretor: compraForm.codigoCorretor,
+      apelidoCorretor: compraForm.apelidoCorretor,
       motorista: motorista,
       codigoMotorista: codigoMotorista,
       veiculo: veiculo,
@@ -1049,6 +1053,7 @@ export default function CommercialView({
       pais: '',
       corretor: '',
       codigoCorretor: '',
+      apelidoCorretor: '',
       motorista: '',
       codigoMotorista: '',
       veiculo: '',
@@ -1291,6 +1296,7 @@ export default function CommercialView({
                   pais: '',
                   corretor: '',
                   codigoCorretor: '',
+                  apelidoCorretor: '',
                   motorista: '',
                   codigoMotorista: '',
                   veiculo: '',
@@ -1430,6 +1436,7 @@ export default function CommercialView({
                             pais: c.pais || '',
                             corretor: c.corretor || '',
                             codigoCorretor: (c as any).codigoCorretor || '',
+                            apelidoCorretor: (c as any).apelidoCorretor || '',
                             motorista: c.motorista || '',
                             codigoMotorista: c.codigoMotorista || '',
                             veiculo: c.veiculo || '',
@@ -2150,7 +2157,7 @@ export default function CommercialView({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Linha 1 */}
-                <div>
+                <div className="md:col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Parceiro / Corretor</label>
                   <input
                     type="text"
@@ -2164,12 +2171,7 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
                 </div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
-
-                {/* Linha 2 */}
-                <div>
+                <div className="md:col-span-3">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro / Corretor</label>
                   <input
                     type="text"
@@ -2180,7 +2182,19 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
-                <div>
+
+                {/* Linha 2 */}
+                <div className="md:col-span-2">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Apelido / Contato</label>
+                  <input
+                    type="text"
+                    value={compraForm.apelidoCorretor || ''}
+                    onChange={(e) => setCompraForm({ ...compraForm, apelidoCorretor: e.target.value })}
+                    placeholder="Apelido ou nome de contato"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
+                </div>
+                <div className="md:col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Comissão (%)</label>
                   <input
                     type="number"
@@ -2199,7 +2213,7 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
-                <div>
+                <div className="md:col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor Comissão (R$)</label>
                   <input
                     type="text"
@@ -2209,7 +2223,6 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
                   />
                 </div>
-                <div className="hidden md:block"></div>
               </div>
 
               {/* Seção 6: Custo Documental */}
