@@ -338,8 +338,8 @@ export default function App() {
           const list = compData.map(d => {
             if (!d.raw_data) return null;
             return {
-              id: d.id,
-              ...d.raw_data
+              ...d.raw_data,
+              id: d.id
             };
           }).filter(Boolean) as Compra[];
           setCompras(list);
@@ -351,8 +351,8 @@ export default function App() {
           const list = vendData.map(d => {
             if (!d.raw_data) return null;
             return {
-              id: d.id,
-              ...d.raw_data
+              ...d.raw_data,
+              id: d.id
             };
           }).filter(Boolean) as OrdemCompraCliente[];
           setOrdensCompraCliente(list);
@@ -364,8 +364,8 @@ export default function App() {
           const list = negData.map(d => {
             if (!d.raw_data) return null;
             return {
-              id: d.id,
-              ...d.raw_data
+              ...d.raw_data,
+              id: d.id
             };
           }).filter(Boolean) as Negociacao[];
           setNegociacoes(list);
