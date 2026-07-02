@@ -2202,95 +2202,9 @@ export default function CommercialView({
                 </div>
               </div>
 
-              {/* Seção 4: Logística */}
+              {/* Seção 4: Comissões */}
               <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Logística</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                {/* Linha 1: Botão de Detalhamento e Status */}
-                <div className="md:col-span-1">
-                  <button
-                    type="button"
-                    onClick={() => setShowLogisticaModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
-                    title="Detalhamento Logístico"
-                  >
-                    <Truck className="h-4 w-4" />
-                    <span>Detalhamento</span>
-                  </button>
-                </div>
-                
-                <div className="md:col-span-3 flex flex-col justify-center">
-                  <div className="text-[11px] text-gray-600 font-medium">
-                    <span className="font-bold text-[#071757]">{compraForm.fretes?.length || 0}</span> {compraForm.fretes?.length === 1 ? 'carreta utilizada' : 'carretas utilizadas'}
-                  </div>
-                  {/* Dica / Alerta para mais de 65 animais */}
-                  {Number(compraForm.quantidade) > 65 && (
-                    <p className="text-[10px] text-amber-600 font-medium animate-pulse mt-0.5">
-                      ⚠️ Operação com {compraForm.quantidade} animais. Recomendado preencher múltiplos fretes/carretas.
-                    </p>
-                  )}
-                </div>
-
-                {/* Linha 2: Banner do Valor Total do Frete */}
-                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total do Frete</span>
-                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
-                      Soma dos fretes de todas as carretas/viagens.
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl font-black font-mono text-[#071757]">
-                      R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Seção 5: Custo Documental */}
-              <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Custo Documental</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                {/* Linha 1: Botão de Detalhamento e Status */}
-                <div className="md:col-span-1">
-                  <button
-                    type="button"
-                    onClick={() => setShowDocumentosModal(true)}
-                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
-                    title="Detalhamento Documental"
-                  >
-                    <FileText className="h-4 w-4" />
-                    <span>Detalhamento</span>
-                  </button>
-                </div>
-                
-                <div className="md:col-span-3 flex flex-col justify-center">
-                  <div className="text-[11px] text-gray-600 font-medium">
-                    <span className="font-bold text-[#071757]">{compraForm.documentos?.length || 0}</span> {compraForm.documentos?.length === 1 ? 'documento utilizado' : 'documentos utilizados'}
-                  </div>
-                </div>
-
-                {/* Linha 2: Banner do Valor Total Custo Documental */}
-                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total Custo Documental</span>
-                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
-                      Soma das taxas documentais pagas pela empresa (Nós).
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl font-black font-mono text-[#071757]">
-                      R$ {liveValorGTA.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Seção 6: Comissões */}
-              <div className="border-b border-gray-200 pb-1.5 pt-2">
-                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">6. Comissões</span>
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Comissões</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Linha 1 */}
@@ -2371,6 +2285,92 @@ export default function CommercialView({
                     value={`R$ ${liveComissao.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-medium"
                   />
+                </div>
+              </div>
+
+              {/* Seção 5: Logística */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">5. Logística</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                {/* Linha 1: Botão de Detalhamento e Status */}
+                <div className="md:col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowLogisticaModal(true)}
+                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                    title="Detalhamento Logístico"
+                  >
+                    <Truck className="h-4 w-4" />
+                    <span>Detalhamento</span>
+                  </button>
+                </div>
+                
+                <div className="md:col-span-3 flex flex-col justify-center">
+                  <div className="text-[11px] text-gray-600 font-medium">
+                    <span className="font-bold text-[#071757]">{compraForm.fretes?.length || 0}</span> {compraForm.fretes?.length === 1 ? 'carreta utilizada' : 'carretas utilizadas'}
+                  </div>
+                  {/* Dica / Alerta para mais de 65 animais */}
+                  {Number(compraForm.quantidade) > 65 && (
+                    <p className="text-[10px] text-amber-600 font-medium animate-pulse mt-0.5">
+                      ⚠️ Operação com {compraForm.quantidade} animais. Recomendado preencher múltiplos fretes/carretas.
+                    </p>
+                  )}
+                </div>
+
+                {/* Linha 2: Banner do Valor Total do Frete */}
+                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total do Frete</span>
+                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
+                      Soma dos fretes de todas as carretas/viagens.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black font-mono text-[#071757]">
+                      R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Seção 6: Custo Documental */}
+              <div className="border-b border-gray-200 pb-1.5 pt-2">
+                <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">6. Custo Documental</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                {/* Linha 1: Botão de Detalhamento e Status */}
+                <div className="md:col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowDocumentosModal(true)}
+                    className="w-full flex items-center justify-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                    title="Detalhamento Documental"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>Detalhamento</span>
+                  </button>
+                </div>
+                
+                <div className="md:col-span-3 flex flex-col justify-center">
+                  <div className="text-[11px] text-gray-600 font-medium">
+                    <span className="font-bold text-[#071757]">{compraForm.documentos?.length || 0}</span> {compraForm.documentos?.length === 1 ? 'documento utilizado' : 'documentos utilizados'}
+                  </div>
+                </div>
+
+                {/* Linha 2: Banner do Valor Total Custo Documental */}
+                <div className="md:col-span-4 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total Custo Documental</span>
+                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
+                      Soma das taxas documentais pagas pela empresa (Nós).
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black font-mono text-[#071757]">
+                      R$ {liveValorGTA.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
               </div>
 
