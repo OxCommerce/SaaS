@@ -150,6 +150,7 @@ export default function CommercialView({
     setShowDetailsModal(true);
   };
   const [fornecedores, setFornecedores] = useState<any[]>([]);
+  const [parceiros, setParceiros] = useState<any[]>([]);
 
   const [searchParams] = useSearchParams();
 
@@ -223,7 +224,35 @@ export default function CommercialView({
         console.warn('Failed to load relations from Supabase in CommercialView:', err);
       }
     }
+
+    async function loadPartners() {
+      try {
+        const { data, error } = await supabase
+          .from('parceiros')
+          .select('*');
+        if (!error && data) {
+          const mapped = data.map(item => {
+            const raw = item.raw_data || {};
+            return {
+              id: item.id,
+              codigo: item.codigo || raw.codigo || '',
+              nome: item.nome || raw.nome || '',
+              contato: item.contato || raw.contato || '',
+              telefone: item.telefone || raw.telefone || '',
+              regiao: item.regiao || raw.regiao || '',
+              tipo: item.tipo || raw.tipo || '',
+              parceiroTipo: item.parceiroTipo || raw.parceiroTipo || 'LOG'
+            };
+          });
+          setParceiros(mapped);
+        }
+      } catch (err) {
+        console.warn('Failed to load partners in CommercialView:', err);
+      }
+    }
+
     loadRelations();
+    loadPartners();
 
     const channel = supabase
       .channel('commercial-relations-changes')
@@ -240,8 +269,24 @@ export default function CommercialView({
       )
       .subscribe();
 
+    const channelPartners = supabase
+      .channel('commercial-partners-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'parceiros'
+        },
+        () => {
+          loadPartners();
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(channelPartners);
     };
   }, []);
 
@@ -677,7 +722,7 @@ export default function CommercialView({
     }
   };
 
-  const handleCorretorLookup = (code: string) => {
+  const handleCorretorLookup = async (code: string) => {
     const cleanVal = code.trim();
     if (!cleanVal) {
       setCompraForm(prev => ({
@@ -689,19 +734,64 @@ export default function CommercialView({
       return;
     }
 
-    const found = CADASTRO_PARCEIROS.find(x => 
+    // 1. Mock CADASTRO_PARCEIROS check
+    const foundMock = CADASTRO_PARCEIROS.find(x => 
       (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
       (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
     );
 
-    if (found) {
+    if (foundMock) {
       setCompraForm(prev => ({
         ...prev,
         codigoCorretor: code,
-        corretor: found.nome,
-        apelidoCorretor: found.contato || ''
+        corretor: foundMock.nome,
+        apelidoCorretor: foundMock.contato || ''
       }));
-    } else {
+      return;
+    }
+
+    // 2. Local state partners check
+    const foundDb = parceiros.find(x =>
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+
+    if (foundDb) {
+      setCompraForm(prev => ({
+        ...prev,
+        codigoCorretor: code,
+        corretor: foundDb.nome,
+        apelidoCorretor: foundDb.contato || ''
+      }));
+      return;
+    }
+
+    // 3. Direct Supabase query check in 'parceiros' table
+    try {
+      const { data, error } = await supabase
+        .from('parceiros')
+        .select('*')
+        .or(`codigo.eq.${cleanVal},id.eq.${cleanVal}`);
+
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const raw = item.raw_data || {};
+        const nome = item.nome || raw.nome || '';
+        const contato = item.contato || raw.contato || '';
+        setCompraForm(prev => ({
+          ...prev,
+          codigoCorretor: code,
+          corretor: nome,
+          apelidoCorretor: contato
+        }));
+      } else {
+        setCompraForm(prev => ({
+          ...prev,
+          codigoCorretor: code
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to query Supabase directly for partner/broker:', err);
       setCompraForm(prev => ({
         ...prev,
         codigoCorretor: code
