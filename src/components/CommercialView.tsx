@@ -2180,7 +2180,6 @@ export default function CommercialView({
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro / Corretor</label>
                   <input
                     type="text"
-                    list="parceiros-list"
                     value={compraForm.corretor}
                     onChange={(e) => setCompraForm({ ...compraForm, corretor: e.target.value })}
                     placeholder="Nome do parceiro/corretor"
@@ -2235,14 +2234,13 @@ export default function CommercialView({
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Emissor da GTA</label>
-                  <select
-                    value={compraForm.emissorGTA || 'Vendedor'}
+                  <input
+                    type="text"
+                    value={compraForm.emissorGTA || ''}
                     onChange={(e) => setCompraForm({ ...compraForm, emissorGTA: e.target.value })}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-bold"
-                  >
-                    <option value="Vendedor">Vendedor (Produtor) - Não deduzido</option>
-                    <option value="Nós">Nós (Empresa) - Contabilizar custo</option>
-                  </select>
+                    placeholder="Ex: Vendedor ou Nós"
+                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                  />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor da Taxa GTA (R$)</label>
