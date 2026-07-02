@@ -1424,12 +1424,12 @@ export default function CommercialView({
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-400 font-bold uppercase tracking-wider font-mono sticky top-0 z-10">
                   <th className="p-3 pl-4">ID Op.</th>
-                  <th className="p-3">Cód. Destino</th>
-                  <th className="p-3">Destino</th>
-                  <th className="p-3">Fazenda Destino</th>
-                  <th className="p-3">País Destino</th>
-                  <th className="p-3">UF Destino</th>
-                  <th className="p-3">Cidade Destino</th>
+                  <th className="p-3">Cód. Fornecedor</th>
+                  <th className="p-3">Fornecedor</th>
+                  <th className="p-3">Fazenda</th>
+                  <th className="p-3">País</th>
+                  <th className="p-3">UF</th>
+                  <th className="p-3">Cidade</th>
                   <th className="p-3 text-center">ID OC</th>
                   <th className="p-3">Categoria</th>
                   <th className="p-3 text-right">Qtd</th>
