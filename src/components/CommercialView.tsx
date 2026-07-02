@@ -336,6 +336,7 @@ export default function CommercialView({
 
   // Form State for Compra
   const [compraForm, setCompraForm] = useState({
+    id: '',
     numeroOperacao: '',
     codigoFornecedor: '',
     fornecedor: '',
@@ -1075,7 +1076,7 @@ export default function CommercialView({
     const placa = firstFrete ? firstFrete.placa : (compraForm.placa || '');
 
     const novaCompra: Compra = {
-      id: isEditCompraMode && editCompraId ? editCompraId : 'c-' + Math.random().toString(36).substr(2, 9),
+      id: compraForm.id || (isEditCompraMode && editCompraId ? editCompraId : 'c-' + Math.random().toString(36).substr(2, 9)),
       numeroOperacao: compraForm.numeroOperacao || 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
       codigoFornecedor: compraForm.codigoFornecedor,
       codigoOrdemCompraCliente: compraForm.codigoOrdemCompraCliente,
@@ -1125,6 +1126,7 @@ export default function CommercialView({
     setEditCompraId(null);
     // Reset keys
     setCompraForm({
+      id: '',
       numeroOperacao: '',
       codigoFornecedor: '',
       fornecedor: '',
@@ -1370,6 +1372,7 @@ export default function CommercialView({
               id="btn-add-compra"
               onClick={() => {
                 setCompraForm({
+                  id: '',
                   numeroOperacao: 'PO-2026-' + Math.floor(Math.random() * 900 + 100),
                   fornecedor: '',
                   fazendaOrigem: '',
@@ -1509,6 +1512,7 @@ export default function CommercialView({
                         id={`edit-compra-${c.id}`}
                         onClick={() => {
                           setCompraForm({
+                            id: c.id,
                             numeroOperacao: c.numeroOperacao,
                             codigoFornecedor: c.codigoFornecedor || '',
                             codigoOrdemCompraCliente: c.codigoOrdemCompraCliente || '',
