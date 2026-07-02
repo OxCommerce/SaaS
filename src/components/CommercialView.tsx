@@ -2171,7 +2171,12 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
                   />
                 </div>
-                <div className="md:col-span-3">
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+                <div className="hidden md:block"></div>
+
+                {/* Linha 2 */}
+                <div className="md:col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Parceiro / Corretor</label>
                   <input
                     type="text"
@@ -2182,15 +2187,13 @@ export default function CommercialView({
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
-
-                {/* Linha 2 */}
-                <div className="md:col-span-2">
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Apelido / Contato</label>
+                <div className="md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Nome Curto / Apelido</label>
                   <input
                     type="text"
                     value={compraForm.apelidoCorretor || ''}
                     onChange={(e) => setCompraForm({ ...compraForm, apelidoCorretor: e.target.value })}
-                    placeholder="Apelido ou nome de contato"
+                    placeholder="Nome curto ou apelido"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
                   />
                 </div>
