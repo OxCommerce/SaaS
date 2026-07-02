@@ -213,50 +213,6 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* ── FINANCEIRO ── */}
-        <div className="space-y-0.5">
-          <button
-            id="sidebar-btn-financeiro-toggle"
-            onClick={() => {
-              if (collapsed) onToggleCollapse();
-              setOpenFinanceiro(!openFinanceiro);
-              setActiveMenu('financeiro');
-            }}
-            className={navItemWithChevron(activeMenu === 'financeiro', collapsed)}
-            title={collapsed ? "Financeiro" : undefined}
-          >
-            <div className="flex items-center gap-3">
-              <Coins className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span>Financeiro</span>}
-            </div>
-            {!collapsed && (
-              openFinanceiro
-                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-            )}
-          </button>
-          {openFinanceiro && !collapsed && (
-            <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
-              <button id="submenu-receber" onClick={() => setActiveMenu('financeiro', 'receber')}
-                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'receber')}>
-                Contas a Receber
-              </button>
-              <button id="submenu-pagar" onClick={() => setActiveMenu('financeiro', 'pagar')}
-                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'pagar')}>
-                Contas a Pagar
-              </button>
-              <button id="submenu-fluxo" onClick={() => setActiveMenu('financeiro', 'fluxo')}
-                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'fluxo')}>
-                Fluxo de Caixa
-              </button>
-              <button id="submenu-conciliacao" onClick={() => setActiveMenu('financeiro', 'conciliacao')}
-                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'conciliacao')}>
-                Conciliação Bancária
-              </button>
-            </div>
-          )}
-        </div>
-
         {/* ── LOGÍSTICA ── */}
         <div className="space-y-0.5">
           <button
@@ -301,6 +257,50 @@ export default function Sidebar({
           )}
         </div>
 
+        {/* ── FINANCEIRO ── */}
+        <div className="space-y-0.5">
+          <button
+            id="sidebar-btn-financeiro-toggle"
+            onClick={() => {
+              if (collapsed) onToggleCollapse();
+              setOpenFinanceiro(!openFinanceiro);
+              setActiveMenu('financeiro');
+            }}
+            className={navItemWithChevron(activeMenu === 'financeiro', collapsed)}
+            title={collapsed ? "Financeiro" : undefined}
+          >
+            <div className="flex items-center gap-3">
+              <Coins className="h-4 w-4 flex-shrink-0" />
+              {!collapsed && <span>Financeiro</span>}
+            </div>
+            {!collapsed && (
+              openFinanceiro
+                ? <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                : <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+            )}
+          </button>
+          {openFinanceiro && !collapsed && (
+            <div className="pl-9 pr-2 py-1 space-y-0.5 border-l-2 border-[#E2E8F0] ml-5">
+              <button id="submenu-receber" onClick={() => setActiveMenu('financeiro', 'receber')}
+                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'receber')}>
+                Contas a Receber
+              </button>
+              <button id="submenu-pagar" onClick={() => setActiveMenu('financeiro', 'pagar')}
+                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'pagar')}>
+                Contas a Pagar
+              </button>
+              <button id="submenu-fluxo" onClick={() => setActiveMenu('financeiro', 'fluxo')}
+                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'fluxo')}>
+                Fluxo de Caixa
+              </button>
+              <button id="submenu-conciliacao" onClick={() => setActiveMenu('financeiro', 'conciliacao')}
+                className={subItem(activeMenu === 'financeiro' && subMenuFinanceiro === 'conciliacao')}>
+                Conciliação Bancária
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* ── Divider ── */}
         <div className="border-t border-[#E2E8F0] my-2" />
         {!collapsed && (
@@ -330,6 +330,14 @@ export default function Sidebar({
           <BarChart3 className="h-4 w-4 flex-shrink-0" />
           {!collapsed && <span>Relatórios Gerenciais</span>}
         </button>
+
+        {/* ── Configurações Section ── */}
+        <div className="border-t border-[#E2E8F0] my-2" />
+        {!collapsed && (
+          <p className="px-3 mb-2 text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">
+            Configurações
+          </p>
+        )}
 
         {/* Configurações */}
         <button
