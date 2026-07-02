@@ -1019,7 +1019,7 @@ export default function CommercialView({
       placa: placa,
       destinoFrigorifico: compraForm.destinoFrigorifico,
       destinoCidade: compraForm.destinoCidade,
-      destinoState: compraForm.destinoEstado,
+      destinoEstado: compraForm.destinoEstado,
       destinoPais: compraForm.destinoPais,
       destinoCodigo: compraForm.destinoCodigo || '',
       destinoFazenda: compraForm.destinoFazenda || '',
@@ -1914,19 +1914,14 @@ export default function CommercialView({
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado Origem (UF)</label>
-                  <select
+                  <input
+                    type="text"
                     disabled
+                    readOnly
                     value={compraForm.estado}
+                    placeholder="UF"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
-                  >
-                    <option value="">-- UF --</option>
-                    <option value="MT">MT</option>
-                    <option value="GO">GO</option>
-                    <option value="MS">MS</option>
-                    <option value="PA">PA</option>
-                    <option value="MG">MG</option>
-                    <option value="SP">SP</option>
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade Origem</label>
@@ -2000,19 +1995,14 @@ export default function CommercialView({
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Estado Destino (UF)</label>
-                  <select
+                  <input
+                    type="text"
                     disabled
+                    readOnly
                     value={compraForm.destinoEstado}
+                    placeholder="UF"
                     className="w-full mt-1 px-3 py-1.5 border border-gray-200 bg-gray-50 rounded-lg text-xs text-gray-500 font-bold"
-                  >
-                    <option value="">-- UF --</option>
-                    <option value="MT">MT</option>
-                    <option value="GO">GO</option>
-                    <option value="MS">MS</option>
-                    <option value="PA">PA</option>
-                    <option value="MG">MG</option>
-                    <option value="SP">SP</option>
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase">Cidade Destino</label>
@@ -2239,8 +2229,13 @@ export default function CommercialView({
                     type="text"
                     value={compraForm.corretor}
                     onChange={(e) => setCompraForm({ ...compraForm, corretor: e.target.value })}
+                    disabled={!!compraForm.codigoCorretor}
                     placeholder="Nome do parceiro/corretor"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs font-bold transition-all ${
+                      compraForm.codigoCorretor
+                        ? 'border-gray-200 bg-gray-50 text-gray-500'
+                        : 'border-gray-300 text-gray-800'
+                    }`}
                   />
                 </div>
                 <div className="md:col-span-1">
@@ -2249,8 +2244,13 @@ export default function CommercialView({
                     type="text"
                     value={compraForm.apelidoCorretor || ''}
                     onChange={(e) => setCompraForm({ ...compraForm, apelidoCorretor: e.target.value })}
+                    disabled={!!compraForm.codigoCorretor}
                     placeholder="Nome curto ou apelido"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                    className={`w-full mt-1 px-3 py-1.5 border rounded-lg text-xs font-bold transition-all ${
+                      compraForm.codigoCorretor
+                        ? 'border-gray-200 bg-gray-50 text-gray-500'
+                        : 'border-gray-300 text-gray-800'
+                    }`}
                   />
                 </div>
                 <div className="md:col-span-1">
