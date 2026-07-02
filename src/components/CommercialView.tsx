@@ -97,7 +97,8 @@ import {
   Tag,
   MapPin,
   FileCheck,
-  Edit2
+  Edit2,
+  Truck
 } from 'lucide-react';
 
 interface CommercialViewProps {
@@ -281,6 +282,7 @@ export default function CommercialView({
   const [showAddCompraModal, setShowAddCompraModal] = useState(false);
   const [showAddVendaModal, setShowAddVendaModal] = useState(false);
   const [showAddNegModal, setShowAddNegModal] = useState(false);
+  const [showLogisticaModal, setShowLogisticaModal] = useState(false);
 
   const [isEditCompraMode, setIsEditCompraMode] = useState(false);
   const [editCompraId, setEditCompraId] = useState<string | null>(null);
@@ -322,7 +324,8 @@ export default function CommercialView({
     destinoCodigo: '',
     destinoFazenda: '',
     codigoOrdemCompraCliente: '',
-    tipoCompra: 'Compra Direta'
+    tipoCompra: 'Compra Direta',
+    fretes: [] as any[]
   });
 
   // Form State for OrdemCompraCliente
@@ -371,7 +374,9 @@ export default function CommercialView({
   const liveArrobas = livePesoTotal / 30;
   const liveValorGado = livePesoTotal * (Number(compraForm.valorArroba) || 0);
   const liveComissao = liveValorGado * ((Number(compraForm.comissao) || 0) / 100);
-  const liveFrete = Number(compraForm.frete) || 0;
+  const liveFrete = compraForm.fretes && compraForm.fretes.length > 0
+    ? compraForm.fretes.reduce((sum, item) => sum + (Number(item.frete) || 0), 0)
+    : (Number(compraForm.frete) || 0);
   const liveValorGTA = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
   const liveTotalEstimado = Math.round(liveValorGado + liveComissao + liveFrete + liveValorGTA);
 
@@ -599,6 +604,69 @@ export default function CommercialView({
         ...prev,
         codigoMotorista: code
       }));
+    }
+  };
+
+  const handleMotoristaLookupForRow = (code: string, index: number) => {
+    const cleanVal = code.trim();
+    if (!cleanVal) {
+      setCompraForm(prev => {
+        const updated = [...(prev.fretes || [])];
+        if (updated[index]) {
+          updated[index] = {
+            ...updated[index],
+            codigoMotorista: '',
+            motorista: '',
+            veiculo: '',
+            placa: ''
+          };
+        }
+        return { ...prev, fretes: updated };
+      });
+      return;
+    }
+
+    const found = CADASTRO_MOTORISTAS.find(x => 
+      (x.codigo || '').trim().toLowerCase() === cleanVal.toLowerCase() ||
+      (x.id || '').trim().toLowerCase() === cleanVal.toLowerCase()
+    );
+
+    if (found) {
+      let veiculo = 'Bitrem Scania';
+      if (found.nome === 'Valdecir Rodrigues Alves') {
+        veiculo = 'Bitrem Scania R440';
+      } else if (found.nome === 'Ailton Senna de Souza') {
+        veiculo = 'Carreta Simples Volvo FH540';
+      } else if (found.nome === 'Roberto Carlos Santos') {
+        veiculo = 'Bi-trem Mercedes Actros';
+      } else if (found.transportadora.includes('Transportadora')) {
+        veiculo = 'Frota Transportadora';
+      }
+
+      setCompraForm(prev => {
+        const updated = [...(prev.fretes || [])];
+        if (updated[index]) {
+          updated[index] = {
+            ...updated[index],
+            codigoMotorista: code,
+            motorista: found.nome,
+            veiculo: veiculo,
+            placa: found.placa
+          };
+        }
+        return { ...prev, fretes: updated };
+      });
+    } else {
+      setCompraForm(prev => {
+        const updated = [...(prev.fretes || [])];
+        if (updated[index]) {
+          updated[index] = {
+            ...updated[index],
+            codigoMotorista: code
+          };
+        }
+        return { ...prev, fretes: updated };
+      });
     }
   };
 
@@ -862,9 +930,19 @@ export default function CommercialView({
     const arrobas = pesoTotal / 30;
     const valorGado = pesoTotal * Number(compraForm.valorArroba);
     const comissaoValor = valorGado * (Number(compraForm.comissao) / 100);
-    const freteValor = Number(compraForm.frete);
+    const freteValor = compraForm.fretes && compraForm.fretes.length > 0
+      ? compraForm.fretes.reduce((sum, item) => sum + (Number(item.frete) || 0), 0)
+      : Number(compraForm.frete) || 0;
     const gtaValor = compraForm.emissorGTA === 'Nós' ? (Number(compraForm.valorGTA) || 0) : 0;
     const valorTotal = Math.round(valorGado + comissaoValor + freteValor + gtaValor);
+
+    const firstFrete = compraForm.fretes && compraForm.fretes.length > 0 ? compraForm.fretes[0] : null;
+    const motorista = firstFrete 
+      ? (compraForm.fretes.length > 1 ? `${firstFrete.motorista} (+${compraForm.fretes.length - 1})` : firstFrete.motorista)
+      : (compraForm.motorista || '');
+    const codigoMotorista = firstFrete ? firstFrete.codigoMotorista : (compraForm.codigoMotorista || '');
+    const veiculo = firstFrete ? firstFrete.veiculo : (compraForm.veiculo || '');
+    const placa = firstFrete ? firstFrete.placa : (compraForm.placa || '');
 
     const novaCompra: Compra = {
       id: isEditCompraMode && editCompraId ? editCompraId : 'c-' + Math.random().toString(36).substr(2, 9),
@@ -894,17 +972,18 @@ export default function CommercialView({
       status: compraForm.status,
       pais: compraForm.pais,
       corretor: compraForm.corretor,
-      motorista: compraForm.motorista,
-      codigoMotorista: compraForm.codigoMotorista,
-      veiculo: compraForm.veiculo,
-      placa: compraForm.placa,
+      motorista: motorista,
+      codigoMotorista: codigoMotorista,
+      veiculo: veiculo,
+      placa: placa,
       destinoFrigorifico: compraForm.destinoFrigorifico,
       destinoCidade: compraForm.destinoCidade,
       destinoState: compraForm.destinoEstado,
       destinoPais: compraForm.destinoPais,
       destinoCodigo: compraForm.destinoCodigo || '',
       destinoFazenda: compraForm.destinoFazenda || '',
-      tipoCompra: compraForm.tipoCompra
+      tipoCompra: compraForm.tipoCompra,
+      fretes: compraForm.fretes || []
     } as any;
 
     onAddCompra(novaCompra);
@@ -948,7 +1027,8 @@ export default function CommercialView({
       destinoCodigo: '',
       destinoFazenda: '',
       codigoOrdemCompraCliente: '',
-      tipoCompra: 'Compra Direta'
+      tipoCompra: 'Compra Direta',
+      fretes: []
     });
   };
 
@@ -1187,7 +1267,8 @@ export default function CommercialView({
                   destinoPais: '',
                   destinoCodigo: '',
                   destinoFazenda: '',
-                  codigoOrdemCompraCliente: ''
+                  codigoOrdemCompraCliente: '',
+                  fretes: [] as any[]
                 });
                 setShowAddCompraModal(true);
               }}
@@ -1323,7 +1404,18 @@ export default function CommercialView({
                             destinoEstado: c.destinoEstado || '',
                             destinoPais: c.destinoPais || '',
                             destinoCodigo: c.destinoCodigo || '',
-                            destinoFazenda: c.destinoFazenda || ''
+                            destinoFazenda: c.destinoFazenda || '',
+                            tipoCompra: c.tipoCompra || 'Compra Direta',
+                            fretes: (c as any).fretes || [
+                              {
+                                id: 'f-1',
+                                codigoMotorista: c.codigoMotorista || '',
+                                motorista: c.motorista || '',
+                                veiculo: c.veiculo || '',
+                                placa: c.placa || '',
+                                frete: Number(c.frete) || 0
+                              }
+                            ]
                           });
                           setIsEditCompraMode(true);
                           setEditCompraId(c.id);
@@ -1975,75 +2067,47 @@ export default function CommercialView({
               <div className="border-b border-gray-200 pb-1.5 pt-2">
                 <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">4. Logística</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Linha 1 */}
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Motorista / Transportador</label>
-                  <input
-                    type="text"
-                    value={compraForm.codigoMotorista || ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm(prev => ({ ...prev, codigoMotorista: val }));
-                      handleMotoristaLookup(val);
-                    }}
-                    placeholder="Ex: M-1006260001"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista / Transportador</label>
-                  <input
-                    type="text"
-                    value={compraForm.motorista || ''}
-                    onChange={(e) => setCompraForm({ ...compraForm, motorista: e.target.value })}
-                    placeholder="Nome do motorista/empresa"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Caminhão / Veículo</label>
-                  <input
-                    type="text"
-                    value={compraForm.veiculo || ''}
-                    onChange={(e) => setCompraForm({ ...compraForm, veiculo: e.target.value })}
-                    placeholder="Ex: Bitrem Scania"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Placa</label>
-                  <input
-                    type="text"
-                    value={compraForm.placa || ''}
-                    onChange={(e) => setCompraForm({ ...compraForm, placa: e.target.value })}
-                    placeholder="Placa do veículo"
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                {/* Banner do Valor Total do Frete */}
+                <div className="md:col-span-2 bg-[#F2F6FC] border border-blue-100 rounded-xl px-4 py-3 flex justify-between items-center shadow-xs animate-in fade-in">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-[#071757] block tracking-wider">Valor Total do Frete</span>
+                    <p className="text-[10.5px] text-gray-500 mt-1 font-medium">
+                      Soma dos fretes de todas as carretas/viagens.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black font-mono text-[#071757]">
+                      R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Linha 2 */}
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor do Frete (R$)</label>
-                  <input
-                    type="number"
-                    value={compraForm.frete}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setCompraForm({ ...compraForm, frete: val === '' ? '' : Number(val) });
-                    }}
-                    onBlur={() => {
-                      if (compraForm.frete === '') {
-                        setCompraForm({ ...compraForm, frete: 0 });
-                      }
-                    }}
-                    className="w-full mt-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
-                  />
+                {/* Botão de Detalhamento Logístico */}
+                <div className="md:col-span-2 flex flex-col space-y-1 justify-center">
+                  <div className="flex items-center space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowLogisticaModal(true)}
+                      className="flex items-center space-x-2 bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2.5 px-4 rounded-lg shadow-md transition-all uppercase cursor-pointer"
+                    >
+                      <Truck className="h-4 w-4" />
+                      <span>Detalhamento Logístico</span>
+                    </button>
+                    
+                    {/* Resumo rápido */}
+                    <div className="text-[11px] text-gray-600">
+                      <span className="font-bold">{compraForm.fretes?.length || 0}</span> {compraForm.fretes?.length === 1 ? 'carreta cadastrada' : 'carretas cadastradas'}
+                    </div>
+                  </div>
+                  
+                  {/* Dica / Alerta para mais de 65 animais */}
+                  {Number(compraForm.quantidade) > 65 && (
+                    <p className="text-[10px] text-amber-600 font-medium animate-pulse mt-1">
+                      ⚠️ Operação com {compraForm.quantidade} animais. Recomendado preencher múltiplos fretes/carretas.
+                    </p>
+                  )}
                 </div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
-                <div className="hidden md:block"></div>
               </div>
 
               {/* Seção 5: Comissões */}
@@ -2214,6 +2278,224 @@ export default function CommercialView({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== DETALHAMENTO LOGÍSTICO MODAL ==================== */}
+      {showLogisticaModal && (
+        <div className="fixed inset-0 bg-black/55 backdrop-blur-xs flex items-start justify-center pt-20 z-[60] p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 animate-in fade-in zoom-in-95 max-h-[calc(100vh-140px)] flex flex-col">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-150">
+              <div className="flex items-center space-x-2">
+                <Truck className="h-5 w-5 text-[#071757]" />
+                <h3 className="text-sm font-bold text-gray-800">
+                  Detalhamento Logístico - Operação {compraForm.numeroOperacao || 'Nova'}
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowLogisticaModal(false)} 
+                className="p-1 hover:bg-gray-100 rounded-lg cursor-pointer"
+              >
+                <X className="h-4 w-4 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-4">
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-gray-500">
+                  Cadastre as carretas, motoristas e respectivos valores de frete para o transporte dos animais.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newId = 'f-' + Math.random().toString(36).substr(2, 9);
+                    setCompraForm(prev => ({
+                      ...prev,
+                      fretes: [
+                        ...(prev.fretes || []),
+                        {
+                          id: newId,
+                          codigoMotorista: '',
+                          motorista: '',
+                          veiculo: '',
+                          placa: '',
+                          frete: 0
+                        }
+                      ]
+                    }));
+                  }}
+                  className="flex items-center space-x-1 bg-green-700 hover:bg-green-800 text-white text-[11px] font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Adicionar Carreta / Viagem</span>
+                </button>
+              </div>
+
+              {(!compraForm.fretes || compraForm.fretes.length === 0) ? (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+                  <Truck className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-xs text-gray-500 font-medium">Nenhuma carreta ou frete cadastrado para esta operação.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCompraForm(prev => ({
+                        ...prev,
+                        fretes: [
+                          {
+                            id: 'f-1',
+                            codigoMotorista: '',
+                            motorista: '',
+                            veiculo: '',
+                            placa: '',
+                            frete: 0
+                          }
+                        ]
+                      }));
+                    }}
+                    className="mt-2 text-xs text-[#071757] hover:underline font-bold"
+                  >
+                    Clique aqui para adicionar a primeira carreta
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {compraForm.fretes.map((item, index) => (
+                    <div 
+                      key={item.id} 
+                      className="p-4 border border-gray-200 rounded-xl bg-gray-50/50 space-y-3 relative group hover:border-gray-300 transition-colors"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-[#071757] uppercase tracking-wider">
+                          Carreta #{index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCompraForm(prev => ({
+                              ...prev,
+                              fretes: prev.fretes.filter(f => f.id !== item.id)
+                            }));
+                          }}
+                          className="text-gray-405 hover:text-rose-650 transition-colors p-1 rounded-md hover:bg-rose-50"
+                          title="Remover Carreta"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Cód. Motorista</label>
+                          <input
+                            type="text"
+                            value={item.codigoMotorista}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              handleMotoristaLookupForRow(val, index);
+                            }}
+                            placeholder="Ex: M-10"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Motorista / Transportador</label>
+                          <input
+                            type="text"
+                            list="motoristas-list"
+                            value={item.motorista}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.fretes || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], motorista: val };
+                                return { ...prev, fretes: updated };
+                              });
+                            }}
+                            placeholder="Nome do motorista"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Caminhão / Veículo</label>
+                          <input
+                            type="text"
+                            value={item.veiculo}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.fretes || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], veiculo: val };
+                                return { ...prev, fretes: updated };
+                              });
+                            }}
+                            placeholder="Ex: Scania R440"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Placa</label>
+                          <input
+                            type="text"
+                            value={item.placa}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.fretes || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], placa: val };
+                                return { ...prev, fretes: updated };
+                              });
+                            }}
+                            placeholder="Placa do veículo"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">Valor do Frete (R$)</label>
+                          <input
+                            type="number"
+                            value={item.frete === 0 ? '' : item.frete}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setCompraForm(prev => {
+                                const updated = [...(prev.fretes || [])];
+                                if (updated[index]) updated[index] = { ...updated[index], frete: val === '' ? 0 : Number(val) };
+                                return { ...prev, fretes: updated };
+                              });
+                            }}
+                            placeholder="Ex: 2500"
+                            className="w-full mt-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-800 font-mono font-bold"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Banner de resumo dentro do modal */}
+              {compraForm.fretes && compraForm.fretes.length > 0 && (
+                <div className="bg-blue-50 border border-blue-105 rounded-xl p-3 flex justify-between items-center text-xs animate-in fade-in">
+                  <div className="text-gray-600">
+                    Soma de <strong className="text-blue-900">{compraForm.fretes.length}</strong> fretes cadastrados.
+                  </div>
+                  <div className="text-[#071757] font-bold font-mono text-sm">
+                    Total: R$ {liveFrete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-gray-100 flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={() => setShowLogisticaModal(false)}
+                className="bg-[#071757] hover:bg-[#182763] text-white text-xs font-bold py-2 px-4 rounded-lg shadow-md cursor-pointer uppercase transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </div>
       )}

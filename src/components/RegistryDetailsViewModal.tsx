@@ -469,9 +469,49 @@ export default function RegistryDetailsViewModal({
                 {renderField("Destino Frigorífico", currentData.destinoFrigorifico)}
                 {renderField("Cidade Destino", currentData.destinoCidade)}
                 {renderField("Corretor / Negociador", currentData.corretor)}
-                {renderField("Motorista Escalado", currentData.motorista)}
-                {renderField("Placa Veículo", currentData.placa)}
+                {(!currentData.fretes || currentData.fretes.length === 0) && (
+                  <>
+                    {renderField("Motorista Escalado", currentData.motorista)}
+                    {renderField("Placa Veículo", currentData.placa)}
+                  </>
+                )}
               </div>
+
+              {currentData.fretes && currentData.fretes.length > 0 && (
+                <div className="mt-4 bg-slate-50 border border-slate-200/60 rounded-xl p-4 animate-in fade-in">
+                  <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-mono">
+                    Detalhamento das Carretas / Viagens
+                  </span>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-[11px] text-gray-700">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-gray-400 font-bold uppercase tracking-wider">
+                          <th className="pb-1 pl-2">Carreta</th>
+                          <th className="pb-1">Cód. Motorista</th>
+                          <th className="pb-1">Motorista</th>
+                          <th className="pb-1">Veículo</th>
+                          <th className="pb-1">Placa</th>
+                          <th className="pb-1 text-right pr-2">Frete</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {currentData.fretes.map((f: any, idx: number) => (
+                          <tr key={f.id || idx} className="hover:bg-slate-100/50 transition-colors">
+                            <td className="py-2 pl-2 font-bold text-gray-900">#{idx + 1}</td>
+                            <td className="py-2 font-mono font-medium text-gray-600">{f.codigoMotorista || '-'}</td>
+                            <td className="py-2 font-semibold text-gray-800">{f.motorista || '-'}</td>
+                            <td className="py-2 text-gray-500">{f.veiculo || '-'}</td>
+                            <td className="py-2 font-mono text-gray-500">{f.placa || '-'}</td>
+                            <td className="py-2 text-right pr-2 font-mono font-bold text-slate-700">
+                              {Number(f.frete).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {currentData.observacoes && (
                 <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-gray-150">
