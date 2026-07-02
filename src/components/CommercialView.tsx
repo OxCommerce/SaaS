@@ -381,6 +381,7 @@ export default function CommercialView({
 
   // Form State for OrdemCompraCliente
   const [vendaForm, setVendaForm] = useState({
+    id: '',
     numeroOC: '',
     codigoCliente: '',
     cliente: '',
@@ -435,7 +436,7 @@ export default function CommercialView({
   const liveTotalOperacao = liveValorGado + liveFrete + liveValorGTA;
 
   useEffect(() => {
-    if (showAddVendaModal) {
+    if (showAddVendaModal && !vendaForm.id) {
       setVendaForm(prev => ({
         ...prev,
         numeroOC: 'OC-2026-' + Math.floor(Math.random() * 9000 + 1000),
@@ -445,7 +446,7 @@ export default function CommercialView({
         status: 'Pendente'
       }));
     }
-  }, [showAddVendaModal]);
+  }, [showAddVendaModal, vendaForm.id]);
 
   useEffect(() => {
     if (showAddCompraModal && !isEditCompraMode) {
@@ -1184,7 +1185,7 @@ export default function CommercialView({
     const resultado = Math.round(valorBruto - comissaoDedução);
 
     const novaVenda: OrdemCompraCliente = {
-      id: 'v-' + Math.random().toString(36).substr(2, 9),
+      id: vendaForm.id || 'v-' + Math.random().toString(36).substr(2, 9),
       numeroOC: vendaForm.numeroOC || 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
       codigoCliente: vendaForm.codigoCliente,
       cliente: vendaForm.cliente,
@@ -1203,6 +1204,7 @@ export default function CommercialView({
     onAddOrdemCompraCliente(novaVenda);
     setShowAddVendaModal(false);
     setVendaForm({
+      id: '',
       numeroOC: '',
       codigoCliente: '',
       cliente: '',
@@ -1616,6 +1618,7 @@ export default function CommercialView({
               id="btn-add-venda"
               onClick={() => {
                 setVendaForm({
+                  id: '',
                   numeroOC: 'OC-2026-' + Math.floor(Math.random() * 900 + 100),
                   codigoCliente: '',
                   cliente: '',
